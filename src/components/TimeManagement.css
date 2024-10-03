@@ -1,0 +1,71 @@
+/* TimeManagement.css */
+
+/* Container Styles */
+.time-management-container {
+  background-color: #f8f9fa; /* Light background for contrast */
+  padding: 2rem;
+  border-radius: 0.75rem; /* Rounded corners for a modern look */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Luxurious shadow effect */
+  margin-top: 2rem;
+}
+
+/* Heading Styles */
+h1 {
+  font-family: 'Merriweather', serif; /* Elegant serif font for heading */
+  color: #4b0082; /* Deep purple for a luxurious feel */
+  margin-bottom: 2rem; /* Space below heading */
+  font-size: 2.5rem; /* Larger font size for emphasis */
+  letter-spacing: 0.05rem; /* Slight letter spacing for elegance */
+}
+
+/* Table Styles */
+.custom-table th,
+.custom-table td {
+  font-family: 'Roboto', sans-serif; /* Clean font for table data */
+  color: #343a40; /* Dark color for readability */
+  padding: 1.2rem; /* Consistent padding */
+  text-align: center; /* Center-align table text */
+  vertical-align: middle; /* Center-align content vertically */
+}
+
+.custom-table thead th {
+  background-color: #4b0082; /* Deep purple header background */
+  color: #fff; /* White text color */
+  text-transform: uppercase; /* Uppercase text for headers */
+  font-weight: bold; /* Bold font for headers */
+}
+
+.custom-table tbody tr:hover {
+  background-color: #e6e6fa; /* Light lavender hover effect */
+  transition: background-color 0.2s ease; /* Smooth transition effect */
+}
+
+/* Badge Styles */
+.badge-success {
+  background-color: #28a745; /* Green for high effort */
+}
+
+.badge-info {
+  background-color: #17a2b8; /* Blue for moderate effort */
+}
+
+.badge-warning {
+  background-color: #ffc107; /* Yellow for low effort */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .time-management-container {
+      padding: 1.5rem; /* Reduced padding on small screens */
+  }
+
+  h1 {
+      font-size: 2rem; /* Slightly smaller heading on small screens */
+  }
+
+  .custom-table th,
+  .custom-table td {
+      font-size: 0.85rem; /* Smaller font size for table cells */
+      padding: 0.8rem; /* Reduced padding for table cells */
+  }
+}

@@ -1,0 +1,58 @@
+/* Footer.css */
+
+footer {
+  background-color: #f8f9fa; /* Light background for contrast */
+  border-top: 3px solid #4b0082; /* Deeper border for a luxurious touch */
+  padding: 1rem 1.5rem; /* Adjusted padding for a more spacious feel */
+  text-align: center; /* Center-align text */
+  position: relative; /* Ensure proper layout positioning */
+  font-size: 0.9rem; /* Base font size for readability */
+  /* Removed box-shadow for a flatter design */
+}
+
+footer p {
+  margin: 0; /* Remove default margin */
+  color: #555; /* Dark grey for readability */
+  line-height: 1.6; /* Increased line height for better readability */
+}
+
+footer p.mb-1 {
+  font-weight: bold;
+  color: #4b0082; /* Indigo color for emphasis */
+}
+
+footer p.mb-0 {
+  font-weight: normal;
+  color: #777; /* Light grey for secondary information */
+}
+
+/* Additional footer links */
+.footer-links {
+  margin-top: 10px; /* Space above links */
+  font-size: 0.8rem; /* Slightly smaller font for links */
+}
+
+.footer-links a {
+  color: #4b0082; /* Indigo color for links */
+  text-decoration: none; /* Remove underline */
+  margin: 0 8px; /* Space between links */
+}
+
+.footer-links a:hover {
+  text-decoration: underline; /* Underline on hover for better visibility */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  footer {
+    padding: 0.5rem; /* Further reduced padding on smaller screens */
+  }
+
+  footer p {
+    font-size: 0.75rem; /* Smaller font size on small screens */
+  }
+
+  .footer-links {
+    font-size: 0.7rem; /* Adjust link font size for smaller screens */
+  }
+}

@@ -1,0 +1,43 @@
+.email-settings {
+    max-width: 400px; /* Limit the width of the settings form */
+    margin: 20px auto; /* Center the form horizontally */
+    padding: 20px; /* Add padding inside the form */
+    border: 1px solid #ddd; /* Light border for the form */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    background-color: #f9f9f9; /* Light background color */
+  }
+  
+  .email-settings h3 {
+    margin-bottom: 20px; /* Space below the heading */
+    text-align: center; /* Center the heading text */
+  }
+  
+  .email-settings label {
+    display: block; /* Make each label block to stack inputs */
+    margin-bottom: 10px; /* Space between labels */
+  }
+  
+  .email-settings input {
+    width: 100%; /* Full width for inputs */
+    padding: 10px; /* Padding for better touch targets */
+    border: 1px solid #ccc; /* Input border */
+    border-radius: 4px; /* Slightly rounded corners */
+    margin-bottom: 15px; /* Space below each input */
+  }
+  
+  .email-settings button {
+    width: 100%; /* Full width for the button */
+    padding: 10px; /* Padding for the button */
+    background-color:linear-gradient(to right, #5a098e, #d8a507);  /* Green background color */
+    color: white; /* White text color */
+    border: none; /* No border */
+    border-radius: 4px; /* Slightly rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Larger font for the button */
+  }
+  
+  .email-settings button:hover {
+    background-color: linear-gradient(to right, #5a098e, #d8a507); /* Darker green on hover */
+  }
+  

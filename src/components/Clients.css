@@ -1,0 +1,122 @@
+/* Clients.css */
+
+/* Container Styles */
+.clients-container {
+  background-color: #f8f9fa; /* Light background for contrast */
+  padding: 2.5rem; /* Ample padding for spacious layout */
+  border-radius: 1rem; /* Rounded corners for a smoother look */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Softer shadow for a luxurious effect */
+  margin-top: 3rem; /* Space above the container */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+/* Hover effect for the container */
+.clients-container:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+/* Heading Styles */
+h1 {
+  font-family: 'Merriweather', serif; /* Elegant serif font for heading */
+  color: #4b0082; /* Deep purple for a luxurious feel */
+  margin-bottom: 2.5rem; /* Space below heading */
+  font-size: 2.75rem; /* Increased font size for prominence */
+  letter-spacing: 0.1rem; /* Slightly spaced letters for premium feel */
+  text-transform: capitalize; /* Capitalize headings for polish */
+  text-align: center; /* Center align heading for better UI */
+}
+
+/* Table Styles */
+.custom-table {
+  width: 100%; /* Full width for better space utilization */
+  border-collapse: collapse; /* Collapse borders for a cleaner look */
+  margin-bottom: 2rem; /* Space below the table */
+}
+
+.custom-table th,
+.custom-table td {
+  font-family: 'Roboto', sans-serif; /* Clean font for table data */
+  color: #343a40; /* Dark color for readability */
+  padding: 1.5rem; /* Consistent padding */
+  text-align: center; /* Center-align table text */
+  border: 1px solid #ddd; /* Soft border for better separation */
+  vertical-align: middle; /* Align text vertically */
+  transition: background-color 0.3s ease; /* Smooth transition for row hover effect */
+}
+
+.custom-table thead th {
+  background-color: #4b0082; /* Deep purple header background */
+  color: #fff; /* White text color */
+  text-transform: uppercase; /* Uppercase text for headers */
+  font-weight: bold; /* Bold font for headers */
+  border-bottom: 3px solid #f1f1f1; /* Light border below header */
+  letter-spacing: 0.05rem; /* Slight spacing for text refinement */
+}
+
+.custom-table tbody tr:hover {
+  background-color: #e0d4f8; /* Lavender hover effect */
+}
+
+/* Zebra stripes for table rows */
+.custom-table tbody tr:nth-of-type(odd) {
+  background-color: #fafafa; /* Light background for alternate rows */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .clients-container {
+      padding: 2rem; /* Adjusted padding for smaller screens */
+  }
+
+  h1 {
+      font-size: 2.25rem; /* Smaller heading for small screens */
+      margin-bottom: 1.5rem; /* Less space below heading */
+  }
+
+  .custom-table th,
+  .custom-table td {
+      font-size: 0.9rem; /* Smaller font size for better fit */
+      padding: 1rem; /* Adjusted padding for compactness */
+  }
+
+  button {
+    font-size: 0.9rem; /* Smaller button text for compactness */
+  }
+}
+
+/* Enhanced Button Styles */
+button {
+  background-color: #4b0082; /* Purple background for luxurious look */
+  color: #fff; /* White text for contrast */
+  border: none;
+  padding: 0.75rem 1.5rem; /* Ample padding for buttons */
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem; /* Standard button font size */
+  border-radius: 0.5rem; /* Rounded corners for buttons */
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Smooth transitions */
+}
+
+/* Button hover effect */
+button:hover {
+  background-color: #3a006a; /* Darker purple on hover */
+  transform: translateY(-2px); /* Slight lift effect on hover */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow on hover */
+}
+
+/* Button Styles for the Modal */
+.modal-footer .btn-primary {
+  background-color: #4b0082; /* Purple background */
+  border-color: #3a006a; /* Border color */
+}
+
+.modal-footer .btn-primary:hover {
+  background-color: #3a006a; /* Darker purple on hover */
+}
+
+/* General Improvements */
+html, body {
+  font-size: 16px; /* Base font size for better readability */
+  line-height: 1.5; /* Improved line height for text clarity */
+}
+

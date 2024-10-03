@@ -1,0 +1,50 @@
+/* src/components/FolderManagement.css */
+
+.folder-management {
+    padding: 2rem;
+    background-color: #f8f9fa;
+}
+
+.folder-actions {
+    margin-bottom: 2rem;
+}
+
+.folder-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.folder-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    width: calc(33.333% - 1rem);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.folder-item h5 {
+    color: #4b0082; /* Indigo color */
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.folder-item p {
+    color: #6c757d; /* Grey color */
+    margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .folder-item {
+        width: calc(50% - 1rem);
+    }
+}
+
+@media (max-width: 576px) {
+    .folder-item {
+        width: 100%;
+    }
+}

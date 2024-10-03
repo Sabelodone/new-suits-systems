@@ -1,0 +1,209 @@
+/* General styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  scroll-behavior: smooth; /* Smooth scrolling */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #6a1b9a; /* Hover color for links */
+}
+
+/* Container for document manager */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease;
+}
+
+.container:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px); /* Subtle lift on hover */
+}
+
+/* Header styles */
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #6a1b9a;
+  margin-bottom: 20px;
+  text-align: center; /* Center align for emphasis */
+}
+
+h3 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Form styles */
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+.form-control,
+.form-control-file,
+.form-control-select {
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 12px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus,
+.form-control-file:focus,
+.form-control-select:focus {
+  border-color: #6a1b9a;
+  outline: none;
+  box-shadow: 0 0 8px rgba(106, 27, 154, 0.2);
+}
+
+.form-control-file {
+  border: none;
+  font-size: 0.9rem;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: #6a1b9a;
+  border-color: #6a1b9a;
+  color: #fff;
+  border-radius: 8px;
+  padding: 12px 25px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s;
+  box-shadow: 0 4px 10px rgba(106, 27, 154, 0.2);
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #4a148c;
+  border-color: #4a148c;
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: translateY(0); /* Remove lift on click */
+  box-shadow: 0 2px 8px rgba(106, 27, 154, 0.15);
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(106, 27, 154, 0.5);
+}
+
+.btn-link {
+  color: #6a1b9a;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.btn-link:hover {
+  color: #4a148c;
+  text-decoration: underline;
+}
+
+/* Card styles */
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  background-color: #fff;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+  padding: 1.75rem;
+  background-color: #fafafa;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.card-text {
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* List styles */
+.list-unstyled {
+  padding-left: 0;
+  list-style: none;
+  margin-top: 10px;
+}
+
+.list-unstyled li {
+  margin-bottom: 12px;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Image and PDF preview styles */
+img {
+  border-radius: 4px;
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  transition: box-shadow 0.3s ease;
+}
+
+img:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+iframe {
+  border: none;
+  width: 100%;
+  height: 500px;
+  margin-top: 10px;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  h2, h3 {
+    font-size: 1.5rem;
+  }
+
+  .card-body {
+    padding: 1.25rem;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 12px;
+  }
+}

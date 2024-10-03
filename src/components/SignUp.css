@@ -1,0 +1,115 @@
+/* SignUp Page Styling */
+
+.signup-container {
+    background-color: #f0ebdd; /* Eggshell background */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signup-form {
+    background-color: #fff; /* White for contrast */
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for luxury effect */
+    width: 100%;
+    max-width: 400px;
+    transition: transform 0.3s; /* Subtle scaling on hover */
+}
+
+.signup-form:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+}
+
+.signup-form h2 {
+    text-align: center;
+    color: #5e3a99; /* Luxurious purple */
+    margin-bottom: 1.5rem;
+}
+
+.signup-form .form-label {
+    color: #5e3a99; /* Purple for form labels */
+}
+
+.signup-form .form-control {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: none;
+    transition: border 0.3s;
+}
+
+.signup-form .form-control:focus {
+    border-color: #5e3a99; /* Purple border on focus */
+    box-shadow: 0 0 5px rgba(94, 58, 153, 0.5); /* Slight purple glow */
+}
+
+.signup-form .form-group {
+    margin-bottom: 1.5rem; /* Increased spacing for better layout */
+}
+
+.signup-form .btn-primary {
+    background-color: #5e3a99; /* Purple for button */
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1.5rem;
+    width: 100%;
+    font-size: 1.1rem;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.signup-form .btn-primary:hover {
+    background-color: #482d73; /* Darker purple on hover */
+    box-shadow: 0 4px 10px rgba(94, 58, 153, 0.5); /* Luxurious shadow on hover */
+}
+
+.signup-form .btn-primary:focus {
+    box-shadow: 0 0 5px rgba(94, 58, 153, 0.7); /* Focus effect */
+}
+
+.signup-link {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.signup-link p {
+    color: #5e3a99;
+}
+
+.signup-link a {
+    color: #5e3a99; /* Purple for links */
+    text-decoration: none;
+    transition: color 0.3s; /* Smooth color transition */
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+    color: #482d73; /* Slightly darker on hover */
+}
+
+.text-danger {
+    color: red; /* Adjust the color to fit your design */
+    margin-top: 10px;
+  }
+  
+  .text-success {
+    color: green; /* Adjust the color to fit your design */
+    margin-top: 10px;
+  }
+  
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .signup-form {
+        padding: 1.5rem;
+    }
+
+    .signup-form h2 {
+        font-size: 1.8rem;
+    }
+
+    .signup-form .btn-primary {
+        font-size: 1rem;
+        padding: 0.4rem 1rem;
+    }
+}

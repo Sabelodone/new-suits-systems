@@ -1,0 +1,110 @@
+/* Dashboard.css */
+
+/* Container Styles */
+.container {
+  max-width: 1200px; /* Maximum width for larger screens */
+  margin: 0 auto; /* Center align container */
+  padding: 0 2rem; /* Add more padding for a spacious feel */
+  background-color: #e8f0f2; /* Light, elegant blue-grey background */
+  border-radius: 0.75rem; /* Rounded corners for a modern look */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+}
+
+/* Heading Styles */
+h1 {
+  font-weight: 700; /* Bold text for emphasis */
+  color: #003366; /* Navy blue for a professional and luxurious feel */
+  margin: 1.5rem 0; /* Reduced spacing around the heading */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15); /* Subtle text shadow for depth */
+}
+
+/* Card Title Styles */
+.card-title {
+  font-size: 1.6rem; /* Larger font size for titles */
+  font-weight: 700; /* Bold for emphasis */
+  color: #003366; /* Navy blue for consistency */
+  margin-bottom: 1rem; /* Space below the title */
+  text-transform: uppercase; /* Uppercase text for impact */
+}
+
+/* Card Text Styles */
+.card-text {
+  font-size: 1rem; /* Default font size */
+  color: #666; /* Dark grey for readability */
+}
+
+/* Card Styles */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+  border: 1px solid #d1d1d1; /* Light grey border for definition */
+  border-radius: 0.75rem; /* Rounded corners for a modern look */
+  overflow: hidden; /* Ensure content stays within rounded corners */
+  background-color: #ffffff; /* White background for cards */
+}
+
+/* Card Hover Styles */
+.card:hover {
+  transform: translateY(-8px); /* Slight lift on hover */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+  border-color: #003366; /* Change border color on hover */
+}
+
+/* Chatbot Icon Styles */
+.chatbot-icon {
+  position: fixed;
+  bottom: 20px; /* Position from the bottom */
+  right: 20px; /* Position from the right */
+  background-color: #003366; /* Navy blue background for the icon */
+  color: #ffffff; /* White icon color */
+  border-radius: 50%; /* Circular icon */
+  padding: 15px; /* Padding for the icon */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+  cursor: pointer; /* Pointer cursor on hover */
+  z-index: 1000; /* Ensure it stays above other elements */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
+}
+
+.chatbot-icon:hover {
+  transform: translateY(-5px); /* Lift slightly on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+  background-color: #002244; /* Darker navy on hover */
+}
+
+/* Chart Styles */
+.card-body {
+  position: relative;
+}
+
+.line-chart,
+.pie-chart {
+  width: 100%; /* Full width of card */
+  height: 300px; /* Set a fixed height */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem; /* Reduce padding on smaller screens */
+  }
+  
+  h1 {
+    font-size: 1.75rem; /* Slightly smaller heading on small screens */
+  }
+  
+  .card-title {
+    font-size: 1.4rem; /* Slightly smaller title on small screens */
+  }
+  
+  .card-text {
+    font-size: 0.95rem; /* Slightly smaller text on small screens */
+  }
+  
+  .chatbot-icon {
+    bottom: 15px; /* Adjust position for smaller screens */
+    right: 15px; /* Adjust position for smaller screens */
+    padding: 12px; /* Adjust padding for smaller screens */
+    width: 50px; /* Set a fixed width */
+    height: 50px; /* Set a fixed height */
+    font-size: 1.2rem; /* Adjust font size */
+  }
+}

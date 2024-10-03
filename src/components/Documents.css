@@ -1,0 +1,102 @@
+/* Container Styles */
+.container {
+  max-width: 1200px; /* Maximum width for larger screens */
+  margin: 0 auto; /* Center align container */
+  padding: 0 1rem; /* Add padding on sides for small screens */
+  background-color: #f0f4f7; /* Light blue-grey background for a clean and sophisticated look */
+  min-height: 100vh; /* Ensure the container takes full viewport height */
+}
+
+/* Heading Styles */
+h1 {
+  font-weight: bold; /* Bold text for emphasis */
+  color: #004d40; /* Deep teal for a professional and luxurious feel */
+  margin: 1rem 0; /* Reduced spacing around the heading */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Subtle text shadow for depth */
+  font-size: 2rem; /* Slightly larger for impact */
+  text-align: center; /* Center the heading */
+}
+
+/* Card Title Styles */
+.card-title {
+  font-size: 1.3rem; /* Adjusted font size for better fit */
+  font-weight: 700; /* Bold for emphasis */
+  color: #004d40; /* Deep teal for consistency */
+  margin-bottom: 0.5rem; /* Reduced space below the title */
+  text-transform: uppercase; /* Uppercase text for impact */
+  text-align: center; /* Center the card title */
+}
+
+/* Card Styles */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+  border: 1px solid #d1d1d1; /* Light grey border for definition */
+  border-radius: 0.5rem; /* Rounded corners for a modern look */
+  overflow: hidden; /* Ensure content stays within rounded corners */
+  background-color: #ffffff; /* White background for cards */
+  margin-bottom: 1rem; /* Add space between cards */
+}
+
+/* Card Hover Styles */
+.card:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+  border-color: #004d40; /* Change border color on hover */
+}
+
+/* Card Body Styles */
+.card-body {
+  padding: 1rem; /* Add padding inside the card */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content inside the card */
+}
+
+/* Chatbot Icon Styles */
+.chatbot-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #004d40; /* Deep teal background for the icon */
+  color: #ffffff; /* White icon color */
+  border-radius: 50%;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+  cursor: pointer;
+  z-index: 1000; /* Ensure it stays above other elements */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.chatbot-icon:hover {
+  transform: translateY(-5px); /* Lift slightly on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+  background-color: #003d33; /* Darker teal on hover */
+}
+
+/* Chart Styles */
+.line-chart,
+.pie-chart {
+  width: 100%; /* Full width of card */
+  height: 250px; /* Reduced height for better fit */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0.5rem; /* Reduce padding on smaller screens */
+  }
+  
+  h1 {
+    font-size: 1.5rem; /* Slightly smaller heading on small screens */
+  }
+  
+  .card-title {
+    font-size: 1.2rem; /* Slightly smaller title on small screens */
+  }
+  
+  .chatbot-icon {
+    bottom: 10px; /* Adjust position for smaller screens */
+    right: 10px; /* Adjust position for smaller screens */
+    padding: 10px;
+  }
+}

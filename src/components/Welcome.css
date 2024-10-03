@@ -1,0 +1,80 @@
+/* Welcome Container Styles */
+.welcome-container {
+  /* Reference the image in public folder */
+  background-size: cover; /* Cover the entire container */
+  background-position: center; /* Center the background image */
+  min-height: 100vh; /* Full viewport height */
+  color: #ffffff; /* White text for contrast */
+  position: relative; /* For positioning child elements */
+  display: flex; /* Enable flexbox */
+  align-items: center; /* Center content vertically */
+  justify-content: center; /* Center content horizontally */
+  padding: 2rem; /* Add padding for better spacing on small screens */
+  text-align: center; /* Ensure centered text for all screen sizes */
+}
+
+/* Welcome Content Styles */
+.welcome-content {
+  background-color: rgba(0, 0, 0, 0.6); /* Slightly darker semi-transparent background for better contrast */
+  padding: 3rem; /* Ample padding for content */
+  border-radius: 0.75rem; /* More rounded corners for a modern look */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); /* More pronounced luxurious shadow */
+  max-width: 700px; /* Limit the width to ensure better readability on larger screens */
+  width: 100%; /* Ensure the content stretches fully on small screens */
+}
+
+/* Title Styles */
+.welcome-title {
+  font-family: 'Merriweather', serif; /* Elegant font for title */
+  font-size: 3rem; /* Increase title font size for larger emphasis */
+  margin-bottom: 1.5rem; /* Space below title */
+  color: #f7f7f7; /* Slightly off-white for a softer look */
+}
+
+/* Text Styles */
+.welcome-text {
+  font-family: 'Roboto', sans-serif; /* Clean font for text */
+  font-size: 1.3rem; /* Slightly larger font size for readability */
+  line-height: 1.6; /* Increase line height for better readability */
+  margin-bottom: 2.5rem; /* Increased spacing below text */
+  color: #eaeaea; /* Softer white for text to contrast with the background */
+}
+
+/* Button Styles */
+.explore-btn {
+  font-family: 'Roboto', sans-serif; /* Match button font to body text */
+  font-size: 1.2rem; /* Slightly larger font size for button */
+  padding: 0.9rem 1.8rem; /* Increased padding for a comfortable click area */
+  background: linear-gradient(to right, #5a098e, #d8a507); /* Gradient background */
+  border: none; /* Remove default border */
+  border-radius: 0.3rem; /* Add border-radius for button */
+  color: #ffffff; /* White text color for contrast */
+  transition: background 0.3s ease, transform 0.3s ease; /* Smooth transition effect */
+}
+
+/* Button Hover Effect */
+.explore-btn:hover {
+  background: linear-gradient(to right, #5a098e, #d8a507); /* Use the same gradient on hover */
+  transform: scale(1.05); /* Slight scaling effect */
+  color: #ffffff; /* Ensure text color remains white on hover */
+}
+
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .welcome-container {
+    padding: 1.5rem; /* Adjust padding for smaller screens */
+  }
+
+  .welcome-title {
+    font-size: 2rem; /* Slightly smaller title on small screens */
+  }
+
+  .welcome-text {
+    font-size: 1.1rem; /* Adjust text size for smaller screens */
+  }
+
+  .welcome-content {
+    padding: 2rem; /* Adjust content padding for smaller screens */
+  }
+}

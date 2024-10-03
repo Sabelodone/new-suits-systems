@@ -1,0 +1,91 @@
+/* Chatbot.css */
+
+.chatbot {
+  position: fixed; /* Fix the chatbot on the screen */
+  bottom: 20px; /* Space from the bottom */
+  right: 20px; /* Space from the right */
+  width: 350px; /* Set a width */
+  max-height: 500px; /* Limit height */
+  overflow-y: auto; /* Enable scrolling */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 10px; /* Rounded corners */
+  background-color: #ffffff; /* Background color */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Add some shadow */
+  z-index: 1000; /* Ensure it's on top */
+  transition: all 0.3s ease; /* Smooth transition */
+  display: none; /* Initially hidden */
+}
+
+.chatbot.open {
+  display: block; /* Show when open */
+}
+
+.chatbot-header {
+  background-color: #007bff; /* Header color */
+  color: white; /* Header text color */
+  padding: 10px; /* Header padding */
+  display: flex; /* Flex for alignment */
+  justify-content: space-between; /* Space between title and close icon */
+  align-items: center; /* Center items vertically */
+  border-top-left-radius: 10px; /* Rounded corners */
+  border-top-right-radius: 10px; /* Rounded corners */
+}
+
+.chatbot-body {
+  padding: 10px; /* Padding for body */
+}
+
+.messages {
+  margin-bottom: 10px; /* Bottom margin */
+}
+
+.user {
+  text-align: right; /* Right align user messages */
+  color: #007bff; /* User text color */
+  margin: 5px 0; /* Margin for spacing */
+}
+
+.bot {
+  text-align: left; /* Left align bot messages */
+  color: #555; /* Bot text color */
+  margin: 5px 0; /* Margin for spacing */
+}
+
+.input-container {
+  display: flex; /* Flex for input and button */
+  justify-content: space-between; /* Space between input and button */
+}
+
+input[type='text'] {
+  flex: 1; /* Take available space */
+  padding: 10px; /* Padding for input */
+  border: 1px solid #ccc; /* Input border */
+  border-radius: 5px; /* Rounded corners */
+}
+
+input[type='text']:disabled {
+  background-color: #f7f7f7; /* Disabled background */
+}
+
+button {
+  background-color: #007bff; /* Button color */
+  color: white; /* Button text color */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Button padding */
+  margin-left: 10px; /* Margin for spacing */
+  cursor: pointer; /* Pointer cursor */
+}
+
+button:disabled {
+  background-color: #ccc; /* Disabled button color */
+  cursor: not-allowed; /* Not allowed cursor */
+}
+
+.consent-message {
+  padding: 10px; /* Padding for consent message */
+  border: 1px solid #007bff; /* Border color */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #e7f1ff; /* Light background */
+  margin-bottom: 10px; /* Bottom margin */
+}

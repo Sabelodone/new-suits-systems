@@ -1,0 +1,68 @@
+/* Welcome.css */
+
+/* General container styling */
+.welcome-container {
+    min-height: calc(100vh - 60px); /* Full height minus navbar */
+    background-color: #f0ead6; /* Match the sidebar eggshell color */
+    padding: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Content box styling */
+  .welcome-content {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+  }
+  
+  /* Title styling */
+  .welcome-title {
+    font-size: 2.5rem;
+    color: #4b0082; /* Luxurious dark purple */
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+  
+  /* Text styling */
+  .welcome-text {
+    font-size: 1.25rem;
+    color: #333; /* Professional dark text */
+    margin-bottom: 30px;
+  }
+  
+  /* Button styling */
+  .explore-btn {
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    background: linear-gradient(to right, #6a0dad, #f8c307); /* Nice color gradient */
+    border: none;
+    border-radius: 25px;
+    color: white;
+    transition: background 0.3s ease;
+  }
+  
+  .explore-btn:hover {
+    background: linear-gradient(to right, #f8c307, #6a0dad); /* Reverse gradient on hover */
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .welcome-title {
+      font-size: 2rem;
+    }
+  
+    .welcome-text {
+      font-size: 1.1rem;
+    }
+  
+    .explore-btn {
+      font-size: 1rem;
+      padding: 8px 16px;
+    }
+  }
+  

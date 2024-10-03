@@ -1,0 +1,75 @@
+/* Tasks.css */
+
+/* Container Styles */
+.tasks-container {
+  background-color: #f8f9fa; /* Light background */
+  padding: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Luxurious shadow */
+  margin-top: 2rem;
+}
+
+/* Heading Styles */
+h1 {
+  font-family: 'Merriweather', serif;
+  color: #4b0082; /* Luxurious deep purple */
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  letter-spacing: 0.05rem;
+}
+
+/* Table Styles */
+.custom-table th,
+.custom-table td {
+  font-family: 'Roboto', sans-serif;
+  color: #343a40;
+  padding: 1.2rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.custom-table thead th {
+  background-color: #4b0082; /* Deep purple for headers */
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #e6e6fa; /* Light lavender on hover */
+  transition: background-color 0.2s ease;
+}
+
+/* Badge Styles */
+.badge-success {
+  background-color: #28a745;
+}
+
+.badge-info {
+  background-color: #17a2b8;
+}
+
+.badge-warning {
+  background-color: #ffc107;
+}
+
+.badge-secondary {
+  background-color: #6c757d;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .tasks-container {
+      padding: 1.5rem;
+  }
+
+  h1 {
+      font-size: 2rem;
+  }
+
+  .custom-table th,
+  .custom-table td {
+      font-size: 0.85rem;
+      padding: 0.8rem;
+  }
+}

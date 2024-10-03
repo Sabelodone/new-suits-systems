@@ -1,0 +1,45 @@
+/* TermsAndConditions.css */
+
+.container {
+    padding: 2rem;
+    background-color: #f9f9f9; /* Light background color for readability */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
+  
+  h2 {
+    font-size: 2rem;
+    color: #4b007f; /* Dark purple color */
+    margin-bottom: 1rem; /* Space below the heading */
+    text-align: center; /* Center align the main heading */
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+    color: #333; /* Dark gray color */
+    margin-top: 1.5rem; /* Space above subheadings */
+    margin-bottom: 0.5rem; /* Space below subheadings */
+  }
+  
+  p {
+    font-size: 1rem;
+    color: #555; /* Medium gray for body text */
+    line-height: 1.6; /* Improve readability */
+    margin-bottom: 1rem; /* Space between paragraphs */
+  }
+  
+  @media (max-width: 576px) {
+    /* Responsive adjustments */
+    h2 {
+      font-size: 1.5rem; /* Smaller heading for mobile */
+    }
+  
+    h3 {
+      font-size: 1.25rem; /* Smaller subheadings for mobile */
+    }
+  
+    p {
+      font-size: 0.9rem; /* Smaller text for mobile */
+    }
+  }
+  
