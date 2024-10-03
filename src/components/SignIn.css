@@ -1,113 +1,102 @@
-/* SignIn Page Styling */
-
+/* SignIn Container Styles */
 .signin-container {
-  background-color: #f0ebdd; /* Eggshell background */
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  top: 70px; /* Adjust this to the height of your navbar */
+  background: #F0EAD6;
+  padding: 40px; /* Padding for spacious feel */
+  border-radius: 15px; /* Rounded corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow */
+  max-width: 400px; /* Maximum width for the container */
+  margin: 0 auto; /* Center align container */
+  animation: fadeIn 0.5s ease-in-out; /* Fade-in effect */
 }
 
+/* SignIn Heading Styles */
+.signin-heading {
+  font-family: 'Comic Sans MS', cursive, sans-serif; /* Fun font */
+  color: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  text-align: center; /* Center align text */
+  margin-bottom: 25px; /* Space below heading */
+  font-size: 28px; /* Font size */
+  transition: transform 0.3s; /* Transition for hover effect */
+}
+
+.signin-heading:hover {
+  transform: scale(1.1); /* Scale effect on hover */
+}
+
+/* SignIn Form Styles */
 .signin-form {
-  background-color: #fff; /* White for contrast */
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for luxury effect */
-  width: 100%;
-  max-width: 400px;
-  transition: transform 0.3s; /* Subtle scaling on hover */
+  display: flex; /* Flex layout */
+  flex-direction: column; /* Stack elements vertically */
+  gap: 20px; /* Space between elements */
 }
 
-.signin-form:hover {
-  transform: translateY(-5px); /* Lift effect on hover */
+/* Input and Button Styles */
+.signin-input {
+  padding: 15px; /* Padding for inputs */
+  border: 2px solid #ff5722; /* Border color matching the heading */
+  border-radius: 8px; /* Rounded borders */
+  font-size: 16px; /* Font size */
+  transition: border-color 0.3s, transform 0.2s; /* Smooth transitions */
 }
 
-.signin-form h2 {
-  text-align: center;
-  color: #5e3a99; /* Luxurious purple */
-  margin-bottom: 1.5rem;
+.signin-input:focus {
+  border-color: #ffcc00; /* Change border color on focus */
+  outline: none; /* Remove default outline */
+  transform: scale(1.02); /* Slight scale on focus */
 }
 
-.signin-form .form-label {
-  color: #5e3a99; /* Purple for form labels */
+/* Button Styles */
+.signin-button {
+  background-color: #ff5722; /* Button background color */
+  color: white; /* White text */
+  font-size: 18px; /* Button text size */
+  padding: 12px; /* Padding for button */
+  border: none; /* Remove default border */
+  border-radius: 8px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
 }
 
-.signin-form .form-control {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: none;
-  transition: border 0.3s;
+.signin-button:hover {
+  background-color: #e64a19; /* Darker shade on hover */
+  transform: translateY(-2px); /* Lift effect on hover */
 }
 
-.signin-form .form-control:focus {
-  border-color: #5e3a99; /* Purple border on focus */
-  box-shadow: 0 0 5px rgba(94, 58, 153, 0.5); /* Slight purple glow */
+/* Link Styles */
+.forgot-password-link,
+.signin-link {
+  text-align: center; /* Center align text */
+  margin-top: 15px; /* Space above link */
+  font-size: 14px; /* Font size */
 }
 
-.signin-form .form-group {
-  margin-bottom: 1.5rem; /* Increased spacing for better layout */
-}
-
-.signin-form .btn-primary {
-  background-color: #5e3a99; /* Purple for button */
-  border: none;
-  border-radius: 5px;
-  padding: 0.5rem 1.5rem;
-  width: 100%;
-  font-size: 1.1rem;
-  transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-.signin-form .btn-primary:hover {
-  background-color: #482d73; /* Darker purple on hover */
-  box-shadow: 0 4px 10px rgba(94, 58, 153, 0.5); /* Luxurious shadow on hover */
-}
-
-.signin-form .btn-primary:focus {
-  box-shadow: 0 0 5px rgba(94, 58, 153, 0.7); /* Focus effect */
-}
-
-.signin-form .form-text {
-  text-align: center;
-  margin-top: 1rem;
-  color: #5e3a99;
-}
-
-.signin-form .form-text a {
-  color: #5e3a99; /* Purple for links */
-  text-decoration: none;
+.signin-link a {
+  color: #2196f3; /* Blue link color */
+  text-decoration: none; /* No underline */
   transition: color 0.3s; /* Smooth color transition */
 }
 
-.signin-form .form-text a:hover {
-  text-decoration: underline;
-  color: #482d73; /* Slightly darker on hover */
+.signin-link a:hover {
+  color: #1976d2; /* Darker blue on hover */
+  text-decoration: underline; /* Underline on hover */
 }
 
-/* Responsive Design */
-@media (max-width: 576px) {
-  .signin-form {
-      padding: 1.5rem;
-  }
-
-  .signin-form h2 {
-      font-size: 1.8rem;
-  }
-
-  .signin-form .btn-primary {
-      font-size: 1rem;
-      padding: 0.4rem 1rem;
-  }
+/* Error Message Styles */
+.signin-error {
+  color: #f44336; /* Red for error messages */
+  text-align: center; /* Center align text */
+  font-weight: bold; /* Bold text */
+  margin-top: 10px; /* Space above error message */
 }
 
-/* Additional Styles for Custom Input Fields */
-.signin-form .form-control.custom-input {
-  border: 1px solid #5e3a99; /* Purple border for custom input */
-}
-
-/* Add some custom styles for focus effect on input */
-.signin-form .form-control.custom-input:focus {
-  border-color: #5e3a99; /* Matching focus color */
-  box-shadow: 0 0 5px rgba(94, 58, 153, 0.3); /* Lighter shadow */
+/* Animation Keyframes */
+@keyframes fadeIn {
+  from {
+      opacity: 0; /* Start transparent */
+      transform: translateY(-20px); /* Slide in from top */
+  }
+  to {
+      opacity: 1; /* Fully visible */
+      transform: translateY(0); /* No transform */
+  }
 }

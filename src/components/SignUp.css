@@ -1,115 +1,80 @@
-/* SignUp Page Styling */
-
+/* SignUp Container Styles */
 .signup-container {
-    background-color: #f0ebdd; /* Eggshell background */
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: #F0EAD6;
+    padding: 20px; /* Padding for a compact look */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    max-width: 400px; /* Maximum width */
+    margin: auto; /* Center the container */
 }
 
+/* SignUp Heading Styles */
+.signup-heading {
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Fun font */
+    color:0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    text-align: center; /* Center align text */
+    margin-bottom: 15px; /* Space below heading */
+}
+
+/* SignUp Form Styles */
 .signup-form {
-    background-color: #fff; /* White for contrast */
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for luxury effect */
-    width: 100%;
-    max-width: 400px;
-    transition: transform 0.3s; /* Subtle scaling on hover */
+    display: flex; /* Flexbox for layout */
+    flex-direction: column; /* Stack elements vertically */
+    gap: 10px; /* Space between form elements */
 }
 
-.signup-form:hover {
-    transform: translateY(-5px); /* Lift effect on hover */
+/* Input and Button Styles */
+.signup-input {
+    padding: 10px; /* Padding for inputs */
+    border: none; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 14px; /* Input text size */
 }
 
-.signup-form h2 {
-    text-align: center;
-    color: #5e3a99; /* Luxurious purple */
-    margin-bottom: 1.5rem;
+.signup-input:focus {
+    border-color: #ffcc00; /* Change border color on focus */
+    outline: none; /* Remove default outline */
 }
 
-.signup-form .form-label {
-    color: #5e3a99; /* Purple for form labels */
+/* Sign Up Button Styles */
+.signup-button {
+    background-color: #ff5722; /* Button background color */
+    color: white; /* White text */
+    font-size: 16px; /* Button text size */
+    padding: 10px; /* Padding for button */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Smooth background color transition */
+    
 }
 
-.signup-form .form-control {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: none;
-    transition: border 0.3s;
+.signup-button:hover {
+    background-color: #e64a19; /* Darker shade on hover */
 }
 
-.signup-form .form-control:focus {
-    border-color: #5e3a99; /* Purple border on focus */
-    box-shadow: 0 0 5px rgba(94, 58, 153, 0.5); /* Slight purple glow */
-}
-
-.signup-form .form-group {
-    margin-bottom: 1.5rem; /* Increased spacing for better layout */
-}
-
-.signup-form .btn-primary {
-    background-color: #5e3a99; /* Purple for button */
-    border: none;
-    border-radius: 5px;
-    padding: 0.5rem 1.5rem;
-    width: 100%;
-    font-size: 1.1rem;
-    transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-.signup-form .btn-primary:hover {
-    background-color: #482d73; /* Darker purple on hover */
-    box-shadow: 0 4px 10px rgba(94, 58, 153, 0.5); /* Luxurious shadow on hover */
-}
-
-.signup-form .btn-primary:focus {
-    box-shadow: 0 0 5px rgba(94, 58, 153, 0.7); /* Focus effect */
-}
-
+/* Link Styles */
 .signup-link {
-    text-align: center;
-    margin-top: 1.5rem;
-}
-
-.signup-link p {
-    color: #5e3a99;
+    text-align: center; /* Center align text */
+    margin-top: 10px; /* Space above link */
 }
 
 .signup-link a {
-    color: #5e3a99; /* Purple for links */
-    text-decoration: none;
-    transition: color 0.3s; /* Smooth color transition */
+    color: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    text-decoration: underline; /* Underline for links */
 }
 
 .signup-link a:hover {
-    text-decoration: underline;
-    color: #482d73; /* Slightly darker on hover */
+    color: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-.text-danger {
-    color: red; /* Adjust the color to fit your design */
-    margin-top: 10px;
-  }
-  
-  .text-success {
-    color: green; /* Adjust the color to fit your design */
-    margin-top: 10px;
-  }
-  
+/* Error and Success Message Styles */
+.signup-error {
+    color: #f44336; /* Red for error messages */
+    text-align: center; /* Center align error text */
+}
 
-/* Responsive Design */
-@media (max-width: 576px) {
-    .signup-form {
-        padding: 1.5rem;
-    }
-
-    .signup-form h2 {
-        font-size: 1.8rem;
-    }
-
-    .signup-form .btn-primary {
-        font-size: 1rem;
-        padding: 0.4rem 1rem;
-    }
+.signup-success {
+    color: #4caf50; /* Green for success messages */
+    text-align: center; /* Center align success text */
 }

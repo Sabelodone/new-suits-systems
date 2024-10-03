@@ -1,38 +1,36 @@
-// SignIn.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from './UserContext'; // Adjust the path accordingly
-import { Container, Form, Button } from 'react-bootstrap';
+import { useUser } from './UserContext'; // Adjust path as needed
+import { Form, Button } from 'react-bootstrap';
 import './SignIn.css'; // Importing the SignIn.css file
 
 function SignIn() {
-  const { signIn } = useUser(); // Assuming signIn is a function from your context
+  const { signIn } = useUser(); // Fetch signIn function from your context
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(''); // State to hold error messages
-  const [rememberMe, setRememberMe] = useState(false); // State for Remember Me checkbox
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); // Clear previous errors
 
     try {
-      await signIn(email, password);
+      await signIn(email, password); // Attempt to sign in
       navigate('/welcome'); // Redirect to Welcome after successful sign-in
-    } catch (error) {
-      console.error('Sign-in failed:', error);
-      setError('Sign-in failed. Please check your credentials and try again.'); // Display error message
+    } catch (err) {
+      setError('Invalid email or password. Please try again.'); // Set error message if sign-in fails
     }
   };
 
   return (
-    <Container>
-      <h2>Sign In</h2>
-      <Form onSubmit={handleSubmit}>
+    <div className="signin-container">
+      <h2 className="signin-heading">Sign In</h2>
+      <Form onSubmit={handleSubmit} className="signin-form">
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control 
+            className="signin-input" 
             type="email" 
             placeholder="Enter email" 
             value={email} 
@@ -44,6 +42,7 @@ function SignIn() {
         <Form.Group controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control 
+            className="signin-input" 
             type="password" 
             placeholder="Password" 
             value={password} 
@@ -52,19 +51,10 @@ function SignIn() {
           />
         </Form.Group>
 
-        <Form.Group controlId="formBasicRememberMe">
-          <Form.Check 
-            type="checkbox" 
-            label="Remember Me" 
-            checked={rememberMe} 
-            onChange={(e) => setRememberMe(e.target.checked)} 
-          />
-        </Form.Group>
-
         {/* Display error message if sign-in fails */}
-        {error && <p className="text-danger">{error}</p>}
+        {error && <p className="signin-error text-danger">{error}</p>}
 
-        <Button variant="primary" type="submit">
+        <Button className="signin-button" variant="primary" type="submit">
           Sign In
         </Button>
       </Form>
@@ -74,12 +64,12 @@ function SignIn() {
           <a href="/forgot-password">Forgot Password?</a>
         </p>
       </div>
-      <div className="signup-link">
+      <div className="signin-link">
         <p>
           Don't have an account? <a href="/signup">Sign Up</a>
         </p>
       </div>
-    </Container>
+    </div>
   );
 }
 
