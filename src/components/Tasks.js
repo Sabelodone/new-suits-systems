@@ -2,7 +2,7 @@ import React from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Tasks.css';
-import { Table, Badge } from 'react-bootstrap';
+import { Table, Badge, Button } from 'react-bootstrap';
 
 const Tasks = () => {
   // Sample task data
@@ -41,6 +41,15 @@ const Tasks = () => {
         <Nav.Link as={Link} to="/documents" className="text-indigo">Documents</Nav.Link>
       </Nav>
       <h1 className="mb-4 text-center">Tasks</h1>
+
+      {/* Buttons Section */}
+      <div className="mb-4 d-flex justify-content-between">
+        <Button variant="primary" as={Link} to="/add-task">Add Task</Button>
+        <Button variant="primary" as={Link} to="/add-appointment">Add Appointment</Button>
+        <Button variant="primary" as={Link} to="/calendar">Calendar</Button>
+        <Button variant="primary" as={Link} to="/agenda">Agenda</Button>
+      </div>
+
       <div className="table-responsive">
         <Table striped bordered hover className="shadow-sm custom-table">
           <thead className="bg-primary text-white">
