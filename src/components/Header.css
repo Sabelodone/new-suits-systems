@@ -1,5 +1,3 @@
-/* Header.css */
-
 /* General styles */
 body {
   margin: 0;
@@ -66,59 +64,7 @@ body {
   font-weight: bold;
 }
 
-/* Profile picture styles */
-.rounded-circle {
-  width: 100px; /* Set width for profile picture */
-  height: 100px; /* Set height for profile picture */
-}
-
-/* Form control styles */
-.form-control {
-  border: 1px solid #6f42c1; /* Indigo border */
-}
-
-.form-control:focus {
-  border-color: #5a2a9a; /* Darker shade on focus */
-}
-
-/* Button styles in the modal */
-.modal-footer .btn {
-  background: linear-gradient(to right, #5a098e, #d8a507); /* Gradient background for buttons */
-  border: none; /* No border */
-  color: white; /* White text */
-  transition: background-color 0.3s ease;
-}
-
-.modal-footer .btn:hover {
-  background: linear-gradient(to right, #5a098e, #d8a507); /* Same gradient on hover */
-}
-
-/* Logout button specific styles */
-.modal-footer .btn-danger {
-  background: linear-gradient(to right, #5a098e, #d8a507); /* Gradient background */
-  border: none; /* No border */
-  color: white; /* White text */
-}
-
-.modal-footer .btn-danger:hover {
-  background: linear-gradient(to right, #5a098e, #d8a507); /* Same gradient on hover */
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-  .navbar .navbar-brand,
-  .navbar .nav-link {
-      font-size: 0.9rem; /* Slightly smaller text for mobile */
-      padding: 0.5rem; /* Ensure padding for touch targets */
-  }
-
-  .custom-search {
-      max-width: 100%; /* Full width on mobile */
-      margin: 0; /* Remove margin for full-width effect */
-  }
-
-  .rounded-circle {
-      width: 80px; /* Smaller profile picture for mobile */
-      height: 80px; /* Smaller profile picture for mobile */
-  }
+/* Adjust backdrop if necessary */
+.modal-backdrop.show {
+  opacity: 0.5; /* Make sure this is not too dark */
 }

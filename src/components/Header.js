@@ -2,28 +2,23 @@ import React, { useState } from 'react';
 import { Navbar, Nav, Form, FormControl, Button, Modal, Tab, Nav as BootstrapNav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaSearch, FaFilter, FaUser } from 'react-icons/fa';
-import './Header.css'; // Import the CSS file
+import './Header.css'; // Ensure this CSS file is properly linked
 
 const Header = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [activeTab, setActiveTab] = useState('profile'); // Default to profile tab
-    const [profilePic, setProfilePic] = useState(null); // State for profile picture
-    const [username, setUsername] = useState('User Name'); // Placeholder for username
-    const [email, setEmail] = useState('user@example.com'); // Placeholder for email
+    const [activeTab, setActiveTab] = useState('profile');
+    const [profilePic, setProfilePic] = useState(null);
+    const [username, setUsername] = useState('User Name');
+    const [email, setEmail] = useState('user@example.com');
 
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
     
-    const handleLogout = () => {
-        console.log('Logged out');
-        handleClose(); // Close the modal after logging out
-    };
-
     const handleSearch = (e) => {
         e.preventDefault();
-        // Implement your search logic here
         console.log('Searching for:', searchTerm);
+        setSearchTerm('');
     };
 
     const handleFileChange = (e) => {
@@ -31,17 +26,16 @@ const Header = () => {
             const file = e.target.files[0];
             const reader = new FileReader();
             reader.onloadend = () => {
-                setProfilePic(reader.result); // Set the profile picture state
+                setProfilePic(reader.result);
             };
             reader.readAsDataURL(file);
         }
     };
 
     const handleProfileSubmit = (e) => {
-        e.preventDefault(); // Prevent default form submission
-        // Implement your logic to save changes
+        e.preventDefault();
         console.log('Profile updated:', { username, email, profilePic });
-        // You may want to provide user feedback here
+        handleClose();
     };
 
     return (
@@ -60,7 +54,6 @@ const Header = () => {
                             className="mr-sm-2 custom-search"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            aria-label="Search" // Improved accessibility
                         />
                         <Button type="submit" variant="outline-indigo" className="ml-2 custom-button">
                             <FaFilter />
@@ -81,7 +74,7 @@ const Header = () => {
                     <Modal.Title className="text-indigo">User Options</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Tab.Container id="left-tabs-example" activeKey={activeTab}>
+                    <Tab.Container id="user-options-tabs" activeKey={activeTab}>
                         <BootstrapNav variant="tabs">
                             <BootstrapNav.Item>
                                 <BootstrapNav.Link eventKey="profile" onClick={() => setActiveTab('profile')}>
@@ -106,6 +99,8 @@ const Header = () => {
                                         src={profilePic || 'https://via.placeholder.com/100'}
                                         alt="User Profile"
                                         className="rounded-circle mb-3"
+                                        width="100"
+                                        height="100"
                                     />
                                     <h5>{username}</h5>
                                     <p>Email: {email}</p>
@@ -146,7 +141,7 @@ const Header = () => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="logout">
                                 <p>Are you sure you want to log out?</p>
-                                <Button variant="danger" onClick={handleLogout}>
+                                <Button variant="danger" onClick={handleClose}>
                                     Logout
                                 </Button>
                             </Tab.Pane>

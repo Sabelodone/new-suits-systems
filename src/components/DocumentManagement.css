@@ -6,7 +6,7 @@ body {
   margin: 0;
   padding: 0;
   line-height: 1.6;
-  scroll-behavior: smooth; /* Smooth scrolling */
+  scroll-behavior: smooth;
 }
 
 a {
@@ -16,13 +16,13 @@ a {
 }
 
 a:hover {
-  color: #6a1b9a; /* Hover color for links */
+  color: #6a1b9a;
 }
 
-/* Container for document manager */
-.container {
+/* Container styles */
+.doc-management-container {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 20px;
   background-color: #fff;
   border-radius: 12px;
@@ -30,37 +30,40 @@ a:hover {
   transition: box-shadow 0.3s ease-in-out, transform 0.3s ease;
 }
 
-.container:hover {
+.doc-management-container:hover {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  transform: translateY(-3px); /* Subtle lift on hover */
+  transform: translateY(-3px);
 }
 
 /* Header styles */
-h2 {
-  font-size: 2rem;
-  font-weight: 700;
+.doc-management-title, .doc-management-subtitle {
+  text-align: center;
   color: #6a1b9a;
   margin-bottom: 20px;
-  text-align: center; /* Center align for emphasis */
 }
 
-h3 {
+.doc-management-title {
+  font-size: 2rem;
+  font-weight: bold;
+  border-bottom: 2px solid #6a1b9a;
+  padding-bottom: 10px;
+}
+
+.doc-management-subtitle {
   font-size: 1.75rem;
   font-weight: 600;
-  color: #333;
-  margin-bottom: 15px;
 }
 
 /* Form styles */
-.form-group label {
+.doc-form-group label {
   font-weight: 600;
   color: #333;
   font-size: 1rem;
 }
 
-.form-control,
-.form-control-file,
-.form-control-select {
+.doc-form-control,
+.doc-form-control-file,
+.doc-form-control-select {
   border-radius: 8px;
   border: 1px solid #ddd;
   padding: 12px;
@@ -69,21 +72,21 @@ h3 {
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.form-control:focus,
-.form-control-file:focus,
-.form-control-select:focus {
+.doc-form-control:focus,
+.doc-form-control-file:focus,
+.doc-form-control-select:focus {
   border-color: #6a1b9a;
   outline: none;
   box-shadow: 0 0 8px rgba(106, 27, 154, 0.2);
 }
 
-.form-control-file {
+.doc-form-control-file {
   border: none;
   font-size: 0.9rem;
 }
 
 /* Button styles */
-.btn-primary {
+.doc-btn-primary {
   background-color: #6a1b9a;
   border-color: #6a1b9a;
   color: #fff;
@@ -92,39 +95,38 @@ h3 {
   font-size: 1rem;
   transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s;
   box-shadow: 0 4px 10px rgba(106, 27, 154, 0.2);
-  cursor: pointer;
 }
 
-.btn-primary:hover {
+.doc-btn-primary:hover {
   background-color: #4a148c;
   border-color: #4a148c;
   transform: translateY(-2px);
 }
 
-.btn-primary:active {
-  transform: translateY(0); /* Remove lift on click */
+.doc-btn-primary:active {
+  transform: translateY(0);
   box-shadow: 0 2px 8px rgba(106, 27, 154, 0.15);
 }
 
-.btn-primary:focus {
+.doc-btn-primary:focus {
   outline: none;
   box-shadow: 0 0 10px rgba(106, 27, 154, 0.5);
 }
 
-.btn-link {
+.doc-btn-link {
   color: #6a1b9a;
   font-weight: 600;
   text-decoration: none;
   transition: color 0.3s;
 }
 
-.btn-link:hover {
+.doc-btn-link:hover {
   color: #4a148c;
   text-decoration: underline;
 }
 
-/* Card styles */
-.card {
+/* Card styles for document display */
+.doc-card {
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
@@ -132,44 +134,57 @@ h3 {
   background-color: #fff;
 }
 
-.card:hover {
+.doc-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.card-body {
+.doc-card-body {
   padding: 1.75rem;
   background-color: #fafafa;
 }
 
-.card-title {
+.doc-card-title {
   font-size: 1.5rem;
   font-weight: bold;
   color: #333;
   margin-bottom: 10px;
 }
 
-.card-text {
+.doc-card-text {
   font-size: 1.1rem;
   color: #555;
   line-height: 1.6;
 }
 
 /* List styles */
-.list-unstyled {
+.doc-list-unstyled {
   padding-left: 0;
   list-style: none;
   margin-top: 10px;
 }
 
-.list-unstyled li {
+.doc-list-unstyled li {
   margin-bottom: 12px;
   font-size: 1rem;
   color: #333;
 }
 
+/* Document icon styles */
+.doc-document-icon {
+  font-size: 2.5rem;
+  color: #6a1b9a;
+  margin-bottom: 10px;
+  transition: transform 0.3s, color 0.3s;
+}
+
+.doc-document-icon:hover {
+  transform: scale(1.1);
+  color: #4a148c;
+}
+
 /* Image and PDF preview styles */
-img {
+.doc-img {
   border-radius: 4px;
   max-width: 100%;
   height: auto;
@@ -177,33 +192,37 @@ img {
   transition: box-shadow 0.3s ease;
 }
 
-img:hover {
+.doc-img:hover {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-iframe {
+.doc-iframe {
   border: none;
   width: 100%;
   height: 500px;
   margin-top: 10px;
 }
 
-/* Responsive design adjustments */
+/* Responsive design */
 @media (max-width: 768px) {
-  .container {
+  .doc-management-container {
     padding: 15px;
   }
 
-  h2, h3 {
+  .doc-management-title, .doc-management-subtitle {
     font-size: 1.5rem;
   }
 
-  .card-body {
+  .doc-card-body {
     padding: 1.25rem;
   }
 
-  .btn-primary {
+  .doc-btn-primary {
     width: 100%;
     padding: 12px;
+  }
+
+  .doc-document-icon {
+    font-size: 2rem;
   }
 }
