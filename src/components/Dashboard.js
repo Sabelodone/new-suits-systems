@@ -1,11 +1,12 @@
-import React, { useState } from 'react'; 
-import './Dashboard.css'; 
-import './Chatbot.css'; 
-import { Card, Row, Col } from 'react-bootstrap'; 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
-import { faRobot, faTimes } from '@fortawesome/free-solid-svg-icons'; 
-import { Link } from 'react-router-dom'; 
-import { Line, Pie, Bar } from 'react-chartjs-2'; 
+import React, { useState } from 'react';
+import './Dashboard.css';
+import './Chatbot.css';
+import {  Button } from 'react-bootstrap';
+import { Card, Row, Col } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRobot, faTimes, faFileAlt } from '@fortawesome/free-solid-svg-icons'; // Added faFileAlt icon
+import { Link } from 'react-router-dom';
+import { Line, Pie, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement, ArcElement } from 'chart.js';
 
 // Register Chart.js components
@@ -69,23 +70,17 @@ const Dashboard = () => {
 
   const handleSendMessage = () => {
     if (inputValue.trim()) {
-      // Check for user consent before sending messages
       if (!consentGiven) {
         alert('Please provide consent to use the chatbot.');
         return;
       }
-      
-      // Add user message
+
       setMessages((prevMessages) => [...prevMessages, { text: inputValue, sender: 'user' }]);
-      
-      // Simulate loading and bot response
       setIsLoading(true);
       setTimeout(() => {
         setMessages((prevMessages) => [...prevMessages, { text: "I'm a bot, how can I assist you?", sender: 'bot' }]);
         setIsLoading(false);
       }, 1000);
-      
-      // Clear input
       setInputValue('');
     }
   };
@@ -98,6 +93,21 @@ const Dashboard = () => {
   return (
     <div className="container mt-5">
       <h1 className="mb-4 text-center">Dashboard</h1>
+      {/* Time Period Buttons */}
+      <Row className="mb-3">
+        <Col className="text-center">
+          <Button variant="outline-primary" className="mx-2">Daily</Button>
+          <Button variant="outline-primary" className="mx-2">Weekly</Button>
+          <Button variant="outline-primary" className="mx-2">Monthly</Button>
+        </Col>
+      </Row>
+
+      {/* Records section at the top of the charts */}
+      <div className="d-flex justify-content-end align-items-center mb-4">
+        <FontAwesomeIcon icon={faFileAlt} size="lg" className="me-2" />
+        <h4 className="mb-0">Records</h4>
+      </div>
+
       <Row>
         <Col md={4} className="mb-4">
           <Link to="/cases" className="text-decoration-none">
@@ -127,6 +137,34 @@ const Dashboard = () => {
         </Col>
       </Row>
 
+      {/* Total Clients, Active Cases, and Pending Invoices section */}
+      <Row className="mt-5">
+        <Col md={4} className="mb-4">
+          <Card className="shadow-lg border-0">
+            <Card.Body>
+              <Card.Title className="text-primary">Total Clients</Card.Title>
+              <h4>120</h4>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={4} className="mb-4">
+          <Card className="shadow-lg border-0">
+            <Card.Body>
+              <Card.Title className="text-primary">Active Cases</Card.Title>
+              <h4>35</h4>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={4} className="mb-4">
+          <Card className="shadow-lg border-0">
+            <Card.Body>
+              <Card.Title className="text-primary">Pending Invoices</Card.Title>
+              <h4>8</h4>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
       {/* AI Chatbot Icon */}
       <div className="chatbot-icon text-center" title="Chat with AI" onClick={toggleChatbot}>
         <FontAwesomeIcon icon={faRobot} size="2x" />
@@ -140,7 +178,6 @@ const Dashboard = () => {
             <FontAwesomeIcon icon={faTimes} size="lg" onClick={toggleChatbot} style={{ cursor: 'pointer' }} />
           </div>
           <div className="chatbot-body">
-            {/* Consent Message */}
             {!consentGiven && (
               <div className="consent-message">
                 <p>To use the chatbot, please give your consent:</p>
@@ -153,7 +190,7 @@ const Dashboard = () => {
                   {msg.text}
                 </div>
               ))}
-              {isLoading && <div className="bot">...typing</div>} {/* Loading indication */}
+              {isLoading && <div className="bot">...typing</div>}
             </div>
             <div className="input-container">
               <input
@@ -161,7 +198,7 @@ const Dashboard = () => {
                 value={inputValue}
                 onChange={handleInputChange}
                 placeholder="Type a message..."
-                disabled={!consentGiven} // Disable input until consent is given
+                disabled={!consentGiven}
               />
               <button onClick={handleSendMessage} disabled={!consentGiven}>Send</button>
             </div>
