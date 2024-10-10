@@ -81,6 +81,15 @@ h1 {
   height: 300px; /* Set a fixed height */
 }
 
+/* Smaller card styling */
+.small-card {
+  width: 90%; /* Adjust the width to make the cards smaller */
+  height: 250px; /* Set a smaller height */
+  margin: 0 auto; /* Center the card horizontally */
+  padding: 10px; /* Add some padding */
+}
+
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .container {

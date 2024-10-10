@@ -70,6 +70,12 @@ h1 {
   color: #4a148c !important;
 }
 
+.case-item {
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .cases-container {

@@ -92,6 +92,11 @@ const DocumentManager = () => {
     }
   };
 
+  // Handle document deletion
+  const handleDelete = (index) => {
+    setDocuments((prevDocs) => prevDocs.filter((_, docIndex) => docIndex !== index));
+  };
+
   return (
     <div className="doc-manager-container my-5 p-4 bg-light rounded shadow">
       <h2 className="doc-manager-title mb-4 text-primary border-bottom pb-2">Document Management System</h2>
@@ -186,9 +191,15 @@ const DocumentManager = () => {
                 {getIconForDocumentType(doc.file.type)}
               </div>
               <p>{doc.description}</p>
-              <a href={doc.fileUrl} download className="btn btn-link">
-                {doc.caseNumber}
+              <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="btn btn-link">
+                View Document
               </a>
+              <button 
+                onClick={() => handleDelete(index)} 
+                className="btn btn-danger mt-2"
+              >
+                Delete
+              </button>
             </div>
           ))
         ) : (

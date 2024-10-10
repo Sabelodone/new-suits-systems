@@ -8,7 +8,7 @@ const Clients = () => {
   // Initial client data
   const [clients, setClients] = useState([
     { 
-      id: 1, 
+      id: '1', // Use string for ID
       name: 'John Doe', 
       contact: 'johndoe@example.com', 
       phone: '555-1234', 
@@ -18,7 +18,7 @@ const Clients = () => {
       status: 'Active' 
     },
     { 
-      id: 2, 
+      id: '2', // Use string for ID
       name: 'Jane Smith', 
       contact: 'janesmith@example.com', 
       phone: '555-5678', 
@@ -28,7 +28,7 @@ const Clients = () => {
       status: 'Inactive' 
     },
     { 
-      id: 3, 
+      id: '3', // Use string for ID
       name: 'David Johnson', 
       contact: 'davidjohnson@example.com', 
       phone: '555-9012', 
@@ -37,7 +37,6 @@ const Clients = () => {
       registrationDate: '2023-07-10', 
       status: 'Active' 
     },
-    // Add more clients as needed
   ]);
 
   const [showModal, setShowModal] = useState(false);
@@ -48,6 +47,8 @@ const Clients = () => {
   const handleInputChange = (index, key, value) => {
     const updatedClients = [...clients];
     updatedClients[index][key] = value;
+
+    console.log('Updated clients:', updatedClients); // Debugging state change
     setClients(updatedClients);
   };
 
@@ -59,8 +60,6 @@ const Clients = () => {
 
   // Handle sending message
   const handleSendMessage = () => {
-    // Here you can implement the logic to send the message
-    // For now, just log it to the console
     console.log(`Message to ${currentClient.name}: ${message}`);
     setShowModal(false);
     setMessage('');
@@ -133,7 +132,7 @@ const Clients = () => {
                   <input
                     type="number"
                     value={client.cases}
-                    onChange={(e) => handleInputChange(index, 'cases', e.target.value)}
+                    onChange={(e) => handleInputChange(index, 'cases', Number(e.target.value))} // Convert to number
                   />
                 </td>
                 <td>
