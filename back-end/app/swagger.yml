@@ -1,0 +1,78 @@
+#app/swagger.yml
+
+swagger: "2.0"
+info:
+  title: API Documentation
+  description: API documentation for the application
+  version: 1.0.0
+host: localhost:5000
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        200:
+          description: Returns a list of users
+    post:
+      summary: Create a new user
+      parameters:
+        - in: body
+          name: user
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+      responses:
+        201:
+          description: User created successfully
+  /users/{user_id}:
+    get:
+      summary: Get a user by ID
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Returns a user
+    put:
+      summary: Update a user
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+        - in: body
+          name: user
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+      responses:
+        200:
+          description: User updated successfully
+    delete:
+      summary: Delete a user
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+      responses:
+        200:
+          description: User deleted successfully
+
