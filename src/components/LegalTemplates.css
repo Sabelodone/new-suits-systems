@@ -7,134 +7,41 @@
   border-radius: 16px; /* Rounded corners for a modern look */
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
   min-height: 100vh; /* Ensures the layout takes full height */
-  transition: box-shadow 0.3s ease, background-color 0.3s; /* Smooth transition */
+  transition: background 0.3s ease; /* Smooth transition for background change */
 }
 
-.legal-templates:hover {
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12); /* Enhanced shadow on hover */
-  background-color: #fff; /* Brightens background on hover */
-}
-
-/* Sidebar styles */
 .sidebar {
-  flex: 1; /* Sidebar takes one part of the flex container */
-  background: #e9ecef; /* Light grey background for contrast */
-  color: #444; /* Dark grey text for readability */
-  padding: 24px; /* Padding for spacing */
-  border-radius: 16px; /* Rounded corners */
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06); /* Subtle shadow */
-  margin-right: 24px; /* Space between sidebar and content */
-  transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition */
+  flex: 1;
+  margin-right: 20px;
 }
 
-.sidebar:hover {
-  background: #ffffff; /* Change background to white on hover */
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); /* Enhance shadow on hover */
+.template-list {
+  max-height: 80vh; /* Limit height of the template list */
+  overflow-y: auto; /* Enable scrolling if there are many templates */
 }
 
-/* Main content */
-.content {
-  flex: 2; /* Main content takes twice the space of sidebar */
-  display: flex;
-  flex-direction: column; /* Stack child elements vertically */
-}
-
-/* Template card styles */
 .template-card {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Subtle shadow */
-  transition: transform 0.25s, box-shadow 0.3s; /* Smooth transition */
-  border-radius: 16px; /* Rounded corners */
-  margin-bottom: 24px; /* Space between cards */
-  background-color: #ffffff; /* White background for cards */
+  background: white; /* Card background */
+  border-radius: 10px; /* Rounded corners for cards */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for card depth */
+  transition: transform 0.2s; /* Smooth scaling effect */
 }
 
 .template-card:hover {
-  transform: scale(1.03); /* Slight scale up on hover */
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12); /* Enhanced shadow on hover */
+  transform: scale(1.05); /* Slightly increase size on hover */
 }
 
-.template-card .card-body {
-  text-align: center; /* Center align text */
-  background: #f9f9f9; /* Slightly darker background for card body */
-  padding: 24px; /* Padding for card body */
-  border-radius: 16px; /* Rounded corners for card body */
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Inner shadow for depth */
+.content {
+  flex: 2;
 }
 
-/* Button styles */
-.template-card .btn {
-  margin-top: 12px; /* Space above the button */
-  background: linear-gradient(135deg, #007bff 0%, #6610f2 100%); /* Gradient background */
-  border: none; /* No border */
-  color: #fff; /* White text color */
-  padding: 14px 28px; /* Padding for button */
-  border-radius: 40px; /* Pill-shaped button */
-  font-size: 1.1rem; /* Slightly larger font */
-  transition: background 0.4s ease, box-shadow 0.3s ease; /* Smooth transition */
-}
-
-.template-card .btn:hover {
-  background: linear-gradient(135deg, #6610f2 0%, #007bff 100%); /* Reverse gradient on hover */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Shadow on hover */
-}
-
-/* Form container */
 .form-container {
-  background: #ffffff; /* White background for form */
-  padding: 28px; /* Padding for form */
-  border-radius: 16px; /* Rounded corners */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Subtle shadow */
-  margin-top: 24px; /* Space above form */
-  transition: box-shadow 0.3s ease; /* Smooth transition */
+  background: white; /* Form background */
+  padding: 20px; /* Padding for form */
+  border-radius: 10px; /* Rounded corners for the form */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for form depth */
 }
 
-.form-container:hover {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow on hover */
-}
-
-/* Form input styles */
-form .form-control {
-  padding: 12px; /* Padding for input fields */
-  font-size: 1rem; /* Standard font size */
-  border-radius: 8px; /* Rounded corners */
-  border: 1px solid #ddd; /* Light grey border */
-  transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transition */
-}
-
-form .form-control:focus {
-  border-color: #007bff; /* Change border color on focus */
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2); /* Shadow effect on focus */
-}
-
-/* Submit button */
-form button[type="submit"] {
-  background-color: #007bff; /* Primary button color */
-  color: #fff; /* White text color */
-  padding: 14px 28px; /* Padding for button */
-  font-size: 1.1rem; /* Slightly larger font */
-  border-radius: 40px; /* Pill-shaped button */
-  border: none; /* No border */
-  transition: background-color 0.4s ease, box-shadow 0.3s ease; /* Smooth transition */
-}
-
-form button[type="submit"]:hover {
-  background-color: #0056b3; /* Darker shade on hover */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Shadow on hover */
-}
-
-/* Secondary button */
-form .btn-secondary {
-  background-color: #6c757d; /* Secondary button color */
-  color: #fff; /* White text color */
-  padding: 12px 24px; /* Padding for button */
-  margin-left: 12px; /* Space on the left */
-  border-radius: 40px; /* Pill-shaped button */
-  transition: background-color 0.3s; /* Smooth transition */
-}
-
-form .btn-secondary:hover {
-  background-color: #495057; /* Darker shade on hover */
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {

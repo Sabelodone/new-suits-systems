@@ -1,71 +1,133 @@
-/* TimeManagement.css */
-
-/* Container Styles */
+/* Time Management Container */
 .time-management-container {
-  background-color: #f8f9fa; /* Light background for contrast */
+  background-color: #f8f9fa;
   padding: 2rem;
-  border-radius: 0.75rem; /* Rounded corners for a modern look */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Luxurious shadow effect */
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   margin-top: 2rem;
 }
 
 /* Heading Styles */
 h1 {
-  font-family: 'Merriweather', serif; /* Elegant serif font for heading */
-  color: #4b0082; /* Deep purple for a luxurious feel */
-  margin-bottom: 2rem; /* Space below heading */
-  font-size: 2.5rem; /* Larger font size for emphasis */
-  letter-spacing: 0.05rem; /* Slight letter spacing for elegance */
+  font-family: 'Merriweather', serif;
+  color: #4b0082;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  letter-spacing: 0.05rem;
 }
 
 /* Table Styles */
 .custom-table th,
 .custom-table td {
-  font-family: 'Roboto', sans-serif; /* Clean font for table data */
-  color: #343a40; /* Dark color for readability */
-  padding: 1.2rem; /* Consistent padding */
-  text-align: center; /* Center-align table text */
-  vertical-align: middle; /* Center-align content vertically */
+  font-family: 'Roboto', sans-serif;
+  color: #343a40;
+  padding: 1.2rem;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .custom-table thead th {
-  background-color: #4b0082; /* Deep purple header background */
-  color: #fff; /* White text color */
-  text-transform: uppercase; /* Uppercase text for headers */
-  font-weight: bold; /* Bold font for headers */
+  background-color: #4b0082;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: bold;
 }
 
 .custom-table tbody tr:hover {
-  background-color: #e6e6fa; /* Light lavender hover effect */
-  transition: background-color 0.2s ease; /* Smooth transition effect */
+  background-color: #e6e6fa;
+  transition: background-color 0.2s ease;
+}
+
+/* Accordion & Filter Styles */
+.card-header {
+  background-color: #f8f9fa; /* Match container background */
+  border: none; /* Remove default border */
+}
+
+.button-accordion {
+  background-color: #fff; /* White button background */
+  color: #4b0082; /* Purple text for accordion button */
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  width: 100%;
+  box-shadow: none;
+  transition: background-color 0.2s ease;
+}
+
+.button-accordion:hover {
+  background-color: #e6e6fa; /* Light lavender hover */
+}
+
+.button-accordion .ms-auto {
+  transition: transform 0.3s ease;
+}
+
+.button-accordion[aria-expanded="true"] .ms-auto {
+  transform: rotate(180deg); /* Rotate arrow when expanded */
+}
+
+.card-body {
+  background-color: #fff;
+  border-top: none;
+  padding: 1.5rem 1rem;
+}
+
+/* Input Fields */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group-text {
+  background-color: #f0f0f0; /* Light grey background for icons */
+  border: none; /* No border for input group text */
+  color: #4b0082; /* Purple color for icons */
+}
+
+.form-control {
+  border-radius: 0.5rem; /* Rounded inputs */
+  border: 1px solid #ccc;
+}
+
+.form-control:focus {
+  border-color: #4b0082; /* Focus state border */
+  box-shadow: 0 0 5px rgba(75, 0, 130, 0.3);
 }
 
 /* Badge Styles */
 .badge-success {
-  background-color: #28a745; /* Green for high effort */
+  background-color: #28a745;
 }
 
 .badge-info {
-  background-color: #17a2b8; /* Blue for moderate effort */
+  background-color: #17a2b8;
 }
 
 .badge-warning {
-  background-color: #ffc107; /* Yellow for low effort */
+  background-color: #ffc107;
 }
 
 /* Responsive Styles */
 @media (max-width: 768px) {
   .time-management-container {
-      padding: 1.5rem; /* Reduced padding on small screens */
+    padding: 1.5rem;
   }
 
   h1 {
-      font-size: 2rem; /* Slightly smaller heading on small screens */
+    font-size: 2rem;
   }
 
   .custom-table th,
   .custom-table td {
-      font-size: 0.85rem; /* Smaller font size for table cells */
-      padding: 0.8rem; /* Reduced padding for table cells */
+    font-size: 0.85rem;
+    padding: 0.8rem;
+  }
+
+  .button-accordion {
+    font-size: 1rem; /* Smaller font size for accordion button */
+    padding: 0.5rem 1rem;
   }
 }
