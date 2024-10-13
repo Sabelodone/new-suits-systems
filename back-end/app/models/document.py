@@ -13,12 +13,12 @@ class Document(PrimaryKeyBaseModel):
     case = db.relationship('Case', back_populates='documents')
 
     document_type_id = db.Column(db.String(32), db.ForeignKey('document_type.id'))
-    document_type = db.relationship('DocumentType', back_populates='documents')
+    type = db.relationship('DocumentType', back_populates='documents')
 
     document_histories = db.relationship('DocumentHistory', back_populates='document')
 
     document_status_id = db.Column(db.String(32), db.ForeignKey('document_status.id'))
-    document_status = db.relationship('DocumentStatus', back_populates='documents')
+    status = db.relationship('DocumentStatus', back_populates='documents')
 
     def to_dict(self):
         return {

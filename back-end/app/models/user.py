@@ -22,10 +22,16 @@ class User(PrimaryKeyBaseModel, UserMixin):
     birthdate = db.Column(db.DateTime)
     
     phones = db.relationship('PhoneNumber', back_populates='user', cascade="all, delete-orphan")
+    
     lawfirm_employee = db.relationship('LawFirmEmployee', back_populates='user')
+    lawfirm = db.relationship('LawFirm', back_populates='user', uselist=False)  # uselist=False indicates one-to-one relationship
+
+
     gender_id = db.Column(db.String(32), db.ForeignKey('gender.id'), nullable=False)
     gender = db.relationship('Gender', backref='users')
 
+    document_histories = db.relationship('DocumentHistory', back_populates='user')
+    
     def set_password(self, password):
         self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
     

@@ -17,6 +17,9 @@ class Case(PrimaryKeyBaseModel):
     lawfirm_id = db.Column(db.String(32), db.ForeignKey('lawfirm.user_id'))
     lawfirm = db.relationship('LawFirm', back_populates='cases')
 
+    tasks = db.relationship('Task', back_populates='case', cascade="all, delete-orphan")
+    documents = db.relationship('Document', back_populates='case', cascade="all, delete-orphan")
+
     def to_dict(self):
         return {
             'id': self.id,

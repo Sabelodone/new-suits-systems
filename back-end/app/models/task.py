@@ -12,7 +12,8 @@ class Task(PrimaryKeyBaseModel):
     case = db.relationship('Case', back_populates='tasks')
 
     task_status_id = db.Column(db.String(32), db.ForeignKey('task_status.id'))
-    task_status = db.relationship('TaskStatus', back_populates='tasks')
+    status = db.relationship('TaskStatus', back_populates='tasks')
+    
 
     def to_dict(self):
         return {
