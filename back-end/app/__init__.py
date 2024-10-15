@@ -3,7 +3,7 @@ import os
 from flask import Flask
 from config import Config
 from flasgger import Swagger
-from .extentions import db, login_manager, sess, swagger
+from .extentions import db, login_manager, sess, swagger, migration
 
 
 def create_app():
@@ -17,6 +17,7 @@ def create_app():
 
     # Initialize extensions
     db.init_app(app)
+    migration.init_app(app, db)
     login_manager.init_app(app)
     sess.init_app(app)
     

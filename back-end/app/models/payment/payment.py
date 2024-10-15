@@ -5,7 +5,7 @@ from app.models.primarykey_base_model import PrimaryKeyBaseModel
 
 class Payment(PrimaryKeyBaseModel):
     __tablename__ = 'payment'
-    invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'), nullable=False)
+    invoice_id = db.Column(db.String(32), db.ForeignKey('invoice.id'), nullable=False)
     amount = db.Column(db.Float, nullable=False)
 
     def to_dict(self):

@@ -1,41 +1,42 @@
 import os
+from dotenv import load_dotenv
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    # SECRET_KEY = os.environ.get('SECRET_KEY')
-    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    # Load environment variables from .env file
+    env_file = os.path.join(basedir, f".env.{os.environ.get('FLASK_ENV', 'development')}")
+    load_dotenv(env_file)
 
-    # project root directory
-    BASE_DIR = os.path.join(os.pardir, os.path.dirname(__file__))
-    SECRET_KEY = os.urandom(24).hex()
+    SECRET_KEY = os.environ.get('SECRET_KEY')
 
-    # sqlalchemy config
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///app.db'
+    db_user = os.environ.get('DB_USER')
+    db_password = os.environ.get('DB_PASSWORD')
+    db_host = os.environ.get('DB_HOST')
+    db_name = os.environ.get('DB_NAME')
+    db_port = os.environ.get('DB_PORT')
+
+    SQLALCHEMY_DATABASE_URI = f'mysql://{db_user}:{db_password}@{db_host}/{db_name}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SESSION_PERMANENT = False
     SESSION_TYPE = 'filesystem'
 
-    # flask config
-    DEBUG = True
-    TESTING = False
+    # Flask config
+    DEBUG = os.environ.get('FLASK_ENV') == 'development'
+    TESTING = os.environ.get('FLASK_ENV') == 'testing'
 
     class TestingConfig:
-        ENV = os.environ.get('FLASK_ENV', "testing")
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'mysql+pymysql://user:password@localhost/test_db')
         TESTING = True
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///app_test.db'
-    
-    class DevelopmentConfig:
-        ENV = os.environ.get('FLASK_ENV', "development")
-        DEBUG = True
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///app.db'
 
+    class DevelopmentConfig:
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'mysql+pymysql://user:password@localhost/dev_db')
 
     class ProductionConfig:
-        ENV = os.environ.get('FLASK_ENV', "production")
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'mysql+pymysql://user:password@localhost/prod_db')
         DEBUG = False
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///app.db'
 
     setting = {
         'development': DevelopmentConfig,
