@@ -144,10 +144,11 @@ const LegalTemplates = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [formData, setFormData] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDownloadMode, setIsDownloadMode] = useState(false); // State to toggle between modes
 
   const handleTemplateSelect = (template) => {
     setSelectedTemplate(template);
-    setFormData({});
+    setFormData({}); // Reset form data on template select
   };
 
   const handleInputChange = (e) => {
@@ -158,16 +159,48 @@ const LegalTemplates = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate a server request
-    setTimeout(() => {
-      console.log('Form data:', formData);
-      alert('Document created successfully!');
-      setIsSubmitting(false);
-    }, 1500);
+    if (isDownloadMode) {
+      // Convert form data to a JSON string
+      const jsonData = JSON.stringify(formData, null, 2);
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      // Create a link element and simulate a click to download the file
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${selectedTemplate.name.replace(/\s+/g, '_')}.json`; // Filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      alert('Document created successfully and downloaded!');
+    } else {
+      // Submit to the API
+      try {
+        const response = await fetch('YOUR_API_ENDPOINT', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          alert('Document created successfully!');
+        } else {
+          alert('Failed to create document.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while creating the document.');
+      }
+    }
+
+    setIsSubmitting(false);
   };
 
   const handleClose = () => {
@@ -205,19 +238,22 @@ const LegalTemplates = () => {
                   handleInputChange={handleInputChange}
                 />
               ))}
-              <div className="d-flex">
+              <div className="d-flex mb-3">
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? <Spinner animation="border" size="sm" /> : 'Submit'}
                 </Button>
                 <Button
+                  className="ms-3"
                   variant="secondary"
-                  onClick={handleClose}
-                  className="ml-3"
+                  onClick={() => setIsDownloadMode((prev) => !prev)}
                 >
-                  Close
+                  {isDownloadMode ? 'Switch to Submit Mode' : 'Switch to Download Mode'}
                 </Button>
               </div>
             </Form>
+            <Button variant="danger" onClick={handleClose}>
+              Close Form
+            </Button>
           </div>
         )}
       </div>

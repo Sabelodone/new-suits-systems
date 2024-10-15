@@ -49,26 +49,141 @@ h1 {
   border-color: #003366; /* Change border color on hover */
 }
 
-/* Chatbot Icon Styles */
+/* Chatbot Container Styles */
+.chatbot-container {
+  position: fixed;
+  bottom: 0;
+  right: 20px;
+  width: 320px;
+  max-height: 500px;
+  background-color: #f0f0f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chatbot Header */
+.chatbot-header {
+  background-color: #003366;
+  color: white;
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+}
+
+/* Chatbot Body */
+.chatbot-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+/* Consent Message */
+.consent-message {
+  text-align: center;
+  padding: 15px;
+}
+
+.consent-btn {
+  background-color: #003366;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.consent-btn:hover {
+  background-color: #002244;
+}
+
+/* Messages */
+.messages {
+  flex-grow: 1;
+  padding: 10px;
+}
+
+.message {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+
+.message.bot {
+  background-color: #e6e6e6;
+  color: #333;
+  text-align: left;
+}
+
+.message.user {
+  background-color: #003366;
+  color: white;
+  text-align: right;
+}
+
+/* Typing Indicator */
+.bot-typing {
+  font-style: italic;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+/* Input Container */
+.input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.send-btn {
+  background-color: #003366;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.send-btn:hover {
+  background-color: #002244;
+}
+
+/* Chatbot Icon */
 .chatbot-icon {
   position: fixed;
-  bottom: 20px; /* Position from the bottom */
-  right: 20px; /* Position from the right */
-  background-color: #003366; /* Navy blue background for the icon */
-  color: #ffffff; /* White icon color */
-  border-radius: 50%; /* Circular icon */
-  padding: 15px; /* Padding for the icon */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
-  cursor: pointer; /* Pointer cursor on hover */
-  z-index: 1000; /* Ensure it stays above other elements */
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
+  bottom: 20px;
+  right: 20px;
+  background-color: #003366;
+  color: white;
+  border-radius: 50%;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .chatbot-icon:hover {
-  transform: translateY(-5px); /* Lift slightly on hover */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
-  background-color: #002244; /* Darker navy on hover */
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  background-color: #002244;
 }
+
 
 /* Chart Styles */
 .card-body {

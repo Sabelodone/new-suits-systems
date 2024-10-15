@@ -7,6 +7,7 @@
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
 }
 
+/* Navigation Link Styles */
 .nav-link {
   font-size: 1.1rem;
   font-weight: 500; /* Slightly bolder text for readability */
@@ -17,6 +18,7 @@
   transition: background-color 0.3s ease, color 0.3s ease; /* Smooth color transition */
 }
 
+/* Hover and Focus States */
 .nav-link:hover {
   background-color: rgba(90, 9, 142, 0.15); /* Subtle hover background effect */
   color: #5a098e; /* Primary brand color */
@@ -28,6 +30,7 @@
   box-shadow: 0 0 0 3px rgba(90, 9, 142, 0.25); /* Accessible focus state with high contrast */
 }
 
+/* Active Link Styles */
 .nav-link.active {
   background: linear-gradient(to right, #5a098e, #d8a507); /* Gradient background for active link */
   color: #fff;
@@ -44,10 +47,26 @@
   .sidebar {
     min-height: auto;
     padding-bottom: 1rem;
+    box-shadow: none; /* Remove shadow on smaller screens */
   }
 
   .nav-link {
     font-size: 1rem;
     padding: 0.5rem 1rem;
+  }
+}
+
+/* Additional responsiveness for even smaller screens */
+@media (max-width: 576px) {
+  .sidebar {
+    position: relative; /* Allow sidebar to collapse */
+    width: 100%; /* Full width on small screens */
+    border-right: none; /* Remove border on small screens */
+  }
+
+  .nav-link {
+    font-size: 0.9rem; /* Smaller font size */
+    padding: 0.4rem 0.8rem; /* Adjust padding for tighter space */
+    text-align: center; /* Center align text on smaller screens */
   }
 }

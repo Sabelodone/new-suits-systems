@@ -1,8 +1,8 @@
 /* General styles for the app */
 .App {
   text-align: center;
-  font-family: 'Helvetica Neue', sans-serif; /* Professional and modern font */
-  color: #333; /* Neutral text color */
+  font-family: 'Helvetica Neue', sans-serif;
+  color: #333;
 }
 
 .App-header {
@@ -19,7 +19,7 @@
 /* Layout container */
 .app-container {
   display: flex;
-  min-height: 100vh; /* Ensure container covers full viewport height */
+  min-height: 100vh;
 }
 
 /* Sidebar styles */
@@ -29,49 +29,48 @@
   height: 100vh; /* Full height for sidebar */
   display: flex;
   flex-direction: column;
-  position: sticky; /* Keep the sidebar in place while scrolling */
-  top: 0; /* Stick the sidebar to the top of the viewport */
-  padding: 20px 0; /* Increased padding for better spacing */
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for sidebar */
+  position: sticky; /* Stick the sidebar to the top of the viewport */
+  top: 0;
+  padding: 20px 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar .nav-link {
-  color: black; /* Set text color to black */
+  color: black;
   font-weight: 500;
   padding: 15px 20px;
   border-radius: 6px;
   transition: background 0.3s ease, color 0.3s ease;
-  display: block; /* Ensures full width click area */
-  text-align: left; /* Align text to the left */
+  display: block;
+  text-align: left;
 }
 
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
-  background-color: #d8cfc4; /* Slightly darker eggshell for hover effect */
-  color: #f8c307; /* Luxurious gold color for active links */
+  background-color: #d8cfc4;
+  color: #f8c307;
 }
 
 /* Content area styles */
 .content-area {
   background-color: white;
   border-radius: 10px;
-  padding: 25px; /* Increased padding for breathing space */
+  padding: 25px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  flex-grow: 1; /* Allow content area to grow and take available space */
-  margin-left: 250px; /* Offset content area to accommodate sidebar */
-  transition: margin-left 0.3s ease; /* Smooth transition for responsive layout changes */
-  position: absolute; /* Fix the content area on the screen */
-  top: 70px; /* Adjust this to the height of your navbar */
-  
-  width: calc(100% - 250px); /* Adjust the width to account for sidebar */
-  height: calc(100vh - 60px); /* Full viewport height minus the navbar height */
-  overflow-y: auto; /* Scroll within the content area */
-  padding-bottom: 20px; /* Ensure there's padding at the bottom */
+  flex-grow: 1;
+  margin-left: 250px; /* Offset for sidebar */
+  transition: margin-left 0.3s ease;
+  position: absolute;
+  top: 70px;
+  width: calc(100% - 250px); /* Adjust width to accommodate sidebar */
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  padding-bottom: 20px;
 }
 
 /* Upload Document Button with Gradient */
 .upload-btn {
-  background: linear-gradient(45deg, #6a5acd, #f8c307); /* Gradient from purple to gold */
+  background: linear-gradient(45deg, #6a5acd, #f8c307);
   color: white;
   padding: 12px 30px;
   border: none;
@@ -79,42 +78,41 @@
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.3s ease;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Add some shadow */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .upload-btn:hover {
-  transform: scale(1.05); /* Slight zoom effect on hover */
-  background: linear-gradient(45deg, #5a4ac4, #e7b207); /* Darker gradient on hover */
+  transform: scale(1.05);
+  background: linear-gradient(45deg, #5a4ac4, #e7b207);
 }
 
 .chatbot {
-  position: fixed; /* Keeps it fixed in place */
-  bottom: 20px; /* Adjusts the distance from the bottom */
-  right: 20px; /* Adjusts the distance from the right */
-  z-index: 1000; /* Ensures it stays on top */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
 }
-
 
 /* Responsive styles */
 @media (max-width: 768px) {
   .app-container {
-    flex-direction: column; /* Stack sidebar and content area vertically on small screens */
+    flex-direction: column; /* Stack sidebar and content vertically */
   }
 
   .sidebar {
-    width: 100%; /* Full width on small screens */
-    height: auto; /* Allow sidebar height to adjust with content */
-    position: static; /* Sidebar scrolls with the content */
+    width: 100%; /* Full width sidebar */
+    height: auto;
+    position: static; /* Sidebar scrolls with content */
     padding: 10px 0;
   }
 
   .content-area {
-    margin-left: 0; /* Remove left margin on small screens */
-    margin-top: 10px; /* Optional: Add top margin for spacing */
-    width: 100%; /* Full width on smaller screens */
+    margin-left: 0; /* Remove sidebar offset */
+    margin-top: 10px; /* Optional spacing */
+    width: 100%; /* Full width content area */
   }
 
   .upload-btn {
-    width: 100%; /* Full width button on smaller screens */
+    width: 100%; /* Full width button */
   }
 }

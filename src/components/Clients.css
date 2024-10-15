@@ -85,12 +85,12 @@ h1 {
   }
 }
 
-/* Enhanced Button Styles */
+/* General Button Styles */
 button {
   background-color: #4b0082; /* Purple background for luxurious look */
   color: #fff; /* White text for contrast */
-  border: none;
-  padding: 0.75rem 1.5rem; /* Ample padding for buttons */
+  border: none; /* Removing default borders */
+  padding: 0.5rem 1rem; /* Padding for buttons */
   font-family: 'Roboto', sans-serif;
   font-size: 1rem; /* Standard button font size */
   border-radius: 0.5rem; /* Rounded corners for buttons */
@@ -104,6 +104,26 @@ button:hover {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow on hover */
 }
 
+/* Specific Bootstrap Button Overrides */
+.btn-primary {
+  background-color: #4b0082; /* Primary button color */
+  border-color: #4b0082; /* Matching border */
+}
+
+.btn-primary:hover {
+  background-color: #3a006a; /* Darker purple on hover */
+  border-color: #3a006a; /* Darker border on hover */
+}
+
+.btn-warning {
+  background-color: #ffb300; /* Custom warning color */
+  color: #fff;
+}
+
+.btn-warning:hover {
+  background-color: #e09e00; /* Darker hover state for warning */
+}
+
 /* Button Styles for the Modal */
 .modal-footer .btn-primary {
   background-color: #4b0082; /* Purple background */
@@ -113,6 +133,13 @@ button:hover {
 .modal-footer .btn-primary:hover {
   background-color: #3a006a; /* Darker purple on hover */
 }
+
+/* Adjusting small button sizes */
+.btn-sm {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+}
+
 
 /* General Improvements */
 html, body {

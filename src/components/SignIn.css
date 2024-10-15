@@ -33,7 +33,7 @@
 /* Input and Button Styles */
 .signin-input {
   padding: 15px; /* Padding for inputs */
-  border: 2px solid #ff5722; /* Border color matching the heading */
+  border: 2px solid purple; /* Border color matching the heading */
   border-radius: 8px; /* Rounded borders */
   font-size: 16px; /* Font size */
   transition: border-color 0.3s, transform 0.2s; /* Smooth transitions */
@@ -47,7 +47,7 @@
 
 /* Button Styles */
 .signin-button {
-  background-color: #ff5722; /* Button background color */
+  background-color: purple; /* Button background color */
   color: white; /* White text */
   font-size: 18px; /* Button text size */
   padding: 12px; /* Padding for button */
@@ -58,7 +58,7 @@
 }
 
 .signin-button:hover {
-  background-color: #e64a19; /* Darker shade on hover */
+  background-color: purple; /* Darker shade on hover */
   transform: translateY(-2px); /* Lift effect on hover */
 }
 
@@ -83,7 +83,7 @@
 
 /* Error Message Styles */
 .signin-error {
-  color: #f44336; /* Red for error messages */
+  color: red; /* Red for error messages */
   text-align: center; /* Center align text */
   font-weight: bold; /* Bold text */
   margin-top: 10px; /* Space above error message */

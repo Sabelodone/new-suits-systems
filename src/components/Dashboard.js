@@ -172,35 +172,44 @@ const Dashboard = () => {
 
       {/* Chatbot Component */}
       {isChatbotOpen && (
-        <div className="chatbot open">
+        <div className="chatbot-container">
           <div className="chatbot-header d-flex justify-content-between align-items-center">
-            <h5 className="m-0">Chatbot</h5>
+            <h5 className="m-0">Chat Support</h5>
             <FontAwesomeIcon icon={faTimes} size="lg" onClick={toggleChatbot} style={{ cursor: 'pointer' }} />
           </div>
           <div className="chatbot-body">
-            {!consentGiven && (
+            {!consentGiven ? (
               <div className="consent-message">
-                <p>To use the chatbot, please give your consent:</p>
-                <button onClick={handleConsent}>I Consent</button>
+                <p>We value your privacy. Please consent to use this service:</p>
+                <button onClick={handleConsent} className="consent-btn">I Consent</button>
+              </div>
+            ) : (
+              <div className="messages">
+                {messages.length > 0 ? (
+                  messages.map((msg, index) => (
+                    <div key={index} className={`message ${msg.sender}`}>
+                      {msg.text}
+                    </div>
+                  ))
+                ) : (
+                  <p className="no-messages">No messages yet. Start the conversation!</p>
+                )}
+                {isLoading && <div className="bot-typing">...typing</div>}
               </div>
             )}
-            <div className="messages">
-              {messages.map((msg, index) => (
-                <div key={index} className={msg.sender === 'user' ? 'user' : 'bot'}>
-                  {msg.text}
-                </div>
-              ))}
-              {isLoading && <div className="bot">...typing</div>}
-            </div>
             <div className="input-container">
               <input
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
                 placeholder="Type a message..."
+                aria-label="Type a message to chatbot"
                 disabled={!consentGiven}
+                className="chat-input"
               />
-              <button onClick={handleSendMessage} disabled={!consentGiven}>Send</button>
+              <button onClick={handleSendMessage} className="send-btn" disabled={!consentGiven}>
+                Send
+              </button>
             </div>
           </div>
         </div>
@@ -208,5 +217,4 @@ const Dashboard = () => {
     </div>
   );
 };
-
 export default Dashboard;

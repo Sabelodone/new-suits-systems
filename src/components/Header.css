@@ -8,10 +8,12 @@ body {
 .navbar {
   background-color: #f8f9fa; /* Light background */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 0.5rem 1rem;
 }
 
 .navbar .navbar-brand {
   color: #6f42c1; /* Indigo color */
+  font-size: 1.5rem; /* Adjust brand size for readability */
 }
 
 .navbar .nav-link {
@@ -31,6 +33,7 @@ body {
   transition: border-color 0.3s ease;
   max-width: 300px; /* Limit width for small screens */
   flex-grow: 1; /* Allow it to grow to fill space */
+  padding: 0.5rem;
 }
 
 .custom-search:focus {
@@ -42,6 +45,7 @@ body {
 .custom-button {
   background-color: transparent;
   border: 1px solid #6f42c1; /* Indigo border */
+  padding: 0.5rem 1rem;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -67,4 +71,39 @@ body {
 /* Adjust backdrop if necessary */
 .modal-backdrop.show {
   opacity: 0.5; /* Make sure this is not too dark */
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .navbar .navbar-brand {
+    font-size: 1.25rem; /* Smaller text for mobile */
+  }
+
+  .navbar .nav-link {
+    font-size: 0.875rem; /* Slightly smaller nav links */
+  }
+
+  .custom-search {
+    max-width: 100%; /* Full width on smaller screens */
+    margin-bottom: 0.5rem; /* Add spacing below search bar */
+  }
+
+  .custom-button {
+    width: 100%; /* Full-width button on small screens */
+    text-align: center; /* Center text */
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar {
+    padding: 0.25rem 0.5rem; /* Reduce padding on extra small screens */
+  }
+
+  .custom-button {
+    font-size: 0.875rem; /* Adjust button text size for smaller screens */
+  }
+  
+  .luxury-modal .modal-content {
+    padding: 1rem; /* Add more padding to modal on small screens */
+  }
 }

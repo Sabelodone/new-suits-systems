@@ -25,20 +25,21 @@
 
 /* Input and Button Styles */
 .signup-input {
-    padding: 10px; /* Padding for inputs */
-    border: none; /* Border color */
-    border-radius: 5px; /* Rounded corners */
-    font-size: 14px; /* Input text size */
+    padding: 15px; /* Padding for inputs */
+    border: 2px solid purple; /* Border color matching the heading */
+    border-radius: 8px; /* Rounded borders */
+    font-size: 16px; /* Font size */
+    transition: border-color 0.3s, transform 0.2s; /* Smooth transitions */
 }
 
 .signup-input:focus {
-    border-color: #ffcc00; /* Change border color on focus */
+    border-color: purple; /* Change border color on focus */
     outline: none; /* Remove default outline */
 }
 
 /* Sign Up Button Styles */
 .signup-button {
-    background-color: #ff5722; /* Button background color */
+    background-color: purple; /* Button background color */
     color: white; /* White text */
     font-size: 16px; /* Button text size */
     padding: 10px; /* Padding for button */
@@ -50,7 +51,7 @@
 }
 
 .signup-button:hover {
-    background-color: #e64a19; /* Darker shade on hover */
+    background-color: purple; /* Darker shade on hover */
 }
 
 /* Link Styles */
@@ -59,18 +60,18 @@
     margin-top: 10px; /* Space above link */
 }
 
-.signup-link a {
-    color: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+.signup-link a:hover {
+    color: #1976d2;
     text-decoration: underline; /* Underline for links */
 }
 
 .signup-link a:hover {
-    color: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    color: #1976d2; /* Subtle shadow */
 }
 
 /* Error and Success Message Styles */
 .signup-error {
-    color: #f44336; /* Red for error messages */
+    color: red; /* Red for error messages */
     text-align: center; /* Center align error text */
 }
 

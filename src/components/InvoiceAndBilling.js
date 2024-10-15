@@ -1,4 +1,4 @@
-import React, { useState } from 'react';  
+import React, { useState } from 'react';
 import emailjs from 'emailjs-com';
 import './InvoiceAndBilling.css';
 import EmailSettings from './EmailSettings';
@@ -15,20 +15,23 @@ const InvoiceAndBilling = ({ clients }) => {
     templateId: '',
     userId: '',
   });
-  const [emailSettingsSaved, setEmailSettingsSaved] = useState(false); // New state
-  const [showReviewModal, setShowReviewModal] = useState(false); // New state for modal
-  const [currentInvoice, setCurrentInvoice] = useState(null); // Current invoice for review
+  const [emailSettingsSaved, setEmailSettingsSaved] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [currentInvoice, setCurrentInvoice] = useState(null);
 
+  // Handle email settings save
   const handleSettingsSave = (settings) => {
     setEmailSettings(settings);
-    setEmailSettingsSaved(true); // Mark settings as saved
+    setEmailSettingsSaved(true);
   };
 
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInvoiceData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle changes in invoice items
   const handleItemChange = (index, e) => {
     const { name, value } = e.target;
     const newItems = [...invoiceData.items];
@@ -36,6 +39,7 @@ const InvoiceAndBilling = ({ clients }) => {
     setInvoiceData((prev) => ({ ...prev, items: newItems }));
   };
 
+  // Add a new item to the invoice
   const addItem = () => {
     setInvoiceData((prev) => ({
       ...prev,
@@ -43,6 +47,7 @@ const InvoiceAndBilling = ({ clients }) => {
     }));
   };
 
+  // Handle invoice submission
   const handleSubmit = (e) => {
     e.preventDefault();
     const totalAmount = invoiceData.items.reduce((acc, item) => acc + Number(item.amount), 0);
@@ -55,26 +60,21 @@ const InvoiceAndBilling = ({ clients }) => {
       status: 'Pending',
       items: invoiceData.items,
     };
-    setCurrentInvoice(newInvoice); // Set the current invoice for review
-    setShowReviewModal(true); // Show the review modal
+    setCurrentInvoice(newInvoice);
+    setShowReviewModal(true);
   };
 
+  // Send invoice email
   const sendInvoiceEmail = (invoice) => {
-    // Attempt to find the client based on the invoice's clientId
     const client = clients.find(client => client.id === invoice.clientId);
-
-    // Log the current invoice and client details for debugging
-    console.log('Current Invoice:', invoice);
-    console.log('Clients:', clients);
-    console.log('Found Client:', client);
-
-    // Check if the client is found
+    
+    // Check if client exists
     if (!client) {
       setEmailStatus('Client not found. Cannot send invoice.');
-      return; // Exit if client is not found
+      return;
     }
 
-    // Proceed with sending the email
+    // Prepare template parameters for email
     const templateParams = {
       to_name: client.name,
       to_email: client.email,
@@ -84,27 +84,31 @@ const InvoiceAndBilling = ({ clients }) => {
       items: invoice.items.map(item => `${item.description}: ZAR ${item.amount}`).join(', '),
     };
 
+    // Send the email using EmailJS
     emailjs.send(emailSettings.serviceId, emailSettings.templateId, templateParams, emailSettings.userId)
       .then((response) => {
         setEmailStatus('Invoice sent successfully!');
-        setInvoices((prevInvoices) => [...prevInvoices, invoice]); // Add invoice to list after sending
+        setInvoices((prevInvoices) => [...prevInvoices, invoice]);
       }, (err) => {
         setEmailStatus('Failed to send invoice. Please try again.');
       });
   };
 
+  // Confirm and send the invoice
   const handleConfirmSend = () => {
     if (currentInvoice) {
-      sendInvoiceEmail(currentInvoice); // Send the invoice
+      sendInvoiceEmail(currentInvoice);
     }
-    setShowReviewModal(false); // Hide the modal
-    setInvoiceData({ clientId: '', items: [{ description: '', amount: '' }] }); // Reset invoice data
+    setShowReviewModal(false);
+    setInvoiceData({ clientId: '', items: [{ description: '', amount: '' }] });
   };
 
+  // Cancel sending the invoice
   const handleCancelSend = () => {
-    setShowReviewModal(false); // Hide the modal
+    setShowReviewModal(false);
   };
 
+  // Calculate total amount due and invoice count
   const totalAmountDue = invoices.reduce((acc, invoice) => acc + invoice.totalAmount, 0);
   const totalInvoices = invoices.length;
 
@@ -112,7 +116,7 @@ const InvoiceAndBilling = ({ clients }) => {
     <div className="invoice-and-billing">
       {/* Conditionally render the EmailSettings component */}
       {!emailSettingsSaved && <EmailSettings onSettingsSave={handleSettingsSave} />}
-      
+
       <h2>Invoice and Billing Management</h2>
       <form className="create-invoice" onSubmit={handleSubmit}>
         <h3>Create Invoice</h3>
@@ -128,6 +132,7 @@ const InvoiceAndBilling = ({ clients }) => {
           </select>
         </div>
 
+        {/* Render invoice items */}
         {invoiceData.items.map((item, index) => (
           <div key={index} className="invoice-item">
             <div className="form-group">
@@ -159,8 +164,9 @@ const InvoiceAndBilling = ({ clients }) => {
         <button type="submit" className="btn-create-invoice">Create Invoice</button>
       </form>
 
-      {emailStatus && <p>{emailStatus}</p>}
+      {emailStatus && <p className="email-status">{emailStatus}</p>}
 
+      {/* Invoice List */}
       <div className="invoice-list">
         <h3>Invoices</h3>
         <table className="custom-table">
@@ -187,32 +193,44 @@ const InvoiceAndBilling = ({ clients }) => {
         </table>
       </div>
 
+      {/* Billing Summary */}
       <div className="billing-summary">
         <h3>Billing Summary</h3>
         <p>Total Invoices: {totalInvoices}</p>
         <p>Total Amount Due: ZAR {totalAmountDue.toFixed(2)}</p>
       </div>
 
-      {/* Review Modal */}
       {showReviewModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Review Invoice</h3>
-            <p><strong>Invoice Number:</strong> {currentInvoice?.invoiceNumber}</p>
-            <p><strong>Client:</strong> {currentInvoice?.clientName}</p>
-            <p><strong>Date Issued:</strong> {new Date(currentInvoice?.dateIssued).toLocaleDateString()}</p>
-            <p><strong>Total Amount:</strong> ZAR {currentInvoice?.totalAmount.toFixed(2)}</p>
-            <h4>Items:</h4>
-            <ul>
-              {currentInvoice?.items.map((item, index) => (
-                <li key={index}>{item.description}: ZAR {item.amount}</li>
-              ))}
-            </ul>
-            <button onClick={handleConfirmSend}>Confirm & Send</button>
-            <button onClick={handleCancelSend}>Cancel</button>
-          </div>
+  <div className="modal show" style={{ display: 'block' }} tabindex="-1" role="dialog">
+    <div className="modal-dialog modal-md" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Review Invoice</h5>
+          <button type="button" className="close" onClick={handleCancelSend}>
+            <span>&times;</span>
+          </button>
         </div>
-      )}
+        <div className="modal-body">
+          <p><strong>Invoice Number:</strong> {currentInvoice?.invoiceNumber}</p>
+          <p><strong>Client:</strong> {currentInvoice?.clientName}</p>
+          <p><strong>Date Issued:</strong> {new Date(currentInvoice?.dateIssued).toLocaleDateString()}</p>
+          <p><strong>Total Amount:</strong> ZAR {currentInvoice?.totalAmount.toFixed(2)}</p>
+          <h4>Items:</h4>
+          <ul>
+            {currentInvoice?.items.map((item, index) => (
+              <li key={index}>{item.description}: ZAR {item.amount}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-primary" onClick={handleConfirmSend}>Confirm & Send</button>
+          <button className="btn btn-secondary" onClick={handleCancelSend}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
