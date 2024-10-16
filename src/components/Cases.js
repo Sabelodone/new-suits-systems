@@ -45,7 +45,7 @@ const Cases = () => {
             {cases.map((caseItem) => (
               <Col key={caseItem.id} md={6} lg={4} className="mb-3 text-center">
                 <div className="folder-icon" style={{ padding: '10px', borderRadius: '5px' }}>
-                  <span style={{ fontSize: '30px' }}>📁</span> {/* Folder emoji */}
+                  <span style={{ fontSize: '30px' }}> 📂 </span> {/* Folder emoji */}
                   <div className="folder-details">
                     <strong>Client ID:</strong> {caseItem.id}
                     <br />
