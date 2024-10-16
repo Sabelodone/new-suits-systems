@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useMemo } from 'react';
-import './DocumentManagement.css'; // Ensure the path is correct for component-specific CSS
+import './DocumentManagement.css';
 
 const DocumentManager = () => {
   const [documents, setDocuments] = useState([]);
@@ -8,13 +8,12 @@ const DocumentManager = () => {
   const [description, setDescription] = useState('');
   const [documentType, setDocumentType] = useState('');
   const [file, setFile] = useState(null);
-  const [isFormVisible, setIsFormVisible] = useState(false); // Toggle form visibility
+  const [isFormVisible, setIsFormVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // File validation (size and type)
   const validateFile = (file) => {
     if (!file) return 'Please select a file.';
     if (file.size > 10 * 1024 * 1024) {
@@ -26,7 +25,6 @@ const DocumentManager = () => {
     return null;
   };
 
-  // Handle document upload
   const handleUpload = async (e) => {
     e.preventDefault();
     try {
@@ -35,9 +33,7 @@ const DocumentManager = () => {
       setSuccess('');
 
       const validationError = validateFile(file);
-      if (validationError) {
-        throw new Error(validationError);
-      }
+      if (validationError) throw new Error(validationError);
 
       const newDocument = {
         caseNumber,
@@ -47,17 +43,15 @@ const DocumentManager = () => {
         fileUrl: URL.createObjectURL(file),
       };
 
-      // Simulate an API request
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setDocuments([...documents, newDocument]);
       setSuccess('Document uploaded successfully!');
-      // Reset form fields
       setCaseNumber('');
       setDescription('');
       setDocumentType('');
       setFile(null);
-      setIsFormVisible(false); // Hide form after upload
+      setIsFormVisible(false);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -65,34 +59,27 @@ const DocumentManager = () => {
     }
   };
 
-  // File change handler
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
-  // Filter documents by search term
   const filteredDocuments = useMemo(() => {
-    return documents.filter((doc) => {
-      return (
-        doc.caseNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doc.documentType.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    });
+    return documents.filter((doc) =>
+      [doc.caseNumber, doc.description, doc.documentType]
+        .some(field => field.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
   }, [documents, searchTerm]);
 
-  // Get icon based on document type
   const getIconForDocumentType = (type) => {
     switch (type) {
       case 'application/pdf':
-        return '📄'; // PDF icon
+        return '📄'; 
       case 'image/jpeg':
       case 'image/png':
-        return '🖼️'; // Image icon
+        return '📁'; 
       default:
-        return '📁'; // Generic document icon
+        return '📁'; 
     }
   };
 
-  // Handle document deletion
   const handleDelete = (index) => {
     setDocuments((prevDocs) => prevDocs.filter((_, docIndex) => docIndex !== index));
   };
@@ -101,11 +88,9 @@ const DocumentManager = () => {
     <div className="doc-manager-container my-5 p-4 bg-light rounded shadow">
       <h2 className="doc-manager-title mb-4 text-primary border-bottom pb-2">Document Management System</h2>
 
-      {/* Display error or success messages */}
-      {error && <div className="doc-manager-alert alert alert-danger">{error}</div>}
-      {success && <div className="doc-manager-alert alert alert-success">{success}</div>}
+      {error && <div className="alert alert-danger">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
-      {/* Search bar */}
       <div className="doc-manager-search mb-4">
         <input
           type="text"
@@ -116,17 +101,12 @@ const DocumentManager = () => {
         />
       </div>
 
-      {/* Toggle form visibility */}
-      <button
-        className="doc-manager-add-btn btn btn-success mb-4"
-        onClick={() => setIsFormVisible(!isFormVisible)}
-      >
+      <button className="btn btn-success mb-4" onClick={() => setIsFormVisible(!isFormVisible)}>
         {isFormVisible ? 'Close Form' : 'Add New Document'}
       </button>
 
-      {/* Document upload form */}
       {isFormVisible && (
-        <form onSubmit={handleUpload} className="doc-manager-form mb-5">
+        <form onSubmit={handleUpload} className="mb-5">
           <div className="form-group">
             <label htmlFor="caseNumber">Case Number:</label>
             <input
@@ -175,31 +155,29 @@ const DocumentManager = () => {
               required
             />
           </div>
-          <button type="submit" className="doc-manager-upload-btn btn btn-primary" disabled={isLoading}>
+          <button type="submit" className="btn btn-primary" disabled={isLoading}>
             {isLoading ? 'Uploading...' : 'Upload Document'}
           </button>
         </form>
       )}
 
-      {/* Display uploaded documents */}
       <h3 className="doc-manager-subtitle mb-3">Uploaded Documents</h3>
       <div className="row">
         {filteredDocuments.length > 0 ? (
           filteredDocuments.map((doc, index) => (
-            <div key={index} className="doc-manager-card col-md-4 text-center mb-4">
-              <div className="doc-manager-icon">
+            <div key={index} className="col-md-4 text-center mb-4">
+              <div className="doc-document-icon mb-2">
                 {getIconForDocumentType(doc.file.type)}
               </div>
               <p>{doc.description}</p>
-              <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="btn btn-link">
-                View Document
-              </a>
-              <button 
-                onClick={() => handleDelete(index)} 
-                className="btn btn-danger mt-2"
-              >
-                Delete
-              </button>
+              <div className="d-flex justify-content-center gap-2">
+                <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="btn btn-link">
+                  View Document
+                </a>
+                <button onClick={() => handleDelete(index)} className="btn btn-danger">
+                  Delete
+                </button>
+              </div>
             </div>
           ))
         ) : (

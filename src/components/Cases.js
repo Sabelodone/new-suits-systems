@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Cases.css'; // Custom CSS for additional styling
-import { Button, Table, Card, Row, Col } from 'react-bootstrap';
-import Clients from './Clients'; // Ensure this path is correct
-import { FaClipboardList, FaFileAlt } from 'react-icons/fa'; // Import an icon for files
+import { Button, Table, Row, Col } from 'react-bootstrap';
+import { FaClipboardList } from 'react-icons/fa'; // Keep the clipboard list icon
 
 const Cases = () => {
-  const [cases, setCases] = useState([
+  const [cases] = useState([ // Removed setCases to avoid unused variable warning
     { id: 123, client: 'John Doe', status: 'Open', date: '2024-08-22' },
     { id: 124, client: 'Jane Smith', status: 'Closed', date: '2024-09-10' },
   ]);
@@ -44,18 +43,15 @@ const Cases = () => {
         <div className="client-files mt-4">
           <Row>
             {cases.map((caseItem) => (
-              <Col key={caseItem.id} md={6} lg={4} className="mb-3">
-                <Card className="text-center shadow-sm" style={{ padding: '10px', maxWidth: '200px', margin: '0 auto' }}>
-                  <Card.Body className="p-2"> {/* Reduced padding */}
-                    <FaFileAlt size={30} className="mb-2 text-primary" /> {/* Smaller file icon */}
-                    <Card.Text className="mb-1">
-                      <strong>Client ID:</strong> {caseItem.id}
-                    </Card.Text>
-                    <Card.Text className="mb-1">
-                      <strong>Date:</strong> {caseItem.date}
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
+              <Col key={caseItem.id} md={6} lg={4} className="mb-3 text-center">
+                <div className="folder-icon" style={{ padding: '10px', borderRadius: '5px' }}>
+                  <span style={{ fontSize: '30px' }}>📁</span> {/* Folder emoji */}
+                  <div className="folder-details">
+                    <strong>Client ID:</strong> {caseItem.id}
+                    <br />
+                    <strong>Date:</strong> {caseItem.date}
+                  </div>
+                </div>
               </Col>
             ))}
           </Row>
