@@ -16,9 +16,9 @@ import Welcome from './components/Welcome';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import PrivateRoute from './components/PrivateRoute';
-import { UserProvider, useUser } from './components/UserContext';
+import { UserProvider, useUser } from './components/UserContext'; // Make sure UserContext is defined and exported
 import TermsAndConditions from './components/TermsAndConditions';
-import InvoiceAndBilling from './components/InvoiceAndBilling'; // Importing the InvoiceAndBilling component
+import InvoiceAndBilling from './components/InvoiceAndBilling';
 import './App.css'; // Assuming you have a global stylesheet
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
       <Router>
         <Header />
         <MainContent />
-        <Chatbot /> {/* Chatbot Component */}
+        <Chatbot />
         <Footer />
       </Router>
     </UserProvider>
@@ -36,13 +36,13 @@ function App() {
 
 const MainContent = () => {
   const { user, loading } = useUser();
-  
-  // Define or fetch your client data here
+
+  // Example client data
   const clientData = [
     { id: 1, name: 'John Doe', email: 'johndoe@example.com' },
     { id: 2, name: 'Jane Smith', email: 'janesmith@example.com' },
     { id: 3, name: 'David Johnson', email: 'davidjohnson@example.com' },
-  ]; // Example client data
+  ];
 
   if (loading) {
     return (
@@ -55,8 +55,7 @@ const MainContent = () => {
   return (
     <Container fluid className="app-container">
       <Row>
-        {user && <Sidebar />} {/* Sidebar only visible if user is authenticated */}
-
+        {user && <Sidebar />}
         <Col md={user ? 10 : 12} className="content-area p-4">
           <Routes>
             <Route path="/signin" element={<SignIn />} />

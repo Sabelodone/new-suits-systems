@@ -33,6 +33,7 @@
   top: 0;
   padding: 20px 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  
 }
 
 .sidebar .nav-link {
@@ -54,16 +55,14 @@
 /* Content area styles */
 .content-area {
   background-color: white;
-  border-radius: 10px;
   padding: 25px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   flex-grow: 1;
   margin-left: 250px; /* Offset for sidebar */
   transition: margin-left 0.3s ease;
   position: absolute;
-  top: 70px;
   width: calc(100% - 250px); /* Adjust width to accommodate sidebar */
-  height: calc(100vh - 60px);
+  height: calc(110vh - 60px);
   overflow-y: auto;
   padding-bottom: 20px;
 }
