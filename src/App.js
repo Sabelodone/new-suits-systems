@@ -19,6 +19,8 @@ import PrivateRoute from './components/PrivateRoute';
 import { UserProvider, useUser } from './components/UserContext'; // Make sure UserContext is defined and exported
 import TermsAndConditions from './components/TermsAndConditions';
 import InvoiceAndBilling from './components/InvoiceAndBilling';
+import Settings from './components/Settings'; // Adjust the path as necessary
+
 import './App.css'; // Assuming you have a global stylesheet
 
 function App() {
@@ -71,6 +73,7 @@ const MainContent = () => {
             <Route path="/document-management" element={<PrivateRoute><DocumentManagement /></PrivateRoute>} />
             <Route path="/legal-templates" element={<PrivateRoute><LegalTemplates /></PrivateRoute>} />
             <Route path="/invoice-and-billing" element={<PrivateRoute><InvoiceAndBilling clients={clientData} /></PrivateRoute>} />
+            <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} /> {/* New route for Settings */}
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
             {/* Redirect root path */}

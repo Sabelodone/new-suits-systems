@@ -74,9 +74,9 @@ const DocumentManager = () => {
         return '📄'; 
       case 'image/jpeg':
       case 'image/png':
-        return '📁'; 
+        return '📄'; 
       default:
-        return '📁'; 
+        return '📄'; 
     }
   };
 

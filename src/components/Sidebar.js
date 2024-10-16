@@ -3,7 +3,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Nav, Col } from 'react-bootstrap'; // Importing Col here
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faBriefcase, faTasks, faClock, faUsers, faFileAlt, faMoneyBill } from '@fortawesome/free-solid-svg-icons'; // Import the new icon
+import { faHome, faBriefcase, faTasks, faClock, faUsers, faFileAlt, faMoneyBill, faCog } from '@fortawesome/free-solid-svg-icons'; // Import the new icon
 import './Sidebar.css'; // Sidebar styles
 
 const Sidebar = () => {
@@ -20,6 +20,7 @@ const Sidebar = () => {
           { to: "/document-management", icon: faFileAlt, label: "Document Management" },
           { to: "/legal-templates", icon: faFileAlt, label: "Templates" },
           { to: "/invoice-and-billing", icon: faMoneyBill, label: "Invoice and Billing" }, // New link for Invoice and Billing
+          { to: "/settings", icon: faCog, label: "Settings" }, // New link for Settings
         ].map(({ to, icon, label }) => (
           <NavLink 
             key={to} 
