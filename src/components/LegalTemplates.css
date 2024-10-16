@@ -4,7 +4,6 @@
   flex-direction: row;
   padding: 24px;
   background: #f4f4f4; /* Soft background for the overall layout */
-  border-radius: 16px; /* Rounded corners for a modern look */
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
   min-height: 100vh; /* Ensures the layout takes full height */
   transition: background 0.3s ease; /* Smooth transition for background change */

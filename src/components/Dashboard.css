@@ -6,7 +6,7 @@
   margin: 0 auto; /* Center align container */
   padding: 0 2rem; /* Add more padding for a spacious feel */
   background-color: #e8f0f2; /* Light, elegant blue-grey background */
-  border-radius: 0.75rem; /* Rounded corners for a modern look */
+  
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
 }
 

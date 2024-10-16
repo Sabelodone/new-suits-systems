@@ -4,7 +4,6 @@
 .clients-container {
   background-color: #f8f9fa; /* Light background for contrast */
   padding: 2.5rem; /* Ample padding for spacious layout */
-  border-radius: 1rem; /* Rounded corners for a smoother look */
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Softer shadow for a luxurious effect */
   margin-top: 3rem; /* Space above the container */
   transition: all 0.3s ease; /* Smooth transition for hover effects */
