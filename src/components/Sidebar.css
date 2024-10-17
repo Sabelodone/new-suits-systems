@@ -3,38 +3,39 @@
   background-color: #f8f9fa;
   min-height: 100vh;
   border-right: 1px solid #ddd;
-  padding-top: 1rem;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
+  padding-top: 1.5rem; /* Increase top padding */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  width: 300px; /* Increase the width of the sidebar */
 }
 
 /* Navigation Link Styles */
 .nav-link {
-  font-size: 1.1rem;
-  font-weight: 500; /* Slightly bolder text for readability */
+  font-size: 1.3rem; /* Increase font size */
+  font-weight: 600; /* Make text bolder for emphasis */
   color: #333;
-  padding: 0.75rem 1.25rem; /* Increased padding for better spacing */
-  margin-bottom: 0.5rem;
-  border-radius: 0.5rem; /* Softer rounded corners */
+  padding: 1rem 1.5rem; /* Increased padding for more space */
+  margin-bottom: 0.75rem; /* Increase margin for better spacing */
+  border-radius: 0.75rem; /* Softer, larger rounded corners */
   transition: background-color 0.3s ease, color 0.3s ease; /* Smooth color transition */
 }
 
 /* Hover and Focus States */
 .nav-link:hover {
-  background-color: rgba(90, 9, 142, 0.15); /* Subtle hover background effect */
+  background-color: rgba(90, 9, 142, 0.2); /* Slightly more prominent hover background */
   color: #5a098e; /* Primary brand color */
   text-decoration: none; /* Remove underline on hover */
 }
 
 .nav-link:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(90, 9, 142, 0.25); /* Accessible focus state with high contrast */
+  box-shadow: 0 0 0 3px rgba(90, 9, 142, 0.3); /* Slightly larger focus state */
 }
 
 /* Active Link Styles */
 .nav-link.active {
   background: linear-gradient(to right, #5a098e, #d8a507); /* Gradient background for active link */
   color: #fff;
-  box-shadow: 0 4px 10px rgba(90, 9, 142, 0.3); /* Add subtle shadow to active link */
+  box-shadow: 0 6px 12px rgba(90, 9, 142, 0.4); /* Add deeper shadow for active link */
 }
 
 .nav-link.active:hover {
@@ -47,12 +48,13 @@
   .sidebar {
     min-height: auto;
     padding-bottom: 1rem;
+    width: 250px; /* Adjust sidebar width for smaller screens */
     box-shadow: none; /* Remove shadow on smaller screens */
   }
 
   .nav-link {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
+    font-size: 1.1rem; /* Adjust font size for smaller screens */
+    padding: 0.75rem 1.25rem; /* Adjust padding for better spacing */
   }
 }
 
@@ -65,8 +67,8 @@
   }
 
   .nav-link {
-    font-size: 0.9rem; /* Smaller font size */
-    padding: 0.4rem 0.8rem; /* Adjust padding for tighter space */
+    font-size: 1rem; /* Adjust font size for very small screens */
+    padding: 0.6rem 1rem; /* Adjust padding for tighter space */
     text-align: center; /* Center align text on smaller screens */
   }
 }

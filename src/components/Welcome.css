@@ -1,6 +1,5 @@
 /* Welcome Container Styles */
 .welcome-container {
-  /* Reference the image in public folder */
   background-size: cover; /* Cover the entire container */
   background-position: center; /* Center the background image */
   min-height: 100vh; /* Full viewport height */
@@ -11,54 +10,99 @@
   justify-content: center; /* Center content horizontally */
   padding: 2rem; /* Add padding for better spacing on small screens */
   text-align: center; /* Ensure centered text for all screen sizes */
+  backdrop-filter: blur(10px); /* Glass effect - blur background */
+  overflow: hidden; /* Contain the shine effect */
+}
+
+/* Glass shine effect for the container */
+.welcome-container::before {
+  content: "";
+  position: absolute;
+  top: -100%; /* Start off-screen */
+  left: -150%;
+  width: 200%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.2); /* Shine color */
+  transform: skewX(-45deg);
+  transition: all 0.7s ease-in-out;
+  pointer-events: none;
+  animation: glassShine 4s forwards; /* One-time shine animation */
+  filter: blur(5px); /* Slight blur for shine */
 }
 
 /* Welcome Content Styles */
 .welcome-content {
-  background-color: rgba(0, 0, 0, 0.6); /* Slightly darker semi-transparent background for better contrast */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent glass-like background */
   padding: 3rem; /* Ample padding for content */
-  border-radius: 0.75rem; /* More rounded corners for a modern look */
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); /* More pronounced luxurious shadow */
-  max-width: 700px; /* Limit the width to ensure better readability on larger screens */
-  width: 100%; /* Ensure the content stretches fully on small screens */
+  border-radius: 0.75rem; /* Rounded corners */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); /* Luxurious shadow */
+  max-width: 700px; /* Limit width for readability */
+  width: 100%; /* Full width on smaller screens */
+  position: relative; /* Required for the shine effect */
+  backdrop-filter: blur(8px); /* Blur for a frosted glass effect */
+}
+
+/* Shine effect for welcome content */
+.welcome-content::before {
+  content: "";
+  position: absolute;
+  top: -150%;
+  left: -150%;
+  width: 200%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.3); /* Shine color */
+  transform: skewX(-45deg);
+  transition: all 0.7s ease-in-out;
+  pointer-events: none;
+  animation: glassShine 6s forwards; /* One-time shine animation */
+  filter: blur(6px); /* Slight blur for shine */
+}
+
+/* Keyframes for the shine animation */
+@keyframes glassShine {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
 }
 
 /* Title Styles */
 .welcome-title {
   font-family: 'Merriweather', serif; /* Elegant font for title */
-  font-size: 3rem; /* Increase title font size for larger emphasis */
+  font-size: 3rem; /* Larger font for emphasis */
   margin-bottom: 1.5rem; /* Space below title */
-  color: #f7f7f7; /* Slightly off-white for a softer look */
+  color: #f7f7f7; /* Slightly off-white for softer look */
 }
 
 /* Text Styles */
 .welcome-text {
   font-family: 'Roboto', sans-serif; /* Clean font for text */
-  font-size: 1.3rem; /* Slightly larger font size for readability */
-  line-height: 1.6; /* Increase line height for better readability */
+  font-size: 1.3rem; /* Slightly larger font for readability */
+  line-height: 1.6; /* Better line spacing */
   margin-bottom: 2.5rem; /* Increased spacing below text */
-  color: #eaeaea; /* Softer white for text to contrast with the background */
+  color: #eaeaea; /* Softer white to contrast with background */
 }
 
 /* Button Styles */
 .explore-btn {
-  font-family: 'Roboto', sans-serif; /* Match button font to body text */
-  font-size: 1.2rem; /* Slightly larger font size for button */
-  padding: 0.9rem 1.8rem; /* Increased padding for a comfortable click area */
+  font-family: 'Roboto', sans-serif; /* Button font */
+  font-size: 1.2rem; /* Slightly larger text */
+  padding: 0.9rem 1.8rem; /* Increased padding for comfort */
   background: linear-gradient(to right, #5a098e, #d8a507); /* Gradient background */
-  border: none; /* Remove default border */
-  border-radius: 0.3rem; /* Add border-radius for button */
-  color: #ffffff; /* White text color for contrast */
-  transition: background 0.3s ease, transform 0.3s ease; /* Smooth transition effect */
+  border: none; /* Remove border */
+  border-radius: 0.3rem; /* Rounded corners */
+  color: #ffffff; /* White text for contrast */
+  transition: background 0.3s ease, transform 0.3s ease; /* Smooth transition */
 }
 
 /* Button Hover Effect */
 .explore-btn:hover {
-  background: linear-gradient(to right, #5a098e, #d8a507); /* Use the same gradient on hover */
+  background: linear-gradient(to right, #5a098e, #d8a507); /* Gradient on hover */
   transform: scale(1.05); /* Slight scaling effect */
-  color: #ffffff; /* Ensure text color remains white on hover */
+  color: #ffffff; /* Keep text color white */
 }
-
 
 /* Responsive Styles */
 @media (max-width: 768px) {
@@ -67,14 +111,14 @@
   }
 
   .welcome-title {
-    font-size: 2rem; /* Slightly smaller title on small screens */
+    font-size: 2rem; /* Smaller title font for mobile */
   }
 
   .welcome-text {
-    font-size: 1.1rem; /* Adjust text size for smaller screens */
+    font-size: 1.1rem; /* Adjust text size for mobile */
   }
 
   .welcome-content {
-    padding: 2rem; /* Adjust content padding for smaller screens */
+    padding: 2rem; /* Adjust padding for mobile */
   }
 }

@@ -1,17 +1,46 @@
 /* SignUp Container Styles */
 .signup-container {
-    background: #F0EAD6;
+    background: rgba(240, 234, 214, 0.4); /* Semi-transparent glass background */
     padding: 20px; /* Padding for a compact look */
     border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255, 255, 255, 0.2); /* Subtle shadow with glowing effect */
     max-width: 400px; /* Maximum width */
     margin: auto; /* Center the container */
+    position: relative; /* For the shine effect */
+    backdrop-filter: blur(8px); /* Blur effect for glass look */
+    overflow: hidden; /* Contain the shine effect */
+}
+
+/* Glass shine effect */
+.signup-container::before {
+    content: "";
+    position: absolute;
+    top: -100%; /* Start off-screen */
+    left: -150%;
+    width: 200%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.3); /* Shine color */
+    transform: skewX(-45deg);
+    transition: all 0.7s ease-in-out;
+    pointer-events: none;
+    animation: glassShine 4s infinite; /* Continuous shine animation */
+    filter: blur(5px); /* Slight blur for shine */
+}
+
+/* Keyframes for the glass shine animation */
+@keyframes glassShine {
+    0% {
+        left: -150%;
+    }
+    100% {
+        left: 150%;
+    }
 }
 
 /* SignUp Heading Styles */
 .signup-heading {
     font-family: 'Comic Sans MS', cursive, sans-serif; /* Fun font */
-    color:0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    color: #333; /* Text color */
     text-align: center; /* Center align text */
     margin-bottom: 15px; /* Space below heading */
 }
@@ -35,6 +64,7 @@
 .signup-input:focus {
     border-color: purple; /* Change border color on focus */
     outline: none; /* Remove default outline */
+    transform: scale(1.02); /* Slight scale effect on focus */
 }
 
 /* Sign Up Button Styles */
@@ -46,12 +76,12 @@
     border: none; /* Remove default border */
     border-radius: 5px; /* Rounded corners */
     cursor: pointer; /* Pointer cursor */
-    transition: background-color 0.3s; /* Smooth background color transition */
-    
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
 }
 
 .signup-button:hover {
-    background-color: purple; /* Darker shade on hover */
+    background-color: #4b0082; /* Darker shade on hover */
+    transform: translateY(-2px); /* Slight lift effect */
 }
 
 /* Link Styles */
@@ -60,13 +90,15 @@
     margin-top: 10px; /* Space above link */
 }
 
-.signup-link a:hover {
-    color: #1976d2;
-    text-decoration: underline; /* Underline for links */
+.signup-link a {
+    color: #2196f3; /* Link color */
+    text-decoration: none; /* No underline */
+    transition: color 0.3s; /* Smooth color transition */
 }
 
 .signup-link a:hover {
-    color: #1976d2; /* Subtle shadow */
+    color: #1976d2; /* Darker blue on hover */
+    text-decoration: underline; /* Underline on hover */
 }
 
 /* Error and Success Message Styles */

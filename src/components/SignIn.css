@@ -1,18 +1,47 @@
 /* SignIn Container Styles */
 .signin-container {
-  background: #F0EAD6;
+  background: rgba(240, 234, 214, 0.4); /* Semi-transparent glass background */
   padding: 40px; /* Padding for spacious feel */
   border-radius: 15px; /* Rounded corners */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 255, 255, 0.3); /* Subtle shadow and glow */
   max-width: 400px; /* Maximum width for the container */
   margin: 0 auto; /* Center align container */
   animation: fadeIn 0.5s ease-in-out; /* Fade-in effect */
+  position: relative; /* Position relative for shine effect */
+  backdrop-filter: blur(10px); /* Blur for glass effect */
+  overflow: hidden; /* Contain the shine effect */
+}
+
+/* Glass shine effect */
+.signin-container::before {
+  content: "";
+  position: absolute;
+  top: -100%; /* Start off-screen */
+  left: -150%;
+  width: 200%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: skewX(-45deg);
+  transition: all 0.7s ease-in-out;
+  pointer-events: none;
+  animation: glassShine 4s infinite;
+  filter: blur(5px); /* Slight blur for the shine effect */
+}
+
+/* Keyframes for the glass shine animation */
+@keyframes glassShine {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
 }
 
 /* SignIn Heading Styles */
 .signin-heading {
   font-family: 'Comic Sans MS', cursive, sans-serif; /* Fun font */
-  color: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  color: #333;
   text-align: center; /* Center align text */
   margin-bottom: 25px; /* Space below heading */
   font-size: 28px; /* Font size */
@@ -58,7 +87,7 @@
 }
 
 .signin-button:hover {
-  background-color: purple; /* Darker shade on hover */
+  background-color: #4b0082; /* Darker purple on hover */
   transform: translateY(-2px); /* Lift effect on hover */
 }
 
@@ -92,11 +121,11 @@
 /* Animation Keyframes */
 @keyframes fadeIn {
   from {
-      opacity: 0; /* Start transparent */
-      transform: translateY(-20px); /* Slide in from top */
+    opacity: 0; /* Start transparent */
+    transform: translateY(-20px); /* Slide in from top */
   }
   to {
-      opacity: 1; /* Fully visible */
-      transform: translateY(0); /* No transform */
+    opacity: 1; /* Fully visible */
+    transform: translateY(0); /* No transform */
   }
 }
