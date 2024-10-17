@@ -1,13 +1,10 @@
-/* Footer.css */
-
 footer {
   background-color: #f8f9fa; /* Light background for contrast */
- 
-  padding: 1rem 1.5rem; /* Adjusted padding for a more spacious feel */
+  padding: 2rem 1.5rem; /* More spacious feel */
   text-align: center; /* Center-align text */
   position: relative; /* Ensure proper layout positioning */
   font-size: 0.9rem; /* Base font size for readability */
-  /* Removed box-shadow for a flatter design */
+  border-top: 1px solid #ddd; /* Subtle border on top for separation */
 }
 
 footer p {
@@ -16,43 +13,71 @@ footer p {
   line-height: 1.6; /* Increased line height for better readability */
 }
 
-footer p.mb-1 {
+.footer-company {
   font-weight: bold;
   color: #4b0082; /* Indigo color for emphasis */
 }
 
-footer p.mb-0 {
-  font-weight: normal;
+.footer-address {
+  font-size: 0.85rem; /* Slightly smaller font for address */
   color: #777; /* Light grey for secondary information */
 }
 
-/* Additional footer links */
-.footer-links {
-  margin-top: 10px; /* Space above links */
-  font-size: 0.8rem; /* Slightly smaller font for links */
+.footer-contact {
+  margin: 0.5rem 0; /* Space above and below contact info */
 }
 
-.footer-links a {
+.footer-link {
   color: #4b0082; /* Indigo color for links */
   text-decoration: none; /* Remove underline */
   margin: 0 8px; /* Space between links */
 }
 
-.footer-links a:hover {
+.footer-link:hover {
   text-decoration: underline; /* Underline on hover for better visibility */
+}
+
+/* Social icons styling */
+.social-icons {
+  margin: 1rem 0; /* Space around social icons */
+}
+
+.icon {
+  color: #4b0082; /* Indigo color for icons */
+  font-size: 1.5rem; /* Size of social icons */
+  margin: 0 10px; /* Space between icons */
+  transition: transform 0.3s; /* Smooth scaling effect */
+}
+
+.icon:hover {
+  transform: scale(1.1); /* Slightly enlarge icon on hover */
+}
+
+/* Quick links styling */
+.quick-links {
+  margin-top: 10px; /* Space above links */
+  font-size: 0.8rem; /* Slightly smaller font for links */
+}
+
+.quick-links a {
+  color: #4b0082; /* Indigo color for quick links */
+}
+
+.quick-links span {
+  color: #777; /* Light grey for separator */
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   footer {
-    padding: 0.5rem; /* Further reduced padding on smaller screens */
+    padding: 1rem; /* Reduced padding on smaller screens */
   }
 
   footer p {
     font-size: 0.75rem; /* Smaller font size on small screens */
   }
 
-  .footer-links {
-    font-size: 0.7rem; /* Adjust link font size for smaller screens */
+  .footer-link {
+    font-size: 0.8rem; /* Slightly smaller font for links */
   }
 }

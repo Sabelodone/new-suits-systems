@@ -42,10 +42,9 @@ h1 {
   background-color: #f8f9fa; /* Match container background */
   border: none; /* Remove default border */
 }
-
 .button-accordion {
   background-color: #fff; /* White button background */
-  color: #4b0082; /* Purple text for accordion button */
+  color: #343a40; /* Changed text color to dark gray instead of purple */
   font-family: 'Roboto', sans-serif;
   font-weight: bold;
   padding: 0.75rem 1.5rem;
@@ -58,7 +57,7 @@ h1 {
 }
 
 .button-accordion:hover {
-  background-color: #e6e6fa; /* Light lavender hover */
+  background-color: #f0f0f0; /* Changed hover background to light gray instead of lavender */
 }
 
 .button-accordion .ms-auto {
