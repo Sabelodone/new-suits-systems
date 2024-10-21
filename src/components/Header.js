@@ -1,20 +1,29 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaBars } from 'react-icons/fa';
+import './Header.css'; // Ensure this CSS file is properly linked
+import { Drawer, TextInput } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { Navbar, Nav, Form, FormControl, Button, Modal, Tab, Nav as BootstrapNav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import { FaSearch, FaFilter, FaUser } from 'react-icons/fa';
 import './Header.css'; // Ensure this CSS file is properly linked
+import { useUser } from './UserContext';
 
 const Header = () => {
+    const [opened, { open, close }] = useDisclosure(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [activeTab, setActiveTab] = useState('profile');
     const [profilePic, setProfilePic] = useState(null);
     const [username, setUsername] = useState('User Name');
     const [email, setEmail] = useState('user@example.com');
+    const { user } = useUser();
+    const navigate = useNavigate();
+
 
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
-    
+
     const handleSearch = (e) => {
         e.preventDefault();
         console.log('Searching for:', searchTerm);
@@ -37,35 +46,58 @@ const Header = () => {
         console.log('Profile updated:', { username, email, profilePic });
         handleClose();
     };
-
     return (
         <>
             <Navbar bg="light" expand="lg" className="mb-4 shadow-sm px-3">
+                {/* Brand on the left */}
                 <Navbar.Brand as={Link} to="/" className="font-weight-bold text-indigo">
                     LawFirm
                 </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Form inline className="mr-lg-auto mt-3 mt-lg-0 d-flex align-items-center" onSubmit={handleSearch}>
-                        <FaSearch className="mr-2 text-indigo" />
-                        <FormControl
-                            type="text"
-                            placeholder="Search"
-                            className="mr-sm-2 custom-search"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                        <Button type="submit" variant="outline-indigo" className="ml-2 custom-button">
-                            <FaFilter />
-                        </Button>
-                    </Form>
-                    <Nav className="ml-auto">
-                        <Nav.Link as={Link} to="/" className="text-indigo">Dashboard</Nav.Link>
-                        <Nav.Link onClick={handleShow} className="text-indigo" aria-label="User Options">
-                            <FaUser size={20} />
-                        </Nav.Link>
+
+                {/* Navigation items visible on larger screens */}
+                <Nav className="ml-auto d-none d-lg-flex flex items-center gap-1">
+                    <Nav.Link onClick={handleShow} className="text-indigo m-0" aria-label="User Options">
+                        <FaUser size={20} />
+                    </Nav.Link>
+
+                </Nav>
+
+                {/* Hamburger menu visible on smaller screens */}
+                <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={open} className="d-lg-none ml-auto">
+                    <FaBars size={24} />
+                </Navbar.Toggle>
+
+                {/* Drawer (opens when hamburger is clicked) */}
+                <Drawer opened={opened} onClose={close} styles={{
+                    inner: {
+                        width: '60%'
+                    }
+                }}>
+                    <Nav className="flex-column flex flex-col">
+                        <Form inline className="!flex !flex-col" onSubmit={handleSearch}>
+                            {/* <FaSearch className="mr-2 text-indigo" />
+                            <FormControl
+                                type="text"
+                                placeholder="Search"
+                                className="mr-sm-2 custom-search"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            /> */}
+                            <TextInput leftSection={<FaSearch />} rightSection={<FaFilter />} />
+                            {/* <Button type="submit" variant="outline-indigo" className="ml-2 custom-button">
+                                <FaFilter />
+                            </Button> */}
+                        </Form>
+
+                        {/* drawer */}
+                        <Nav className="flex items-start gap-1 w-full">
+                            <Nav.Link as={Link} to="/" className="text-indigo m-0">Dashboard</Nav.Link>
+                            <Nav.Link onClick={handleShow} className="text-indigo m-0" aria-label="User Options">
+                                <FaUser size={20} />
+                            </Nav.Link>
+                        </Nav>
                     </Nav>
-                </Navbar.Collapse>
+                </Drawer>
             </Navbar>
 
             {/* User Profile Modal */}
@@ -103,7 +135,7 @@ const Header = () => {
                                         height="100"
                                     />
                                     <h5>{username}</h5>
-                                    <p>Email: {email}</p>
+                                    <p>Email: {user?.email}</p>
                                 </div>
                             </Tab.Pane>
                             <Tab.Pane eventKey="settings">
@@ -141,7 +173,10 @@ const Header = () => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="logout">
                                 <p>Are you sure you want to log out?</p>
-                                <Button variant="danger" onClick={handleClose}>
+                                <Button variant="danger" onClick={() => {
+                                    handleClose();
+                                    navigate('/signin')
+                                }}>
                                     Logout
                                 </Button>
                             </Tab.Pane>

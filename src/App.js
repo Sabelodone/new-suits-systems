@@ -20,19 +20,22 @@ import { UserProvider, useUser } from './components/UserContext'; // Make sure U
 import TermsAndConditions from './components/TermsAndConditions';
 import InvoiceAndBilling from './components/InvoiceAndBilling';
 import Settings from './components/Settings'; // Adjust the path as necessary
-
+import '@mantine/core/styles.css';
+import { MantineProvider } from '@mantine/core';
 import './App.css'; // Assuming you have a global stylesheet
 
 function App() {
   return (
-    <UserProvider>
-      <Router>
-        <Header />
-        <MainContent />
-        <Chatbot />
-        <Footer />
-      </Router>
-    </UserProvider>
+    <MantineProvider>
+      <UserProvider>
+        <Router>
+          <Header />
+          <MainContent />
+          <Chatbot />
+          <Footer />
+        </Router>
+      </UserProvider>
+    </MantineProvider>
   );
 }
 
