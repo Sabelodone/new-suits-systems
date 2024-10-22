@@ -1,3 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
 /* General styles for the app */
 .App {
   text-align: center;
@@ -60,7 +65,7 @@
 
 /* Sidebar styles */
 .sidebar {
-  background-color: #e2d5ea; /* Eggshell background for sidebar */
+  background-color: #f8f9fa; /* Eggshell background for sidebar */
   width: 250px; /* Fixed width for sidebar */
   height: 100vh; /* Full height for sidebar */
   display: flex;

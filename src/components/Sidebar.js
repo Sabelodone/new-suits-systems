@@ -25,7 +25,7 @@ const Sidebar = () => {
           <NavLink
             key={to}
             to={to}
-            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+            className={({ isActive }) => `nav-link text-sm   ${isActive ? 'active' : ''}`}
           >
             <FontAwesomeIcon icon={icon} className="me-2" /> {label}
           </NavLink>

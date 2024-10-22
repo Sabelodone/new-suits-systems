@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import Header from './components/Header';
@@ -41,7 +41,6 @@ function App() {
 
 const MainContent = () => {
   const { user, loading } = useUser();
-
   // Example client data
   const clientData = [
     { id: 1, name: 'John Doe', email: 'johndoe@example.com' },

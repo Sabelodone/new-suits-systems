@@ -1,12 +1,12 @@
 /* General styles */
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 /* Navbar styles */
 .navbar {
-  background-color: #f8f9fa; /* Light background */
+  background-color: #e2e1e3; /* Light background */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   padding: 0.5rem 1rem;
 }
@@ -22,7 +22,7 @@ body {
 }
 
 .navbar .nav-link:hover {
-  background: linear-gradient(to right, #5a098e, #d8a507); /* Gradient on hover */
+  /* background: linear-gradient(to right, #5a098e, #d8a507); Gradient on hover */
   color: white; /* Change text color on hover */
 }
 
@@ -50,7 +50,11 @@ body {
 }
 
 .custom-button:hover {
-  background: linear-gradient(to right, #5a098e, #d8a507); /* Gradient on hover */
+  background: linear-gradient(
+    to right,
+    #5a098e,
+    #d8a507
+  ); /* Gradient on hover */
   color: white; /* White text on hover */
 }
 
@@ -102,7 +106,7 @@ body {
   .custom-button {
     font-size: 0.875rem; /* Adjust button text size for smaller screens */
   }
-  
+
   .luxury-modal .modal-content {
     padding: 1rem; /* Add more padding to modal on small screens */
   }
