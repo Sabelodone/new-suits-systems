@@ -8,7 +8,7 @@ import './Sidebar.css'; // Sidebar styles
 
 const Sidebar = () => {
   return (
-    <Col md={2} className="sidebar d-flex flex-column justify-content-between p-4">
+    <Col md={2} className="sidebar d-flex flex-column justify-content-between p-3">
       <Nav className="flex-column">
         {/* Sidebar Links */}
         {[
@@ -22,9 +22,9 @@ const Sidebar = () => {
           { to: "/invoice-and-billing", icon: faMoneyBill, label: "Invoice and Billing" }, // New link for Invoice and Billing
           { to: "/settings", icon: faCog, label: "Settings" }, // New link for Settings
         ].map(({ to, icon, label }) => (
-          <NavLink 
-            key={to} 
-            to={to} 
+          <NavLink
+            key={to}
+            to={to}
             className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
           >
             <FontAwesomeIcon icon={icon} className="me-2" /> {label}

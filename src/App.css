@@ -1,7 +1,7 @@
 /* General styles for the app */
 .App {
   text-align: center;
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: "Helvetica Neue", sans-serif;
   color: #333;
   position: relative; /* Needed for the shine effect */
   background: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
@@ -41,7 +41,6 @@
   border-radius: 10px; /* Soft rounded edges */
 }
 
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -61,7 +60,7 @@
 
 /* Sidebar styles */
 .sidebar {
-  background-color: #f0ead6; /* Eggshell background for sidebar */
+  background-color: #e2d5ea; /* Eggshell background for sidebar */
   width: 250px; /* Fixed width for sidebar */
   height: 100vh; /* Full height for sidebar */
   display: flex;
@@ -70,23 +69,23 @@
   top: 0;
   padding: 20px 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  
 }
 
 .sidebar .nav-link {
-  color: black;
+  color: white;
   font-weight: 500;
-  padding: 15px 20px;
   border-radius: 6px;
+  padding-block: 10px;
   transition: background 0.3s ease, color 0.3s ease;
   display: block;
   text-align: left;
+  background: #c6a2dc;
 }
 
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
-  background-color: #d8cfc4;
-  color: #f8c307;
+  background-color: #6a1b9a;
+  color: white;
 }
 
 /* Content area styles */
