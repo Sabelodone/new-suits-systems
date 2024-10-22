@@ -84,14 +84,35 @@ const DocumentManager = () => {
     setDocuments((prevDocs) => prevDocs.filter((_, docIndex) => docIndex !== index));
   };
 
+  // Drag-and-drop event handlers
+  const handleFileDrop = (e) => {
+    e.preventDefault();
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile) {
+      setFile(droppedFile);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+  };
+
   return (
-    <div className="doc-manager-container my-5 p-4 bg-light rounded shadow">
-      <h2 className="doc-manager-title mb-4 text-primary border-bottom pb-2">Document Management System</h2>
+    <div className="doc-management-container my-5 p-4 bg-light rounded shadow">
+      <h2 className="doc-management-title mb-4 text-primary border-bottom pb-2">Document Management System</h2>
 
       {error && <div className="alert alert-danger">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
 
-      <div className="doc-manager-search mb-4">
+      <div className="doc-management-search mb-4">
         <input
           type="text"
           placeholder="Search by case number, description, or document type"
@@ -101,41 +122,41 @@ const DocumentManager = () => {
         />
       </div>
 
-      <button className="btn btn-success mb-4" onClick={() => setIsFormVisible(!isFormVisible)}>
+      <button className="doc-btn-primary mb-4" onClick={() => setIsFormVisible(!isFormVisible)}>
         {isFormVisible ? 'Close Form' : 'Add New Document'}
       </button>
 
       {isFormVisible && (
         <form onSubmit={handleUpload} className="mb-5">
-          <div className="form-group">
+          <div className="doc-form-group">
             <label htmlFor="caseNumber">Case Number:</label>
             <input
               type="text"
               id="caseNumber"
               value={caseNumber}
               onChange={(e) => setCaseNumber(e.target.value)}
-              className="form-control"
+              className="doc-form-control"
               required
             />
           </div>
-          <div className="form-group">
+          <div className="doc-form-group">
             <label htmlFor="description">Description:</label>
             <input
               type="text"
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="form-control"
+              className="doc-form-control"
               required
             />
           </div>
-          <div className="form-group">
+          <div className="doc-form-group">
             <label htmlFor="documentType">Document Type:</label>
             <select
               id="documentType"
               value={documentType}
               onChange={(e) => setDocumentType(e.target.value)}
-              className="form-control"
+              className="doc-form-control-select"
               required
             >
               <option value="">Select Type</option>
@@ -145,23 +166,32 @@ const DocumentManager = () => {
               <option value="invoice">Invoice</option>
             </select>
           </div>
-          <div className="form-group">
-            <label htmlFor="fileUpload">Upload File:</label>
+          <div
+            className="doc-file-drop-area"
+            onDrop={handleFileDrop}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+          >
+            <label htmlFor="fileUpload">Drag & Drop File Here or Click to Upload</label>
             <input
               type="file"
               id="fileUpload"
               onChange={handleFileChange}
-              className="form-control-file"
+              className="doc-form-control-file"
+              style={{ display: "none" }}
               required
             />
+            {file && <p>File Selected: {file.name}</p>}
           </div>
-          <button type="submit" className="btn btn-primary" disabled={isLoading}>
+
+          <button type="submit" className="doc-btn-primary" disabled={isLoading}>
             {isLoading ? 'Uploading...' : 'Upload Document'}
           </button>
         </form>
       )}
 
-      <h3 className="doc-manager-subtitle mb-3">Uploaded Documents</h3>
+      <h3 className="doc-management-subtitle mb-3">Uploaded Documents</h3>
       <div className="row">
         {filteredDocuments.length > 0 ? (
           filteredDocuments.map((doc, index) => (
@@ -171,10 +201,10 @@ const DocumentManager = () => {
               </div>
               <p>{doc.description}</p>
               <div className="d-flex justify-content-center gap-2">
-                <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="btn btn-link">
+                <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="doc-btn-link">
                   View Document
                 </a>
-                <button onClick={() => handleDelete(index)} className="btn btn-danger">
+                <button onClick={() => handleDelete(index)} className="doc-btn-danger">
                   Delete
                 </button>
               </div>

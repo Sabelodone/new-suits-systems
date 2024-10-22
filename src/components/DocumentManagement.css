@@ -41,190 +41,80 @@ a:hover {
   margin-bottom: 20px;
 }
 
-.doc-management-title {
-  font-size: 2rem;
-  font-weight: bold;
-  border-bottom: 2px solid #6a1b9a;
-  padding-bottom: 10px;
-}
-
-.doc-management-subtitle {
-  font-size: 1.75rem;
-  font-weight: 600;
-}
-
-/* Form styles */
-.doc-form-group label {
-  font-weight: 600;
-  color: #333;
-  font-size: 1rem;
-}
-
-.doc-form-control,
-.doc-form-control-file,
-.doc-form-control-select {
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  padding: 12px;
-  font-size: 1rem;
-  margin-bottom: 20px;
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.doc-form-control:focus,
-.doc-form-control-file:focus,
-.doc-form-control-select:focus {
-  border-color: #6a1b9a;
-  outline: none;
-  box-shadow: 0 0 8px rgba(106, 27, 154, 0.2);
-}
-
-.doc-form-control-file {
-  border: none;
-  font-size: 0.9rem;
-}
-
 /* Button styles */
 .doc-btn-primary {
   background-color: #6a1b9a;
-  border-color: #6a1b9a;
   color: #fff;
-  border-radius: 8px;
-  padding: 12px 25px;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s;
-  box-shadow: 0 4px 10px rgba(106, 27, 154, 0.2);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .doc-btn-primary:hover {
-  background-color: #4a148c;
-  border-color: #4a148c;
-  transform: translateY(-2px);
+  background-color: #4a0072;
 }
 
-.doc-btn-primary:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(106, 27, 154, 0.15);
+.doc-btn-danger {
+  background-color: #e53935;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.doc-btn-primary:focus {
-  outline: none;
-  box-shadow: 0 0 10px rgba(106, 27, 154, 0.5);
+.doc-btn-danger:hover {
+  background-color: #c62828;
 }
 
 .doc-btn-link {
   color: #6a1b9a;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.3s;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .doc-btn-link:hover {
-  color: #4a148c;
-  text-decoration: underline;
+  color: #4a0072;
 }
 
-/* Card styles for document display */
-.doc-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
-  background-color: #fff;
+/* Form styles */
+.doc-form-group {
+  margin-bottom: 15px;
 }
 
-.doc-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+.doc-form-control, .doc-form-control-select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
 }
 
-.doc-card-body {
-  padding: 1.75rem;
-  background-color: #fafafa;
+.doc-form-control:focus, .doc-form-control-select:focus {
+  border-color: #6a1b9a;
 }
 
-.doc-card-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
+.doc-file-drop-area {
+  border: 2px dashed #6a1b9a;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
 }
 
-.doc-card-text {
-  font-size: 1.1rem;
-  color: #555;
-  line-height: 1.6;
-}
-
-/* List styles */
-.doc-list-unstyled {
-  padding-left: 0;
-  list-style: none;
-  margin-top: 10px;
-}
-
-.doc-list-unstyled li {
-  margin-bottom: 12px;
-  font-size: 1rem;
-  color: #333;
+.doc-file-drop-area:hover {
+  border-color: #4a0072;
 }
 
 .doc-document-icon {
-  font-size: 5rem; /* Double the size of the icon */
+  font-size: 50px;
   color: #6a1b9a;
-  margin-bottom: 10px;
-  transition: transform 0.3s, color 0.3s;
 }
 
-.doc-document-icon:hover {
-  transform: scale(1.1);
-  color: #4a148c;
-}
 
-/* Rest of your styles remain the same... */
-
-/* Image and PDF preview styles */
-.doc-img {
-  border-radius: 4px;
-  max-width: 100%;
-  height: auto;
-  margin-top: 10px;
-  transition: box-shadow 0.3s ease;
-}
-
-.doc-img:hover {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-/* PDF iframe preview */
-.doc-iframe {
-  border: none;
-  width: 100%;
-  height: 500px;
-  margin-top: 10px;
-}
-
-/* View Document button styles */
-.doc-btn-view {
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s;
-  text-transform: uppercase;
-}
-
-.doc-btn-view:hover {
-  background-color: #6a1b9a;
-  border-color: #6a1b9a;
-  color: #fff;
-  transform: translateY(-2px);
-}
-
-.doc-btn-view:focus {
-  outline: none;
-  box-shadow: 0 0 10px rgba(106, 27, 154, 0.5);
-}
 
 /* Responsive design */
 @media (max-width: 768px) {
