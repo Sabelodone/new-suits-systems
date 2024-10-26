@@ -19,7 +19,7 @@ def create_app():
     app = Flask(__name__)
 
     # Configuration
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'  # You can update this with your MySQL configuration
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'app.db')  # You can update this with your MySQL configuration
     app.config['SECRET_KEY'] = os.urandom(24).hex()
     app.config['SESSION_PERMANENT'] = False
     app.config['SESSION_TYPE'] = 'filesystem'
@@ -38,7 +38,8 @@ def create_app():
     swagger = Swagger(app, template_file='swagger.yml')
 
     # Import models
-    from app import models
+    with app.app_context():
+        from app import models
 
     # Register Blueprints
     from app.routes.users import users_blueprint  # Import your users blueprint
