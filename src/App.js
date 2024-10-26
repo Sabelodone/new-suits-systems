@@ -43,15 +43,13 @@ function App() {
 
 const MainContent = () => {
   const { user, loading } = useUser();
-<<<<<<< HEAD
+
   // Example client data
   const clientData = [
     { id: 1, name: 'John Doe', email: 'johndoe@example.com' },
     { id: 2, name: 'Jane Smith', email: 'janesmith@example.com' },
     { id: 3, name: 'David Johnson', email: 'davidjohnson@example.com' },
   ];
-=======
->>>>>>> 064c716 (added backend functionalities)
 
   if (loading) {
     return (
