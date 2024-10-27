@@ -1,7 +1,7 @@
 import logging
 from flask import Blueprint, request, jsonify
 from app import db
-from app.models import Case
+from app.models.case import Case
 from flask_login import login_required
 
 # Configure logging

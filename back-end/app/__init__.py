@@ -39,20 +39,21 @@ def create_app():
     #app.register_blueprint(events_blueprint, url_prefix='/api/events')
 
     from app.models import user, gender, lawfirm, client, lawfirm_employee, client_lawfirm
-    from app.models import case, task, case_status, case_category, document,document_type
+    from app.models.case import Case
+    from app.models import task, case_status, case_category, document,document_type
     from app.models import customer, base_model, primarykey_base_model, phone_number
     from app.models import task_status, document_status, document_history, client_phone
     from app.models.payment import payment, invoice
 
-    # # Register Blueprints
+    # Register Blueprints
     # from app.routes.users import users_blueprint  # Import your users blueprint
     # app.register_blueprint(users_blueprint, url_prefix='/users')  # Prefix all routes with /users
 
     # #from app.routes.billing import billing_blueprint
     # #app.register_blueprint(billing_blueprint, url_prefix='/billing')
-
-    # #from app.routes.cases import case_blueprint
-    # #app.register_blueprint(case_blueprint, url_prefix='/cases')
+    
+    from app.routes.cases import cases_blueprint
+    app.register_blueprint(cases_blueprint, url_prefix='/api/cases')
 
     # from app.routes.customers import customers_blueprint
     # app.register_blueprint(customers_blueprint, url_prefix='/customers')
