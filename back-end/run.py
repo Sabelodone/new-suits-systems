@@ -1,4 +1,5 @@
 from app import create_app, db
+from sqlalchemy import text  # Import this at the top
 
 app = create_app()
 
@@ -12,7 +13,7 @@ with app.app_context():
         try:
             with app.app_context():
                 # Attempt to connect and execute a simple query
-                db.session.execute('SELECT 1')  # Simple query to check connection
+                db.session.execute(text('SELECT 1'))  # Simple query to check connection
                 print("Database connection successful!")
         except Exception as e:
             print(f"Database connection failed: {e}")
