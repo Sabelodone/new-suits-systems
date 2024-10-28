@@ -22,6 +22,8 @@ import InvoiceAndBilling from './components/InvoiceAndBilling';
 import Settings from './components/Settings'; // Adjust the path as necessary
 import '@mantine/core/styles.css';
 import { MantineProvider } from '@mantine/core';
+import CreateCase from './components/CreateCase'; // Importing the CreateCase component
+import AddTask from './components/AddTask'; // Importing AddTask component
 import './App.css'; // Assuming you have a global stylesheet
 
 function App() {
@@ -41,6 +43,7 @@ function App() {
 
 const MainContent = () => {
   const { user, loading } = useUser();
+
   // Example client data
   const clientData = [
     { id: 1, name: 'John Doe', email: 'johndoe@example.com' },
@@ -74,12 +77,14 @@ const MainContent = () => {
             <Route path="/clients" element={<PrivateRoute><Clients /></PrivateRoute>} />
             <Route path="/document-management" element={<PrivateRoute><DocumentManagement /></PrivateRoute>} />
             <Route path="/legal-templates" element={<PrivateRoute><LegalTemplates /></PrivateRoute>} />
-            <Route path="/invoice-and-billing" element={<PrivateRoute><InvoiceAndBilling clients={clientData} /></PrivateRoute>} />
+	  {/*<Route path="/invoice-and-billing" element={<PrivateRoute><InvoiceAndBilling clients={clientData} /></PrivateRoute>} />*/}
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} /> {/* New route for Settings */}
+	    <Route path="/add-task" element={<PrivateRoute><AddTask /></PrivateRoute>} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
             {/* Redirect root path */}
             <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/signin" replace />} />
+	  < Route path="/create-case" element={<CreateCase />} /> {/*CraeteCase route*/}
           </Routes>
         </Col>
       </Row>

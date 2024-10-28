@@ -5,11 +5,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_session import Session
 from flasgger import Swagger
+from flask_cors import CORS
+from flask_migrate import Migrate
 
 # Initialize extensions
 db = SQLAlchemy()
 login_manager = LoginManager()
 sess = Session()
+migrate = Migrate()
 swagger = Swagger()
 
 def create_app():
@@ -23,8 +26,13 @@ def create_app():
 
     # Initialize extensions
     db.init_app(app)
+    migrate.init_app(app, db)
     login_manager.init_app(app)
     sess.init_app(app)
+
+    #Initialize CORS, allow requests from react app
+    CORS(app, supports_credentials=True) # Allow credentials if needed
+    app.config['CORS_HEADERS'] = 'Content-Type' # Specify allowed headers
     
     # Initialize Swagger with YAML configuration
     swagger = Swagger(app, template_file='swagger.yml')
@@ -34,31 +42,34 @@ def create_app():
 
     # Register Blueprints
     from app.routes.users import users_blueprint  # Import your users blueprint
-    app.register_blueprint(users_blueprint, url_prefix='/users')  # Prefix all routes with /users
+    app.register_blueprint(users_blueprint, url_prefix='/api/users')  # Prefix all routes with /users
 
     #from app.routes.billing import billing_blueprint
-    #app.register_blueprint(billing_blueprint, url_prefix='/billing')
+    #app.register_blueprint(billing_blueprint, url_prefix='/api/billing')
 
-    #from app.routes.cases import case_blueprint
-    #app.register_blueprint(case_blueprint, url_prefix='/cases')
+    from app.routes.cases import cases_blueprint
+    app.register_blueprint(cases_blueprint, url_prefix='/api/cases')
 
     from app.routes.customers import customers_blueprint
-    app.register_blueprint(customers_blueprint, url_prefix='/customers')
+    app.register_blueprint(customers_blueprint, url_prefix='/api/customers')
 
     from app.routes.documents import documents_blueprint
-    app.register_blueprint(documents_blueprint, url_prefix='/documents')
+    app.register_blueprint(documents_blueprint, url_prefix='/api/documents')
 
     from app.routes.invoices import invoices_blueprint
-    app.register_blueprint(invoices_blueprint, url_prefix='/invoices')
+    app.register_blueprint(invoices_blueprint, url_prefix='/api/invoices')
 
     from app.routes.payments import payments_blueprint
-    app.register_blueprint(payments_blueprint, url_prefix='/payments')
+    app.register_blueprint(payments_blueprint, url_prefix='/api/payments')
 
     from app.routes.tasks import tasks_blueprint
-    app.register_blueprint(tasks_blueprint, url_prefix='/tasks')
+    app.register_blueprint(tasks_blueprint, url_prefix='/api/tasks')
+
+    from app.routes.events import events_blueprint
+    app.register_blueprint(events_blueprint, url_prefix='/api/events')
 
     # Set login manager login view
-    login_manager.login_view = 'users.login'
+    login_manager.login_view = 'users.login_user'
 
     # user loader callback for Flask-Login
     @login_manager.user_loader

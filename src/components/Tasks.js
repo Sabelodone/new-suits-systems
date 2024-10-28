@@ -1,17 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState} from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Tasks.css';
 import { Table, Badge, Button } from 'react-bootstrap';
+import axios from 'axios';
 
 const Tasks = () => {
-  // Sample task data
-  const tasks = [
-    { id: 1, description: 'Review Documents', status: 'In Progress', dueDate: '2024-08-30' },
-    { id: 2, description: 'Prepare Case Notes', status: 'Completed', dueDate: '2024-08-25' },
-    { id: 3, description: 'Schedule Client Meeting', status: 'Pending', dueDate: '2024-09-05' },
-    // Add more tasks here as needed
-  ];
+  // task data
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch tasks from the backend server
+  useEffect(()=> {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get('http://34.35.32.197/api/tasks'); //Backend URL API
+  	setTasks(response.data);
+      } catch (err) {
+  	setError (err.response?.data?.error || 'An error occcured while fetching tasks');
+      } finally {
+  	setLoading(false);
+      }
+    };
+
+  fetchTasks();
+}, []);
 
   // Function to display status badge
   const renderStatusBadge = (status) => {
