@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Cases.css'; // Custom CSS for additional styling
-import { Button, Table, Row, Col } from 'react-bootstrap';
+import { Table, Row, Col } from 'react-bootstrap';
 import { FaClipboardList } from 'react-icons/fa'; // Keep the clipboard list icon
+import { Button } from '@mantine/core';
 
 const Cases = () => {
   const [cases] = useState([ // Removed setCases to avoid unused variable warning
@@ -19,33 +20,28 @@ const Cases = () => {
   };
 
   return (
-    <div className="container mt-5 cases-container">
-      {/* Navigation */}
-      <Nav className="mb-4 justify-content-center">
-        <Nav.Link as={Link} to="/tasks" className="text-indigo">Tasks</Nav.Link>
-        <Nav.Link as={Link} to="/time-management" className="text-indigo">Time Management</Nav.Link>
-        <Nav.Link as={Link} to="/clients" className="text-indigo">Clients</Nav.Link>
-        <Nav.Link as={Link} to="/documents-management" className="text-indigo">Document Manager</Nav.Link>
-      </Nav>
+    <div className="container cases-container bg-[#e3dce7] rounded-lg flex flex-col gap-6 items-center w-full">
 
       {/* Page Header */}
-      <h1 className="mb-4 text-center">Case Management</h1>
+      <h3 className='text-2xl text-primary-purple font-bold '>Case Management</h3>
+
 
       {/* Assessed Button */}
-      <div className="text-center mb-4">
-        <Button variant="primary" onClick={handleAssessedClick}>
-          <FaClipboardList className="me-2" /> Assessed
+      <div className="text-center mb-4  ">
+        <Button variant="primary" className='flex items-center bg-primary-purple hover:bg-primary-purple cursor-pointer' onClick={handleAssessedClick}>
+          <FaClipboardList className="me-2" size={16} />
+          <span className='text-xs '> Assessed</span>
         </Button>
       </div>
 
       {/* File Icons and Client Details (Visible when table is hidden) */}
       {!showTable && (
-        <div className="client-files mt-4">
+        <div className="client-files mt-4 w-full">
           <Row>
             {cases.map((caseItem) => (
               <Col key={caseItem.id} md={6} lg={4} className="mb-3 text-center">
                 <div className="folder-icon" style={{ padding: '10px', borderRadius: '5px' }}>
-                  <span style={{ fontSize: '30px' }}> 📂 </span> {/* Folder emoji */}
+                  <span> 📂 </span> {/* Folder emoji */}
                   <div className="folder-details">
                     <strong>Client ID:</strong> {caseItem.id}
                     <br />
