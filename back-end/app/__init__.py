@@ -4,7 +4,6 @@ from flask import Flask
 from config import Config
 from flasgger import Swagger
 from flask_cors import CORS
-
 from .extentions import db, login_manager, sess, swagger, migration
 
 def create_app():
@@ -38,9 +37,12 @@ def create_app():
     #from app.routes.events import events_blueprint
     #app.register_blueprint(events_blueprint, url_prefix='/api/events')
 
-    from app.models import user, gender, lawfirm, client, lawfirm_employee, client_lawfirm
+    from app.models.workflow import Workflow
+    from app.models import case, user, gender, lawfirm, client, lawfirm_employee, client_lawfirm
     from app.models.case import Case
     from app.models import task, case_status, case_category, document,document_type
+    from app.models.case_category import CaseCategory
+    from app.models.case_status import CaseStatus
     from app.models import customer, base_model, primarykey_base_model, phone_number
     from app.models import task_status, document_status, document_history, client_phone
     from app.models.payment import payment, invoice

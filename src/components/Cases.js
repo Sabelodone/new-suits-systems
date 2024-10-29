@@ -8,6 +8,9 @@ import { Button, Table, Row, Col } from 'react-bootstrap';
 import { FaClipboardList } from 'react-icons/fa'; // Keep the clipboard list icon
 import { useNavigate } from 'react-router-dom'; // UseNavigate, to navigate back once the case is added
 import axios from 'axios';
+//import { Button } from '@mantine/core';
+//import { useNavigate } from 'react-router-dom'; // UseNavigate, to navigate back once the case is added
+//import axios from 'axios';
 
 const Cases = () => {
   const [cases, setCases] = useState([]);
@@ -96,8 +99,8 @@ const Cases = () => {
                 <th>Status</th>
 	      	<th>Category ID</th>
 	      	<th>Law Firm ID</th>
-	      	<th> Created At</th>
-	      	<th>Last Updated</th>
+	      	<th>Date Created</th>
+	      	<th>Last Modified</th>
               </tr>
             </thead>
             <tbody>
@@ -110,7 +113,7 @@ const Cases = () => {
 		  <td>{caseItem.category_id}</td>
 		  <td>{caseItem.lawfirm_id}</td>
 		  <td>{new Date(caseItem.created_at).toLocaleDateString()}</td>
-		  <td>{new Date(caseItem.last_upadted).toLocaleDateString()}</td>
+		  <td>{new Date(caseItem.updated_at).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>
