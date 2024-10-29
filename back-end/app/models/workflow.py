@@ -1,10 +1,11 @@
-from app.extentions import db
+from flask_sqlalchemy import SQLAlchemy
 from .primarykey_base_model import PrimaryKeyBaseModel
+from app.extentions import db
 
 class Workflow(PrimaryKeyBaseModel):
     __tablename__ = 'workflows'
     
-    #id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     statuses = db.relationship('CaseStatus', backref='workflow', lazy=True)
 

@@ -37,8 +37,8 @@ def create_app():
     #from app.routes.events import events_blueprint
     #app.register_blueprint(events_blueprint, url_prefix='/api/events')
 
+    from app.models import case, user, gender, lawfirm, client, lawfirm_employee, client_lawfirm, workflow
     from app.models.workflow import Workflow
-    from app.models import case, user, gender, lawfirm, client, lawfirm_employee, client_lawfirm
     from app.models.case import Case
     from app.models import task, case_status, case_category, document,document_type
     from app.models.case_category import CaseCategory
@@ -46,7 +46,8 @@ def create_app():
     from app.models import customer, base_model, primarykey_base_model, phone_number
     from app.models import task_status, document_status, document_history, client_phone
     from app.models.payment import payment, invoice
-
+    
+    print("Successfully Imported all models")
     # Register Blueprints
     # from app.routes.users import users_blueprint  # Import your users blueprint
     # app.register_blueprint(users_blueprint, url_prefix='/users')  # Prefix all routes with /users
@@ -71,6 +72,12 @@ def create_app():
 
     # from app.routes.tasks import tasks_blueprint
     # app.register_blueprint(tasks_blueprint, url_prefix='/tasks')
+
+    from app.routes.workflows import workflows_blueprint
+    app.register_blueprint(workflows_blueprint, url_prefix='/api/workflows')
+
+    from app.routes.statuses import statuses_blueprint
+    app.register_blueprint(statuses_blueprint, url_prefix='/api/statuses')
 
     # # Set login manager login view
     # login_manager.login_view = 'users.login'
