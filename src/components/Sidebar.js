@@ -15,9 +15,9 @@ const Sidebar = () => {
           { to: "/dashboard", icon: faHome, label: "Dashboard" },
           { to: "/cases", icon: faBriefcase, label: "Cases" },
           { to: "/tasks", icon: faTasks, label: "Tasks" },
-          { to: "/time-management", icon: faClock, label: "Time Management" },
+          { to: "/time-management", icon: faClock, label: "Schedular" },
           { to: "/clients", icon: faUsers, label: "Clients" },
-          { to: "/document-management", icon: faFileAlt, label: "Document Management" },
+          { to: "/document-management", icon: faFileAlt, label: "Documents" },
           { to: "/legal-templates", icon: faFileAlt, label: "Templates" },
           { to: "/invoice-and-billing", icon: faMoneyBill, label: "Invoice and Billing" }, // New link for Invoice and Billing
           { to: "/settings", icon: faCog, label: "Settings" }, // New link for Settings

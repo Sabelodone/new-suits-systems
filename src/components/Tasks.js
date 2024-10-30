@@ -1,17 +1,37 @@
-import React from 'react';
-import { Nav } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Nav, Table, Badge, Button, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Tasks.css';
-import { Table, Badge, Button } from 'react-bootstrap';
 
 const Tasks = () => {
-  // Sample task data
-  const tasks = [
+  const [tasks, setTasks] = useState([
     { id: 1, description: 'Review Documents', status: 'In Progress', dueDate: '2024-08-30' },
     { id: 2, description: 'Prepare Case Notes', status: 'Completed', dueDate: '2024-08-25' },
     { id: 3, description: 'Schedule Client Meeting', status: 'Pending', dueDate: '2024-09-05' },
-    // Add more tasks here as needed
-  ];
+  ]);
+
+  // Set the default state values to true so that all sections are open by default
+  const [showAddTaskForm, setShowAddTaskForm] = useState(true);
+  const [showAddAppointmentForm, setShowAddAppointmentForm] = useState(true);
+  const [showAgendaSection, setShowAgendaSection] = useState(true);
+  const [showCalendarSection, setShowCalendarSection] = useState(true);
+
+  // State for new task and new appointment
+  const [newTask, setNewTask] = useState({ description: '', status: '', dueDate: '' });
+  const [newAppointment, setNewAppointment] = useState({ title: '', date: '', time: '' });
+
+  // Toggle functions for each form and section
+  const toggleAddTaskForm = () => setShowAddTaskForm(!showAddTaskForm);
+  const toggleAddAppointmentForm = () => setShowAddAppointmentForm(!showAddAppointmentForm);
+  const toggleAgendaSection = () => setShowAgendaSection(!showAgendaSection);
+  const toggleCalendarSection = () => setShowCalendarSection(!showCalendarSection);
+
+  // Function to add a new task
+  const handleAddTask = () => {
+    setTasks([...tasks, { id: tasks.length + 1, ...newTask }]);
+    setNewTask({ description: '', status: '', dueDate: '' });
+    setShowAddTaskForm(true);
+  };
 
   // Function to display status badge
   const renderStatusBadge = (status) => {
@@ -44,12 +64,117 @@ const Tasks = () => {
 
       {/* Buttons Section */}
       <div className="mb-4 d-flex justify-content-between">
-        <Button variant="primary" as={Link} to="/add-task">Add Task</Button>
-        <Button variant="primary" as={Link} to="/add-appointment">Add Appointment</Button>
-        <Button variant="primary" as={Link} to="/calendar">Calendar</Button>
-        <Button variant="primary" as={Link} to="/agenda">Agenda</Button>
+        <Button variant="primary" onClick={toggleAddTaskForm}>
+          {showAddTaskForm ? 'Close Add Task' : 'Add Task'}
+        </Button>
+        <Button variant="primary" onClick={toggleAddAppointmentForm}>
+          {showAddAppointmentForm ? 'Close Add Appointment' : 'Add Appointment'}
+        </Button>
+        <Button variant="primary" onClick={toggleAgendaSection}>
+          {showAgendaSection ? 'Close Agenda' : 'Agenda'}
+        </Button>
+        <Button variant="primary" onClick={toggleCalendarSection}>
+          {showCalendarSection ? 'Close Calendar' : 'Calendar'}
+        </Button>
       </div>
 
+      {/* Add Task Form */}
+      {showAddTaskForm && (
+        <div className="mb-4 p-3 border rounded shadow-sm">
+          <h5>Add New Task</h5>
+          <Form>
+            <Form.Group controlId="formTaskDescription">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter task description"
+                value={newTask.description}
+                onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+              />
+            </Form.Group>
+            <Form.Group controlId="formTaskStatus" className="mt-3">
+              <Form.Label>Status</Form.Label>
+              <Form.Select
+                value={newTask.status}
+                onChange={(e) => setNewTask({ ...newTask, status: e.target.value })}
+              >
+                <option value="">Select status</option>
+                <option value="Completed">Completed</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Pending">Pending</option>
+              </Form.Select>
+            </Form.Group>
+            <Form.Group controlId="formTaskDueDate" className="mt-3">
+              <Form.Label>Due Date</Form.Label>
+              <Form.Control
+                type="date"
+                value={newTask.dueDate}
+                onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+              />
+            </Form.Group>
+            <Button variant="primary" className="mt-3" onClick={handleAddTask}>
+              Add Task
+            </Button>
+          </Form>
+        </div>
+      )}
+
+      {/* Add Appointment Form */}
+      {showAddAppointmentForm && (
+        <div className="mb-4 p-3 border rounded shadow-sm">
+          <h5>Add New Appointment</h5>
+          <Form>
+            <Form.Group controlId="formAppointmentTitle">
+              <Form.Label>Title</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter appointment title"
+                value={newAppointment.title}
+                onChange={(e) => setNewAppointment({ ...newAppointment, title: e.target.value })}
+              />
+            </Form.Group>
+            <Form.Group controlId="formAppointmentDate" className="mt-3">
+              <Form.Label>Date</Form.Label>
+              <Form.Control
+                type="date"
+                value={newAppointment.date}
+                onChange={(e) => setNewAppointment({ ...newAppointment, date: e.target.value })}
+              />
+            </Form.Group>
+            <Form.Group controlId="formAppointmentTime" className="mt-3">
+              <Form.Label>Time</Form.Label>
+              <Form.Control
+                type="time"
+                value={newAppointment.time}
+                onChange={(e) => setNewAppointment({ ...newAppointment, time: e.target.value })}
+              />
+            </Form.Group>
+            <Button variant="primary" className="mt-3">
+              Add Appointment
+            </Button>
+          </Form>
+        </div>
+      )}
+
+      {/* Agenda Section */}
+      {showAgendaSection && (
+        <div className="mb-4 p-3 border rounded shadow-sm">
+          <h5>Agenda</h5>
+          <p>Here you can add or view your agenda items for the upcoming days.</p>
+          {/* Add more agenda-related content or functionality here */}
+        </div>
+      )}
+
+      {/* Calendar Section */}
+      {showCalendarSection && (
+        <div className="mb-4 p-3 border rounded shadow-sm">
+          <h5>Calendar</h5>
+          <p>This is the Calendar view where you can see scheduled tasks, appointments, and events.</p>
+          {/* You could embed a calendar component here if needed */}
+        </div>
+      )}
+
+      {/* Table for tasks */}
       <div className="table-responsive">
         <Table striped bordered hover className="shadow-sm custom-table">
           <thead className="bg-primary text-white">

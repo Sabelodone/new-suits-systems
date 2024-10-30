@@ -107,7 +107,7 @@ const DocumentManager = () => {
 
   return (
     <div className="doc-management-container my-5 p-4 bg-light rounded shadow">
-      <h2 className="doc-management-title mb-4 text-primary border-bottom pb-2">Document Management System</h2>
+      <h2 className="doc-management-title mb-4 text-primary border-bottom pb-2">Documents</h2>
 
       {error && <div className="alert alert-danger">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}

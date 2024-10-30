@@ -54,7 +54,7 @@ const TimeManagement = () => {
         <Nav.Link as={Link} to="/documents" className="text-indigo">Documents</Nav.Link>
       </Nav>
 
-      <h1 className="mb-4 text-center">Time Management</h1>
+      <h1 className="mb-4 text-center">Schedular</h1>
 
       {/* Accordion Filter Section */}
       <Accordion>
