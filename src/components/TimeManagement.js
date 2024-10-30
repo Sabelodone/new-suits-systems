@@ -53,22 +53,121 @@ const TimeManagement = () => {
   };
 
   return (
-    <div>
-      <h1>Time Management</h1>
-      {loading ? ( // Show loading state
-        <p>Loading events...</p>
-      ) : (
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 500, margin: '50px' }}
-          selectable
-          onSelectSlot={handleSelectSlot} // Enable event creation on slot selection
-        />
-      )}
-    </div>
+
+    <div className="container mt-5 time-management-container">
+      <Nav className="mb-4">
+        <Nav.Link as={Link} to="/cases" className="text-indigo">Cases</Nav.Link>
+        <Nav.Link as={Link} to="/tasks" className="text-indigo">Tasks</Nav.Link>
+        <Nav.Link as={Link} to="/clients" className="text-indigo">Clients</Nav.Link>
+        <Nav.Link as={Link} to="/documents" className="text-indigo">Documents</Nav.Link>
+      </Nav>
+
+      <h1 className="mb-4 text-center">Schedular</h1>
+
+      {/* Accordion Filter Section */}
+      <Accordion>
+        <Card>
+          <Card.Header>
+            <Button
+              onClick={toggleAccordion}
+              aria-controls="filter-accordion"
+              aria-expanded={isOpen}
+              variant="light"
+              className="d-flex align-items-center"
+            >
+              Filters {isOpen ? <FaChevronUp className="ms-auto" /> : <FaChevronDown className="ms-auto" />}
+            </Button>
+          </Card.Header>
+          <Accordion.Collapse in={isOpen}>
+            <Card.Body id="filter-accordion">
+              <Form>
+                <div className="row">
+                  <div className="col-md-6">
+                    <Form.Group controlId="filterDate">
+                      <Form.Label>Filter by Date</Form.Label>
+                      <InputGroup>
+                        <InputGroup.Text>
+                          <FaCalendarAlt /> {/* Icon inside the InputGroup */}
+                        </InputGroup.Text>
+                        <Form.Control
+                          type="date"
+                          value={filterDate}
+                          onChange={(e) => setFilterDate(e.target.value)}
+                        />
+                      </InputGroup>
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group controlId="filterParticipant">
+                      <Form.Label>Filter by Participant</Form.Label>
+                      <InputGroup>
+                        <InputGroup.Text>
+                          <FaUser /> {/* Icon inside the InputGroup */}
+                        </InputGroup.Text>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter participant name"
+                          value={filterParticipant}
+                          onChange={(e) => setFilterParticipant(e.target.value)}
+                        />
+                      </InputGroup>
+                    </Form.Group>
+                  </div>
+                </div>
+              </Form>
+            </Card.Body>
+          </Accordion.Collapse>
+        </Card>
+      </Accordion>
+
+      <div className="table-responsive mt-4">
+        <Table striped bordered hover className="shadow-sm custom-table">
+          <thead className="bg-primary text-white">
+            <tr>
+              <th>Entry ID</th>
+              <th>Task</th>
+              <th>Hours Worked</th>
+              <th>Date</th>
+              <th>Participant</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredEntries.length > 0 ? (
+              filteredEntries.map(entry => (
+                <tr key={entry.id}>
+                  <td>{entry.id}</td>
+                  <td>{entry.task}</td>
+                  <td>{renderHoursBadge(entry.hours)}</td>
+                  <td>{entry.date}</td>
+                  <td>{entry.participant}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center">No entries found</td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </div>
+
+ //   <div>
+ //     <h1>Time Management</h1>
+ //     {loading ? ( // Show loading state
+ //       <p>Loading events...</p>
+ //     ) : (
+ //       <Calendar
+ //         localizer={localizer}
+ //         events={events}
+ //         startAccessor="start"
+  //        endAccessor="end"
+  //        style={{ height: 500, margin: '50px' }}
+ //         selectable
+ //         onSelectSlot={handleSelectSlot} // Enable event creation on slot selection
+//        />
+//      )}
+
+//    </div>
   );
 };
 

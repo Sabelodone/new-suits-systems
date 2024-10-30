@@ -15,6 +15,8 @@ import LegalTemplates from './components/LegalTemplates';
 import Welcome from './components/Welcome';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 import PrivateRoute from './components/PrivateRoute';
 import { UserProvider, useUser } from './components/UserContext'; // Make sure UserContext is defined and exported
 import TermsAndConditions from './components/TermsAndConditions';
@@ -67,6 +69,8 @@ const MainContent = () => {
           <Routes>
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Protected Routes */}
             <Route path="/welcome" element={<PrivateRoute><Welcome /></PrivateRoute>} />
