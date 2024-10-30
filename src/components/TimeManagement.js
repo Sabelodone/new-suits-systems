@@ -1,51 +1,59 @@
-import React, { useState } from 'react';
-import { Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import './TimeManagement.css';
-import { Table, Badge, Form, InputGroup, Accordion, Card, Button } from 'react-bootstrap';
-import { FaCalendarAlt, FaUser, FaChevronDown, FaChevronUp } from 'react-icons/fa'; // Import icons
+// TimeManagement
+
+import React, { useState, useEffect } from 'react';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import axios from 'axios';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { addHours } from 'date-fns';
+import moment from 'moment'; // Import moment for date formatting
 
 const TimeManagement = () => {
-  // Sample time entries with participants
-  const timeEntries = [
-    { id: 1, task: 'Case Review', hours: 2, date: '2024-08-22', participant: 'John Doe' },
-    { id: 2, task: 'Client Meeting', hours: 1.5, date: '2024-08-25', participant: 'Jane Smith' },
-    { id: 3, task: 'Document Preparation', hours: 3, date: '2024-08-30', participant: 'John Doe' },
-    // Add more entries as needed
-  ];
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
+  const localizer = momentLocalizer(moment); // Use moment.js for date localization
 
-  // State for filters
-  const [filterDate, setFilterDate] = useState('');
-  const [filterParticipant, setFilterParticipant] = useState('');
-  const [isOpen, setIsOpen] = useState(false); // For controlling accordion open/close
-
-  // Toggle the accordion
-  const toggleAccordion = () => {
-    setIsOpen(!isOpen);
-  };
-
-  // Function to render hours worked badge
-  const renderHoursBadge = (hours) => {
-    let variant = 'secondary';
-    if (hours >= 3) {
-      variant = 'success'; // High effort
-    } else if (hours >= 1.5) {
-      variant = 'info'; // Moderate effort
-    } else if (hours < 1.5) {
-      variant = 'warning'; // Low effort
+  const fetchEvents = async () => {
+    setLoading(true); // Set loading to true when fetching starts
+    try {
+      const response = await axios.get('http://34.35.32.197/api/events'); // Backend URL API
+      const formattedEvents = response.data.map(event => ({
+        ...event,
+        start: new Date(event.start_time), // Ensure date is in Date format
+        end: new Date(event.end_time), // Adjust end time as needed
+      }));
+      setEvents(formattedEvents);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      alert('Failed to load events. Please try again later.'); // User-friendly error message
+    } finally {
+      setLoading(false); // Set loading to false when done
     }
-    return <Badge bg={variant}>{hours} hrs</Badge>;
   };
 
-  // Filter time entries based on date and participant
-  const filteredEntries = timeEntries.filter(entry => {
-    return (
-      (filterDate === '' || entry.date === filterDate) &&
-      (filterParticipant === '' || entry.participant.toLowerCase().includes(filterParticipant.toLowerCase()))
-    );
-  });
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const handleSelectSlot = async ({ start, end }) => {
+    const title = prompt('New Event name');
+    if (title) {
+      try {
+        await axios.post('http://34.35.32.197/api/events', {
+          title,
+          start_time: start.toISOString(),
+          end_time: end.toISOString(),
+        });
+        // Refresh events after creating a new one
+        fetchEvents();
+      } catch (error) {
+        console.error('Error creating event:', error);
+        alert('Failed to create event. Please try again.'); // User-friendly error message
+      }
+    }
+  };
 
   return (
+
     <div className="container mt-5 time-management-container">
       <Nav className="mb-4">
         <Nav.Link as={Link} to="/cases" className="text-indigo">Cases</Nav.Link>
@@ -142,7 +150,24 @@ const TimeManagement = () => {
           </tbody>
         </Table>
       </div>
-    </div>
+
+ //   <div>
+ //     <h1>Time Management</h1>
+ //     {loading ? ( // Show loading state
+ //       <p>Loading events...</p>
+ //     ) : (
+ //       <Calendar
+ //         localizer={localizer}
+ //         events={events}
+ //         startAccessor="start"
+  //        endAccessor="end"
+  //        style={{ height: 500, margin: '50px' }}
+ //         selectable
+ //         onSelectSlot={handleSelectSlot} // Enable event creation on slot selection
+//        />
+//      )}
+
+//    </div>
   );
 };
 

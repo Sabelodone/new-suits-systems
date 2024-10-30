@@ -9,8 +9,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 cases_blueprint = Blueprint('cases', __name__)
 
-@cases_blueprint.route('/cases', methods=['POST'])
-@login_required
+@cases_blueprint.route('', methods=['POST'])
+#@login_required
 def create_case():
     logging.info('Received request to create case') # Log request
     data = request.get_json()
@@ -34,8 +34,8 @@ def create_case():
         logging.error(f'Error creating case: {str(e)}')
         return jsonify({'error': str(e)}), 500
 
-@cases_blueprint.route('/cases', methods=['GET'])
-@login_required
+@cases_blueprint.route('', methods=['GET'])
+#@login_required
 def get_cases():
     cases = Case.query.all()
     return jsonify([case.to_dict() for case in cases]), 200

@@ -7,8 +7,8 @@ from flask_login import login_required
 
 tasks_blueprint = Blueprint('tasks', __name__)
 
-@tasks_blueprint.route('/tasks', methods=['POST'])
-@login_required
+@tasks_blueprint.route('', methods=['POST'])
+#@login_required
 def create_task():
     data = request.get_json()
     # Validation
@@ -25,14 +25,14 @@ def create_task():
     except Exception as e:
         return jsonify({'error': 'An error occurred: ' + str(e)}), 500
 
-@tasks_blueprint.route('/tasks', methods=['GET'])
-@login_required
+@tasks_blueprint.route('', methods=['GET'])
+#@login_required
 def get_tasks():
     tasks = Task.query.all()
     return jsonify([task.to_dict() for task in tasks]), 200
 
-@tasks_blueprint.route('/tasks/<int:task_id>', methods=['GET'])
-@login_required
+@tasks_blueprint.route('/<int:task_id>', methods=['GET'])
+#@login_required
 def get_task(task_id):
     task = Task.query.get(task_id)
     if task:

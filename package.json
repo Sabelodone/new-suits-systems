@@ -15,12 +15,15 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.4",
+    "date-fns": "^4.1.0",
     "emailjs-com": "^3.2.0",
     "framer-motion": "^11.5.0",
     "openai": "^4.65.0",
     "react": "^18.3.1",
+    "react-big-calendar": "^1.15.0",
     "react-bootstrap": "^2.10.4",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
@@ -61,6 +64,8 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "postcss": "^8.4.47",
     "postcss-preset-mantine": "^1.17.0",
-    "postcss-simple-vars": "^7.0.1"
-  }
+    "postcss-simple-vars": "^7.0.1",
+    "tailwindcss": "^3.4.14"
+  },
+  "proxy": "http://34.35.32.197/api"
 }

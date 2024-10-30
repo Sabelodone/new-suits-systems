@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
 import './Header.css'; // Ensure this CSS file is properly linked
 import { Drawer, TextInput } from '@mantine/core';
@@ -8,6 +8,9 @@ import { Navbar, Nav, Form, FormControl, Button, Modal, Tab, Nav as BootstrapNav
 import { FaSearch, FaFilter, FaUser } from 'react-icons/fa';
 import './Header.css'; // Ensure this CSS file is properly linked
 import { useUser } from './UserContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBriefcase, faTasks, faClock, faUsers, faFileAlt, faMoneyBill, faCog, faHome } from '@fortawesome/free-solid-svg-icons'; // Import the new icon
+import './Sidebar.css'; // Sidebar styles
 
 const Header = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -17,7 +20,7 @@ const Header = () => {
     const [profilePic, setProfilePic] = useState(null);
     const [username, setUsername] = useState('User Name');
     const [email, setEmail] = useState('user@example.com');
-    const { user } = useUser();
+    const { user, signOut } = useUser();
     const navigate = useNavigate();
 
 
@@ -71,37 +74,48 @@ const Header = () => {
                 <Drawer opened={opened} onClose={close} styles={{
                     inner: {
                         width: '60%'
-                    }
-                }}>
-                    <Nav className="flex-column flex flex-col">
-                        <Form inline className="!flex !flex-col" onSubmit={handleSearch}>
-                            {/* <FaSearch className="mr-2 text-indigo" />
-                            <FormControl
-                                type="text"
-                                placeholder="Search"
-                                className="mr-sm-2 custom-search"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            /> */}
-                            <TextInput leftSection={<FaSearch />} rightSection={<FaFilter />} />
-                            {/* <Button type="submit" variant="outline-indigo" className="ml-2 custom-button">
-                                <FaFilter />
-                            </Button> */}
-                        </Form>
+                    },
 
-                        {/* drawer */}
-                        <Nav className="flex items-start gap-1 w-full">
-                            <Nav.Link as={Link} to="/" className="text-indigo m-0">Dashboard</Nav.Link>
-                            <Nav.Link onClick={handleShow} className="text-indigo m-0" aria-label="User Options">
-                                <FaUser size={20} />
-                            </Nav.Link>
+                }} classNames={{ body: '!flex-1' }}>
+
+
+                    {/* drawer */}
+                    <Nav className="flex-column flex flex-col ">
+                        <Nav className="flex items-start gap-1 w-full flex-1 ">
+                            <Nav className="flex flex-col flex-1 ">
+                                {/* Sidebar Links */}
+                                <div className='flex flex-col gap-2'>
+                                    {[
+                                        { to: "/dashboard", icon: faHome, label: "Dashboard" },
+                                        { to: "/cases", icon: faBriefcase, label: "Cases" },
+                                        { to: "/tasks", icon: faTasks, label: "Tasks" },
+                                        { to: "/time-management", icon: faClock, label: "Time Management" },
+                                        { to: "/clients", icon: faUsers, label: "Clients" },
+                                        { to: "/document-management", icon: faFileAlt, label: "Document Management" },
+                                        { to: "/legal-templates", icon: faFileAlt, label: "Templates" },
+                                        { to: "/invoice-and-billing", icon: faMoneyBill, label: "Invoice and Billing" }, // New link for Invoice and Billing
+                                        { to: "/settings", icon: faCog, label: "Settings" }, // New link for Settings
+                                    ].map(({ to, icon, label }) => (
+
+                                        <NavLink
+                                            key={to}
+                                            to={to}
+                                            className={({ isActive }) => `p-2 whitespace-nowrap text-white bg-[#c6a2dc] rounded-sm no-underline   ${isActive ? 'active bg-[#6f42c1]' : ''}`}
+                                        >
+                                            <FontAwesomeIcon icon={icon} className="me-2" /> {label}
+                                        </NavLink>
+
+                                    ))}
+                                </div>
+
+                            </Nav>
                         </Nav>
                     </Nav>
                 </Drawer>
-            </Navbar>
+            </Navbar >
 
             {/* User Profile Modal */}
-            <Modal show={showModal} onHide={handleClose} className="luxury-modal">
+            <Modal Modal show={showModal} onHide={handleClose} className="luxury-modal" >
                 <Modal.Header closeButton>
                     <Modal.Title className="text-indigo">User Options</Modal.Title>
                 </Modal.Header>
@@ -175,6 +189,7 @@ const Header = () => {
                                 <p>Are you sure you want to log out?</p>
                                 <Button variant="danger" onClick={() => {
                                     handleClose();
+                                    signOut()
                                     navigate('/signin')
                                 }}>
                                     Logout
@@ -183,7 +198,7 @@ const Header = () => {
                         </Tab.Content>
                     </Tab.Container>
                 </Modal.Body>
-            </Modal>
+            </Modal >
         </>
     );
 };

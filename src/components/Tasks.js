@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+
 import { Nav, Table, Badge, Button, Form } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState} from 'react';
+import { Link } from 'react-router-dom'; 
 import './Tasks.css';
+import axios from 'axios';
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([
@@ -32,6 +34,31 @@ const Tasks = () => {
     setNewTask({ description: '', status: '', dueDate: '' });
     setShowAddTaskForm(true);
   };
+
+
+
+//const Tasks = () => {
+  // task data
+ // const [tasks, setTasks] = useState([]);
+ // const [loading, setLoading] = useState(true);
+ // const [error, setError] = useState(null);
+
+  // Fetch tasks from the backend server
+  //useEffect(()=> {
+   //const fetchTasks = async () => {
+    //  try {
+      //  const response = await axios.get('http://34.35.32.197/api/tasks'); //Backend URL API
+  //	setTasks(response.data);
+    //  } catch (err) {
+  //	setError (err.response?.data?.error || 'An error occcured while fetching tasks');
+    //  } finally {
+  //	setLoading(false);
+    //  }
+    //};
+
+ // fetchTasks();
+//}, []);
+
 
   // Function to display status badge
   const renderStatusBadge = (status) => {

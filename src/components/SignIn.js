@@ -20,10 +20,11 @@ function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); // Clear previous errors
-
+ 
 
     try {
       await signIn(email, password); // Attempt to sign in
+      
       navigate('/dashboard'); // Redirect to Welcome after successful sign-in
 
     } catch (err) {

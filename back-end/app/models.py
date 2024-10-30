@@ -2,6 +2,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin
+from datetime import datetime
 from app import db
 
 bcrypt = Bcrypt()
@@ -41,13 +42,15 @@ class Case(db.Model):
     category_id = db.Column(db.String(32), db.ForeignKey('case_category.id'))
     lawfirm_id = db.Column(db.String(32), db.ForeignKey('lawfirm.user_id'))
     created_at = db.Column(db.DateTime, default=db.func.now())
-    last_updated = db.Column(db.DateTime, onupdate=db.func.now())
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow())
 
     def to_dict(self):
         return {
             'id': self.id,
             'title': self.title,
-            'description': self.description
+            'description': self.description,
+            'created_at': self.created_at.isoformat() if self.created_at else 'Invalid Date',
+            'updated_at': self.updated_at.isoformat() if self.updated_at else 'Invalid Date',
         }
 
 class Task(db.Model):
@@ -123,6 +126,23 @@ class Payment(db.Model):
             'invoice_id': self.invoice_id,
             'amount': self.amount
         }
+
+# New Model added by Jameson
+class Event(db.Model):
+    __tablename__ = 'events'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'start_time': self.start_time.isoformat(),
+            'end_time': self.end_time.isoformat()
+        }
+
 
 # New Models
 class PhoneNumber(db.Model):

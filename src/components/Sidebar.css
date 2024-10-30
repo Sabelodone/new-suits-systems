@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* Sidebar Styles */
 .sidebar {
   background-color: #f8f9fa;
@@ -10,7 +13,7 @@
 
 /* Navigation Link Styles */
 .nav-link {
-  font-size: 1.3rem; /* Increase font size */
+  /* font-size: 1.3rem; Increase font size */
   font-weight: 600; /* Make text bolder for emphasis */
   color: #333;
   padding: 1rem 1.5rem; /* Increased padding for more space */
@@ -21,7 +24,12 @@
 
 /* Hover and Focus States */
 .nav-link:hover {
-  background-color: rgba(90, 9, 142, 0.2); /* Slightly more prominent hover background */
+  background-color: rgba(
+    90,
+    9,
+    142,
+    0.2
+  ); /* Slightly more prominent hover background */
   color: #5a098e; /* Primary brand color */
   text-decoration: none; /* Remove underline on hover */
 }
@@ -33,13 +41,21 @@
 
 /* Active Link Styles */
 .nav-link.active {
-  background: linear-gradient(to right, #5a098e, #d8a507); /* Gradient background for active link */
+  background: linear-gradient(
+    to right,
+    #5a098e,
+    #d8a507
+  ); /* Gradient background for active link */
   color: #fff;
   box-shadow: 0 6px 12px rgba(90, 9, 142, 0.4); /* Add deeper shadow for active link */
 }
 
 .nav-link.active:hover {
-  background: linear-gradient(to right, #5a098e, #d8a507); /* Ensure gradient persists on hover */
+  background: linear-gradient(
+    to right,
+    #5a098e,
+    #d8a507
+  ); /* Ensure gradient persists on hover */
   color: #fff;
 }
 
@@ -68,7 +84,7 @@
 
   .nav-link {
     font-size: 1rem; /* Adjust font size for very small screens */
-    padding: 0.6rem 1rem; /* Adjust padding for tighter space */
+    /* padding: 0.6rem 1rem; Adjust padding for tighter space */
     text-align: center; /* Center align text on smaller screens */
   }
 }
