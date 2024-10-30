@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-from app.models import CaseStatus, db
+from app.models.case_status import CaseStatus
+from app.extentions import db
 
 statuses_blueprint = Blueprint('statuses', __name__)
 

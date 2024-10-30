@@ -31,7 +31,7 @@ class Case(PrimaryKeyBaseModel):
             'title': self.title,
             'description': self.description,
             'status': self.status.name if self.status else 'N/A',
-            #'workflow': self.workflow.name if self.workflow else 'N/A',
+            'workflow': self.workflow.name if self.workflow else 'N/A',
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
         }
