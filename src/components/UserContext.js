@@ -1,26 +1,30 @@
 // src/UserContext.js
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
-const UserContext = createContext();
+// Create UserContext
+export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [userRoles, setUserRoles] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    return (
-        <UserContext.Provider value={{ user, setUser, userRoles, setUserRoles }}>
-            {children}
-        </UserContext.Provider>
-    );
-};
-
-export const useUser = () => {
-    const context = useContext(UserContext);
-    if (!context) {
-        throw new Error('useUser must be used within a UserProvider');
+  useEffect(() => {
+    // Check if user data exists in local storage
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser)); // Set user state from local storage
     }
-    return context;
+    setLoading(false); // Update loading state
+  }, []);
+
+  return (
+    <UserContext.Provider value={{ user, setUser, loading }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
+// Custom hook to use the UserContext
+export const useUser = () => React.useContext(UserContext);
 

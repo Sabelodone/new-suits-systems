@@ -25,6 +25,7 @@ function SignIn() {
 	 //setUserRoles(roles); // Store roles in context or state management
 	 const userData = response.data;
 	 setUser(userData);
+	 localStorage.setItem('user', JSON.stringify(userData)); //Save user data local storage
 	 navigate('/welcome');
       } else {
 	 setError('Invalid email or password. Please try again.');
