@@ -16,7 +16,7 @@ import Welcome from './components/Welcome';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import PrivateRoute from './components/PrivateRoute';
-import { UserProvider, useUser } from './components/UserContext'; // Make sure UserContext is defined and exported
+import { useUser } from './components/UserContext'; // Make sure UserContext is defined and exported
 import TermsAndConditions from './components/TermsAndConditions';
 import InvoiceAndBilling from './components/InvoiceAndBilling';
 import Settings from './components/Settings'; // Adjust the path as necessary
@@ -27,14 +27,12 @@ import './App.css'; // Assuming you have a global stylesheet
 
 function App() {
   return (
-    <UserProvider>
-      <Router>
-        <Header />
-        <MainContent />
-        <Chatbot />
-        <Footer />
-      </Router>
-    </UserProvider>
+    <Router>
+      <Header />
+      <MainContent />
+      <Chatbot />
+      <Footer />
+    </Router>
   );
 }
 

@@ -6,8 +6,8 @@ import './SignIn.css'; // Importing the SignIn.css file
 import axios from 'axios'; // Import axios for API requests
 
 function SignIn() {
-  const {setUser} = useUser();
-  const { signIn, setUserRoles } = useUser(); // Ensure setUserRoles is defined in context
+  const { setUser } = useUser();
+  //const { signIn, setUserRoles } = useUser(); // Ensure setUserRoles is defined in context
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,15 +19,19 @@ function SignIn() {
 
     try {
       const response = await axios.post('http://34.35.32.197/api/users/login', { email, password }); // Send request to backend
-      if (response.status === 200) {
-	    //const { roles } = response.data; // Extract roles from response
-	    //setUserRoles(roles); // Store roles in context or state management
-	    const userData = response.data;
-	    setUser(userData);
-	    navigate('/welcome');
+	    console.log('Response from login', response.data) // Logging for Debbuging
+	if (response.data.message === 'User logged in successfully') {
+	 //const { roles } = response.data; // Extract roles from response
+	 //setUserRoles(roles); // Store roles in context or state management
+	 const userData = response.data;
+	 setUser(userData);
+	 navigate('/welcome');
+      } else {
+	 setError('Invalid email or password. Please try again.');
       }
     } catch (err) {
-      setError('Invalid email or password. Please try again.');
+      console.error('Login error:', err); // Log the error
+      //setError('Invalid email or password. Please try again.');
     }
   };
 
