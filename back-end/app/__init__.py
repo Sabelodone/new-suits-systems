@@ -39,6 +39,7 @@ def create_app():
     #app.register_blueprint(events_blueprint, url_prefix='/api/events')
 
     from app.models import case, user, gender, lawfirm, client, lawfirm_employee, client_lawfirm, workflow
+    from app.models.auth import role, user_role, lawfirm_role, lawfirm_employee_role, token_blocklist
     from app.models.workflow import Workflow
     from app.models.case import Case
     from app.models import task, case_status, case_category, document,document_type

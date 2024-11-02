@@ -4,8 +4,9 @@ from app.models.primarykey_base_model import PrimaryKeyBaseModel
 
 
 class Role(PrimaryKeyBaseModel):
-    __tablename__ = 'user_roles'
+    __tablename__ = 'roles'
     name = db.Column(db.String(30), nullable=False)
+
 
     def to_dict(self):
         return {

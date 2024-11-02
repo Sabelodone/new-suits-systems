@@ -6,7 +6,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    '''# Load environment variables from .env file
+    # Load environment variables from .env file
     env_file = os.path.join(basedir, f".env.{os.environ.get('FLASK_ENV', 'development')}")
     load_dotenv(env_file)
 
@@ -36,40 +36,6 @@ class Config:
 
     class ProductionConfig:
         SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'mysql+pymysql://user:password@localhost/prod_db')
-        DEBUG = False
-
-    setting = {
-        'development': DevelopmentConfig,
-        'testing': TestingConfig,
-        'production': ProductionConfig,
-        'default': DevelopmentConfig
-    }'''
-
-    # Load environment variables from .env file
-    env_file = os.path.join(basedir, f".env.{os.environ.get('FLASK_ENV', 'development')}")
-    load_dotenv(env_file)
-
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'your_default_secret_key')  # Provide a default key for local development
-
-    # Use SQLite database URI
-    SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(basedir, "instance/app.db")}'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SESSION_PERMANENT = False
-    SESSION_TYPE = 'filesystem'
-
-    # Flask config
-    DEBUG = os.environ.get('FLASK_ENV') == 'development'
-    TESTING = os.environ.get('FLASK_ENV') == 'testing'
-
-    class TestingConfig:
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # Use in-memory database for tests
-        TESTING = True
-
-    class DevelopmentConfig:
-        SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(basedir, "instance/dev.db")}'
-
-    class ProductionConfig:
-        SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(basedir, "instance/prod.db")}'
         DEBUG = False
 
     setting = {
