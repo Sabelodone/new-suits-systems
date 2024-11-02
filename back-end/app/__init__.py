@@ -8,8 +8,9 @@ from .extentions import db, login_manager, sess, swagger, migration
 
 def create_app():
     app = Flask(__name__)
+    # Configurations
+    app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # Set to 10 MB
     app.config.from_object(Config)
-    # Configuration
 
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'  # You can update this with your MySQL configuration
     # app.config['SECRET_KEY'] = os.urandom(24).hex()
@@ -48,9 +49,8 @@ def create_app():
     from app.models.payment import payment, invoice
     
     print("Successfully Imported all models")
-    # Register Blueprints
-    # from app.routes.users import users_blueprint  # Import your users blueprint
-    # app.register_blueprint(users_blueprint, url_prefix='/users')  # Prefix all routes with /users
+    from app.routes.users import users_blueprint
+    app.register_blueprint (users_blueprint, url_prefix='/api/users') # Prefix all routes with /users
 
     # #from app.routes.billing import billing_blueprint
     # #app.register_blueprint(billing_blueprint, url_prefix='/billing')
@@ -58,11 +58,11 @@ def create_app():
     from app.routes.cases import cases_blueprint
     app.register_blueprint(cases_blueprint, url_prefix='/api/cases')
 
-    # from app.routes.customers import customers_blueprint
-    # app.register_blueprint(customers_blueprint, url_prefix='/customers')
+    from app.routes.customers import customers_blueprint
+    app.register_blueprint(customers_blueprint, url_prefix='/api/customers')
 
-    # from app.routes.documents import documents_blueprint
-    # app.register_blueprint(documents_blueprint, url_prefix='/documents')
+    from app.routes.documents import documents_blueprint
+    app.register_blueprint(documents_blueprint, url_prefix='/api/documents')
 
     # from app.routes.invoices import invoices_blueprint
     # app.register_blueprint(invoices_blueprint, url_prefix='/invoices')

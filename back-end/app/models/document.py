@@ -6,7 +6,7 @@ from .primarykey_base_model import PrimaryKeyBaseModel
 class Document(PrimaryKeyBaseModel):
     __tablename__ = 'document'
     file_name = db.Column(db.String(120), nullable=False)
-    file_desc = db.Column(db.LargeBinary, nullable=False)
+    file_content = db.Column(db.LargeBinary, nullable=False)
     link = db.Column(db.String(255), nullable=False)
 
     case_id = db.Column(db.String(32), db.ForeignKey('case.id'))
