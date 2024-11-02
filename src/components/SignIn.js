@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from './UserContext'; // Adjust path as needed
 import { Form, Button } from 'react-bootstrap';
 import './SignIn.css'; // Importing the SignIn.css file
+import axios from 'axios'; // Import axios for API requests
 
 function SignIn() {
-  const { signIn } = useUser(); // Fetch signIn function from your context
+  const {setUser} = useUser();
+  const { signIn, setUserRoles } = useUser(); // Ensure setUserRoles is defined in context
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,18 +15,23 @@ function SignIn() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Clear previous errors
+    setError('');
 
     try {
-      await signIn(email, password); // Attempt to sign in
-      navigate('/welcome'); // Redirect to Welcome after successful sign-in
+      const response = await axios.post('http://34.35.32.197/api/users/login', { email, password }); // Send request to backend
+      if (response.status === 200) {
+	    //const { roles } = response.data; // Extract roles from response
+	    //setUserRoles(roles); // Store roles in context or state management
+	    const userData = response.data;
+	    setUser(userData);
+	    navigate('/welcome');
+      }
     } catch (err) {
-      setError('Invalid email or password. Please try again.'); // Set error message if sign-in fails
+      setError('Invalid email or password. Please try again.');
     }
   };
 
   return (
-    
     <div className="signin-container">
       <h2 className="signin-heading">Sign In</h2>
       <Form onSubmit={handleSubmit} className="signin-form">
@@ -52,8 +59,7 @@ function SignIn() {
           />
         </Form.Group>
 
-        {/* Display error message if sign-in fails */}
-        {error && <p className="signin-error text-danger">{error}</p>}
+        {error && <p className="signin-error text-danger">{error}</p>} {/* Display error message if sign-in fails */}
 
         <Button className="signin-button" variant="primary" type="submit">
           Sign In
@@ -75,3 +81,4 @@ function SignIn() {
 }
 
 export default SignIn;
+

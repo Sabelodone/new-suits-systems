@@ -1,14 +1,70 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Card, Button, Nav, Form, Table, ListGroup } from 'react-bootstrap';
-import { FaCreditCard, FaPaypal, FaUniversity } from 'react-icons/fa';
-
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Button, Nav, Form, ListGroup } from 'react-bootstrap';
 import './Settings.css'; // Add your custom CSS for styling
 
 const Settings = () => {
   const [selectedTab, setSelectedTab] = useState('manage-users');
+  const [workflows, setWorkflows] = useState([]);
+  const [statuses, setStatuses] = useState([]);
+  const [roles, setRoles] = useState([]); // State for roles
+  const [newWorkflow, setNewWorkflow] = useState('');
+  const [newStatus, setNewStatus] = useState('');
+  const [selectedWorkflowId, setSelectedWorkflowId] = useState('');
 
   const handleTabSelect = (tab) => {
     setSelectedTab(tab);
+  };
+
+  useEffect(() => {
+    const fetchWorkflows = async () => {
+      const response = await fetch('/api/workflows');
+      const data = await response.json();
+      setWorkflows(data);
+    };
+
+    const fetchRoles = async () => {
+      const response = await fetch('/api/roles'); // Adjust API endpoint
+      const data = await response.json();
+      setRoles(data);
+    };
+
+    fetchWorkflows();
+    fetchRoles(); // Fetch roles on component mount
+  }, []);
+
+  const handleCreateWorkflow = async (event) => {
+    event.preventDefault();
+    const response = await fetch('/api/workflows', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newWorkflow }),
+    });
+    if (response.ok) {
+      const newWorkflowData = await response.json();
+      setWorkflows([...workflows, newWorkflowData]);
+      setNewWorkflow('');
+    }
+  };
+
+  const handleCreateStatus = async (event) => {
+    event.preventDefault();
+    const response = await fetch('/api/statuses', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newStatus, workflow_id: selectedWorkflowId }),
+    });
+    if (response.ok) {
+      const newStatusData = await response.json();
+      setStatuses([...statuses, newStatusData]);
+      setNewStatus('');
+    }
+  };
+
+  const handleSelectWorkflow = async (workflowId) => {
+    setSelectedWorkflowId(workflowId);
+    const response = await fetch(`/api/statuses/${workflowId}`);
+    const data = await response.json();
+    setStatuses(data);
   };
 
   return (
@@ -16,235 +72,87 @@ const Settings = () => {
       <h1 className="text-center mb-4">Settings</h1>
 
       <Row>
-        {/* Navigation for the settings on the left side */}
         <Col md={3} className="mb-4">
           <Nav className="flex-column">
-            <Nav.Link
-              onClick={() => handleTabSelect('manage-users')}
-              active={selectedTab === 'manage-users'}
-            >
+            <Nav.Link onClick={() => handleTabSelect('manage-users')} active={selectedTab === 'manage-users'}>
               Manage Users
             </Nav.Link>
-            <Nav.Link
-              onClick={() => handleTabSelect('manage-offices')}
-              active={selectedTab === 'manage-offices'}
-            >
-              Manage Offices
+            <Nav.Link onClick={() => handleTabSelect('manage-roles')} active={selectedTab === 'manage-roles'}>
+              Manage Roles
             </Nav.Link>
-            <Nav.Link
-              onClick={() => handleTabSelect('law-firm-settings')}
-              active={selectedTab === 'law-firm-settings'}
-            >
-              Law Firm Settings
-            </Nav.Link>
-            <Nav.Link
-              onClick={() => handleTabSelect('manage-activities')}
-              active={selectedTab === 'manage-activities'}
-            >
-              Manage Activities
-            </Nav.Link>
-            <Nav.Link
-              onClick={() => handleTabSelect('manage-documents')}
-              active={selectedTab === 'manage-documents'}
-            >
-              Manage Documents
-            </Nav.Link>
-            <Nav.Link
-              onClick={() => handleTabSelect('manage-practice-areas')}
-              active={selectedTab === 'manage-practice-areas'}
-            >
-              Manage Practice Areas
-            </Nav.Link>
-            <Nav.Link
-              onClick={() => handleTabSelect('subscription-payment')}
-              active={selectedTab === 'subscription-payment'}
-            >
-              Subscription & Payment
-            </Nav.Link>
+            {/* Add more tabs as needed */}
           </Nav>
         </Col>
 
-        {/* Content area on the right side */}
         <Col md={9}>
-          {selectedTab === 'manage-users' && (
+          {selectedTab === 'manage-roles' && (
             <Card>
-              <Card.Header>Manage Users</Card.Header>
+              <Card.Header>Manage Roles</Card.Header>
               <Card.Body>
                 <Form>
-                  <Form.Group controlId="formUserEmail">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" placeholder="Enter user email" />
+                  <Form.Group controlId="formRoleName">
+                    <Form.Label>Role Name</Form.Label>
+                    <Form.Control type="text" placeholder="Enter role name" />
                   </Form.Group>
-                  <Form.Group controlId="formUserRole">
-                    <Form.Label>Role</Form.Label>
-                    <Form.Control as="select">
-                      <option>Admin</option>
-                      <option>Editor</option>
-                      <option>Viewer</option>
-                    </Form.Control>
-                  </Form.Group>
-                  <Button variant="primary" type="submit">Add User</Button>
-                </Form>
-                <Table striped bordered hover className="mt-4">
-                  <thead>
-                    <tr>
-                      <th>Email</th>
-                      <th>Role</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>john.doe@example.com</td>
-                      <td>Admin</td>
-                      <td>
-                        <Button variant="danger">Remove</Button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card.Body>
-            </Card>
-          )}
-
-          {selectedTab === 'manage-offices' && (
-            <Card>
-              <Card.Header>Manage Offices</Card.Header>
-              <Card.Body>
-                <Form>
-                  <Form.Group controlId="formOfficeName">
-                    <Form.Label>Office Name</Form.Label>
-                    <Form.Control type="text" placeholder="Enter office name" />
-                  </Form.Group>
-                  <Form.Group controlId="formOfficeLocation">
-                    <Form.Label>Location</Form.Label>
-                    <Form.Control type="text" placeholder="Enter office location" />
-                  </Form.Group>
-                  <Button variant="primary" type="submit">Add Office</Button>
+                  <Button variant="primary" type="submit">Add Role</Button>
                 </Form>
                 <ListGroup className="mt-4">
-                  <ListGroup.Item>Office 1 - New York</ListGroup.Item>
-                  <ListGroup.Item>Office 2 - Los Angeles</ListGroup.Item>
+                  {roles.map(role => (
+                    <ListGroup.Item key={role.id}>
+                      {role.name}
+                      <Button variant="danger" className="float-end">Remove</Button>
+                    </ListGroup.Item>
+                  ))}
                 </ListGroup>
               </Card.Body>
             </Card>
           )}
-
-          {selectedTab === 'law-firm-settings' && (
+          {selectedTab === 'manage-workflows' && (
             <Card>
-            <Card.Header>Law Firm Settings</Card.Header>
-            <Card.Body>
-              <Form>
-                <Form.Group controlId="formFirmName">
-                  <Form.Label>Firm Name</Form.Label>
-                  <Form.Control type="text" placeholder="Enter law firm name" />
-                </Form.Group>
-                <Form.Group controlId="formFirmLogo">
-                  <Form.Label>Upload Logo</Form.Label>
-                  <Form.Control type="file" />
-                </Form.Group>
-                <Button variant="primary" type="submit">Save Settings</Button>
-              </Form>
-            </Card.Body>
-          </Card>
-          
-          )}
-
-          {selectedTab === 'manage-activities' && (
-            <Card>
-              <Card.Header>Manage Activities</Card.Header>
+              <Card.Header>Manage Workflows</Card.Header>
               <Card.Body>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>Activity</th>
-                      <th>Date</th>
-                      <th>Duration</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Client Meeting</td>
-                      <td>2024-09-01</td>
-                      <td>1 hour</td>
-                      <td>
-                        <Button variant="danger">Delete</Button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card.Body>
-            </Card>
-          )}
-        {selectedTab === 'manage-documents' && (
-  <Card>
-    <Card.Header>Manage Documents</Card.Header>
-    <Card.Body>
-      <Form>
-        <Form.Group controlId="formDocumentTitle">
-          <Form.Label>Document Title</Form.Label>
-          <Form.Control type="text" placeholder="Enter document title" />
-        </Form.Group>
-        <Form.Group controlId="formDocumentUpload">
-          <Form.Label>Upload Document</Form.Label>
-          <Form.Control type="file" />
-        </Form.Group>
-        <Button variant="primary" type="submit">Upload Document</Button>
-      </Form>
-      <ListGroup className="mt-4">
-        <ListGroup.Item>Document 1 - Contract.pdf</ListGroup.Item>
-        <ListGroup.Item>Document 2 - Invoice.docx</ListGroup.Item>
-      </ListGroup>
-    </Card.Body>
-  </Card>
-)}
-
-
-          {selectedTab === 'manage-practice-areas' && (
-            <Card>
-              <Card.Header>Manage Practice Areas</Card.Header>
-              <Card.Body>
-                <Form>
-                  <Form.Group controlId="formPracticeArea">
-                    <Form.Label>Practice Area</Form.Label>
-                    <Form.Control type="text" placeholder="Enter practice area" />
+                <Form onSubmit={handleCreateWorkflow}>
+                  <Form.Group controlId="formWorkflowName">
+                    <Form.Label>Workflow Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter workflow name"
+                      value={newWorkflow}
+                      onChange={(e) => setNewWorkflow(e.target.value)}
+                    />
                   </Form.Group>
-                  <Button variant="primary" type="submit">Add Practice Area</Button>
+                  <Button variant="primary" type="submit">Add Workflow</Button>
                 </Form>
                 <ListGroup className="mt-4">
-                  <ListGroup.Item>Practice Area 1 - Family Law</ListGroup.Item>
-                  <ListGroup.Item>Practice Area 2 - Criminal Law</ListGroup.Item>
+                  {workflows.map((workflow) => (
+                    <ListGroup.Item key={workflow.id} onClick={() => handleSelectWorkflow(workflow.id)}>
+                      {workflow.name}
+                    </ListGroup.Item>
+                  ))}
                 </ListGroup>
-              </Card.Body>
-            </Card>
-          )}
-
-          {selectedTab === 'subscription-payment' && (
-            <Card>
-              <Card.Header>Subscription & Payment</Card.Header>
-              <Card.Body>
-                <Form>
-                  <Form.Group controlId="formPaymentMethod">
-                    <Form.Label>Payment Method</Form.Label>
-                    <Form.Control as="select">
-                      <option>
-                        <FaCreditCard /> Credit Card
-                      </option>
-                      <option>
-                        <FaPaypal /> PayPal
-                      </option>
-                      <option>
-                        <FaUniversity /> Bank Transfer
-                      </option>
-                    </Form.Control>
-                  </Form.Group>
-                  <Form.Group controlId="formPaymentDetails">
-                    <Form.Label>Payment Details</Form.Label>
-                    <Form.Control type="text" placeholder="Enter payment details" />
-                  </Form.Group>
-                  <Button variant="primary" type="submit">Update Payment</Button>
-                </Form>
+                {selectedWorkflowId && (
+                  <Form onSubmit={handleCreateStatus}>
+                    <Form.Group controlId="formStatusName">
+                      <Form.Label>Status Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter status name"
+                        value={newStatus}
+                        onChange={(e) => setNewStatus(e.target.value)}
+                      />
+                    </Form.Group>
+                    <Button variant="primary" type="submit">Add Status</Button>
+                  </Form>
+                )}
+                {statuses.length > 0 && (
+                  <ListGroup className="mt-4">
+                    {statuses.map((status) => (
+                      <ListGroup.Item key={status.id}>
+                        {status.name}
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                )}
               </Card.Body>
             </Card>
           )}
@@ -255,3 +163,4 @@ const Settings = () => {
 };
 
 export default Settings;
+

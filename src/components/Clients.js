@@ -1,66 +1,61 @@
-import React, { useState } from 'react';
-import { Nav, Button, Modal } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Nav, Button, Modal, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Clients.css'; // Custom CSS for additional styling
-import { Table } from 'react-bootstrap';
+import axios from 'axios'; // Import axios for making HTTP requests
 
 const Clients = () => {
-  // Initial client data
-  const [clients, setClients] = useState([
-    { 
-      id: '1', // Use string for ID
-      name: 'John Doe', 
-      contact: 'johndoe@example.com', 
-      phone: '555-1234', 
-      address: '123 Main St', 
-      cases: 5, 
-      registrationDate: '2023-05-12', 
-      status: 'Active' 
-    },
-    { 
-      id: '2', // Use string for ID
-      name: 'Jane Smith', 
-      contact: 'janesmith@example.com', 
-      phone: '555-5678', 
-      address: '456 Elm St', 
-      cases: 3, 
-      registrationDate: '2023-06-22', 
-      status: 'Inactive' 
-    },
-    { 
-      id: '3', // Use string for ID
-      name: 'David Johnson', 
-      contact: 'davidjohnson@example.com', 
-      phone: '555-9012', 
-      address: '789 Oak St', 
-      cases: 2, 
-      registrationDate: '2023-07-10', 
-      status: 'Active' 
-    },
-  ]);
-
+  const [clients, setClients] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentClient, setCurrentClient] = useState(null);
   const [message, setMessage] = useState('');
+  const [newClient, setNewClient] = useState({
+    name: '',
+    email: '',
+    // Add other fields as necessary
+  });
+
+  // Fetch clients from the API
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await axios.get('http://34.35.32.197/api/customers'); // Adjust URL as needed
+        setClients(response.data);
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+      }
+    };
+    fetchClients();
+  }, []);
+
+  // Add new client
+  const handleAddClient = async () => {
+    try {
+      const response = await axios.post('http://34.35.32.197/api/customers', newClient);
+      setClients([...clients, response.data]); // Update state with the new client
+      setNewClient({ name: '', email: '' }); // Reset the new client state
+    } catch (error) {
+      console.error('Error adding client:', error);
+    }
+  };
 
   // Handle input change for table editing
   const handleInputChange = (index, key, value) => {
     const updatedClients = [...clients];
     updatedClients[index][key] = value;
-
-    console.log('Updated clients:', updatedClients); // Debugging state change
     setClients(updatedClients);
   };
 
-  // Open modal for contacting client
+  // Handle contact button click
   const handleContactClick = (client) => {
     setCurrentClient(client);
     setShowModal(true);
   };
 
   // Handle sending message
-  const handleSendMessage = () => {
-    console.log(`Message to ${currentClient.name}: ${message}`);
+  const handleSendMessage = async () => {
+    console.log(`Message to ${currentClient.first_name} ${currentClient.last_name}: ${message}`);
+    // Add logic for sending message (e.g., to a messaging API)
     setShowModal(false);
     setMessage('');
   };
@@ -92,69 +87,18 @@ const Clients = () => {
           </thead>
           <tbody>
             {clients.map((client, index) => (
-              <tr key={index}>
+              <tr key={client.id}>
+                <td>{client.id}</td>
+                <td>{client.first_name} {client.last_name}</td> {/* Adjusted */}
+                <td>{client.email}</td> {/* Assuming email is the contact */}
+                <td>{client.phones ? client.phones.join(', ') : 'N/A'}</td> {/* Adjusted for phone numbers */}
+                <td>{client.address || 'N/A'}</td> {/* Assuming address is part of your model */}
+                <td>{client.cases || 'N/A'}</td> {/* Adjusted */}
+                <td>{client.registration_date || 'N/A'}</td> {/* Adjusted */}
+                <td>{client.status || 'N/A'}</td> {/* Adjusted */}
                 <td>
-                  <input
-                    type="text"
-                    value={client.id}
-                    onChange={(e) => handleInputChange(index, 'id', e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    value={client.name}
-                    onChange={(e) => handleInputChange(index, 'name', e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="email"
-                    value={client.contact}
-                    onChange={(e) => handleInputChange(index, 'contact', e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    value={client.phone}
-                    onChange={(e) => handleInputChange(index, 'phone', e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    value={client.address}
-                    onChange={(e) => handleInputChange(index, 'address', e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    value={client.cases}
-                    onChange={(e) => handleInputChange(index, 'cases', Number(e.target.value))} // Convert to number
-                  />
-                </td>
-                <td>
-                  <input
-                    type="date"
-                    value={client.registrationDate}
-                    onChange={(e) => handleInputChange(index, 'registrationDate', e.target.value)}
-                  />
-                </td>
-                <td>
-                  <select
-                    value={client.status}
-                    onChange={(e) => handleInputChange(index, 'status', e.target.value)}
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </td>
-                <td>
-                  <Button variant="info" size="sm" className="me-2" onClick={() => handleContactClick(client)}>Contact</Button>
-                  <Button variant="warning" size="sm" className="me-2">Edit</Button>
-                  <Button variant="danger" size="sm">Delete</Button>
+                  <Button variant="info" size="sm" onClick={() => handleContactClick(client)}>Contact</Button>
+                  {/* Add edit and delete buttons with their respective handlers */}
                 </td>
               </tr>
             ))}
@@ -165,7 +109,7 @@ const Clients = () => {
       {/* Contact Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Contact {currentClient?.name}</Modal.Title>
+          <Modal.Title>Contact {currentClient?.first_name} {currentClient?.last_name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <textarea
@@ -190,3 +134,4 @@ const Clients = () => {
 };
 
 export default Clients;
+

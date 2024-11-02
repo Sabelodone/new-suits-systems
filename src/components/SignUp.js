@@ -1,18 +1,38 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Import Link from react-router-dom
-import { useUser } from './UserContext'; // Adjust path as needed
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom'; 
+import { useUser } from './UserContext'; 
 import './SignUp.css';
+import axios from 'axios'; 
 
 function SignUp() {
-  const { signUp } = useUser(); // Fetch signUp function from your context
+  const { signUp } = useUser(); 
   const navigate = useNavigate();
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [middleName, setMiddleName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState(''); 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [genderId, setGenderId] = useState(''); 
+  const [genders, setGenders] = useState([]); // Added state for genders
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [acceptedTerms, setAcceptedTerms] = useState(false); // State for terms acceptance
+  const [acceptedTerms, setAcceptedTerms] = useState(false); 
+
+  // Fetch genders on component mount
+  useEffect(() => {
+    const fetchGenders = async () => {
+      try {
+        const response = await axios.get('http://34.35.32.197/users/api/genders'); // Update the endpoint as needed
+        setGenders(response.data);
+      } catch (err) {
+        setError('Failed to fetch gender options.');
+      }
+    };
+
+    fetchGenders();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,9 +50,17 @@ function SignUp() {
     }
 
     try {
-      await signUp(name, email, password);
+      await axios.post('http://34.35.32.197/users/api/register', {
+        email,
+        username,
+        password,
+        first_name: firstName,
+        middle_name: middleName,
+        last_name: lastName,
+        gender_id: genderId, // Include gender_id in the request
+      });
       setSuccessMessage('Sign-up successful! Redirecting...');
-      setTimeout(() => navigate('/signin'), 2000); // Redirect to sign-in after success
+      setTimeout(() => navigate('/signin'), 2000); 
     } catch (err) {
       setError('Sign-up failed. Please try again.');
     }
@@ -45,9 +73,24 @@ function SignUp() {
         <input
           className="signup-input"
           type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          placeholder="First Name"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          required
+        />
+        <input
+          className="signup-input"
+          type="text"
+          placeholder="Middle Name"
+          value={middleName}
+          onChange={(e) => setMiddleName(e.target.value)}
+        />
+        <input
+          className="signup-input"
+          type="text"
+          placeholder="Last Name"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
           required
         />
         <input
@@ -56,6 +99,14 @@ function SignUp() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          className="signup-input"
+          type="text"
+          placeholder="Username" 
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
         <input
@@ -74,6 +125,17 @@ function SignUp() {
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
+        <select
+          className="signup-input"
+          value={genderId}
+          onChange={(e) => setGenderId(e.target.value)} 
+          required
+        >
+          <option value="">Select Gender</option>
+          {genders.map(gender => (
+            <option key={gender.id} value={gender.id}>{gender.name}</option>
+          ))}
+        </select>
         <div>
           <input
             type="checkbox"
@@ -98,3 +160,4 @@ function SignUp() {
 }
 
 export default SignUp;
+

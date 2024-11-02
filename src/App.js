@@ -22,6 +22,7 @@ import InvoiceAndBilling from './components/InvoiceAndBilling';
 import Settings from './components/Settings'; // Adjust the path as necessary
 import CreateCase from './components/CreateCase'; // Importing the CreateCase component
 import AddTask from './components/AddTask'; // Importing AddTask component
+import ManageWorkflows from './components/ManageWorkflows'; // ManageWorkflows component
 import './App.css'; // Assuming you have a global stylesheet
 
 function App() {
@@ -68,6 +69,7 @@ const MainContent = () => {
             <Route path="/legal-templates" element={<PrivateRoute><LegalTemplates /></PrivateRoute>} />
 	  {/*<Route path="/invoice-and-billing" element={<PrivateRoute><InvoiceAndBilling clients={clientData} /></PrivateRoute>} />*/}
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} /> {/* New route for Settings */}
+	    {/*<Route path="/workflows" component={ManageWorkflows} />*/}
 	    <Route path="/add-task" element={<PrivateRoute><AddTask /></PrivateRoute>} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 

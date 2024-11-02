@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useMemo } from 'react';
+import axios from 'axios';
 import './DocumentManagement.css';
 
 const DocumentManager = () => {
@@ -33,25 +34,39 @@ const DocumentManager = () => {
       setSuccess('');
 
       const validationError = validateFile(file);
-      if (validationError) throw new Error(validationError);
+      if (validationError) {
+        setError(validationError);
+        return; // Exit the function if there's an error
+      }
 
-      const newDocument = {
-        caseNumber,
-        description,
-        documentType,
-        file,
-        fileUrl: URL.createObjectURL(file),
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        const base64File = reader.result.split(',')[1]; // Get base64 string
+
+        const newDocument = {
+	  file_name: file.name,
+          file_content: base64File, // Use base64 encoded content
+          // Include additional fields if needed, like:
+          // case_id: caseNumber,
+          // document_type_id: documentType,
+          //caseNumber,
+          //description,
+          //documentType,
+          //file_name: file.name,
+          //file_content: base64File, // Use base64 encoded content
+        };
+
+        await axios.post('http://34.35.32.197/api/documents', newDocument); // Adjust the URL as needed
+
+        setDocuments([...documents, newDocument]);
+        setSuccess('Document uploaded successfully!');
+        setCaseNumber('');
+        setDescription('');
+        setDocumentType('');
+        setFile(null);
+        setIsFormVisible(false);
       };
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setDocuments([...documents, newDocument]);
-      setSuccess('Document uploaded successfully!');
-      setCaseNumber('');
-      setDescription('');
-      setDocumentType('');
-      setFile(null);
-      setIsFormVisible(false);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -171,7 +186,7 @@ const DocumentManager = () => {
               </div>
               <p>{doc.description}</p>
               <div className="d-flex justify-content-center gap-2">
-                <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="btn btn-link">
+                <a href={`data:application/pdf;base64,${doc.file_content}`} target="_blank" rel="noopener noreferrer" className="btn btn-link">
                   View Document
                 </a>
                 <button onClick={() => handleDelete(index)} className="btn btn-danger">
@@ -189,3 +204,4 @@ const DocumentManager = () => {
 };
 
 export default DocumentManager;
+
