@@ -57,8 +57,9 @@ def login_user():
         print ("Password incorrect.") #Debugging line
         return jsonify({'error': 'Invalid email or password'}), 401
 
-@users_blueprint.route('/api/logout', methods=['POST'])
+@users_blueprint.route('/logout', methods=['POST'])
 def logout_user():
     # Handle logout logic (e.g., clearing session)
+    session.clear()  # Clear the session
     return jsonify({'message': 'User logged out successfully'}), 200
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Tasks.css';
@@ -6,28 +6,26 @@ import { Table, Badge, Button } from 'react-bootstrap';
 import axios from 'axios';
 
 const Tasks = () => {
-  // task data
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch tasks from the backend server
-  useEffect(()=> {
+  useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get('http://34.35.32.197/api/tasks'); //Backend URL API
-  	setTasks(response.data);
+        const response = await axios.get('http://34.35.32.197/api/tasks');
+	console.log('Fetched Tasks:', response.data); // For Debugging
+        setTasks(response.data);
       } catch (err) {
-  	setError (err.response?.data?.error || 'An error occcured while fetching tasks');
+        setError(err.response?.data?.error || 'Failed to fetch tasks');
       } finally {
-  	setLoading(false);
+        setLoading(false);
       }
     };
 
-  fetchTasks();
-}, []);
+    fetchTasks();
+  }, []);
 
-  // Function to display status badge
   const renderStatusBadge = (status) => {
     let variant;
     switch (status) {
@@ -46,6 +44,9 @@ const Tasks = () => {
     return <Badge bg={variant}>{status}</Badge>;
   };
 
+  if (loading) return <p>Loading tasks...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <div className="container mt-5 tasks-container">
       <Nav className="mb-4">
@@ -56,7 +57,6 @@ const Tasks = () => {
       </Nav>
       <h1 className="mb-4 text-center">Tasks</h1>
 
-      {/* Buttons Section */}
       <div className="mb-4 d-flex justify-content-between">
         <Button variant="primary" as={Link} to="/add-task">Add Task</Button>
         <Button variant="primary" as={Link} to="/add-appointment">Add Appointment</Button>
@@ -68,7 +68,7 @@ const Tasks = () => {
         <Table striped bordered hover className="shadow-sm custom-table">
           <thead className="bg-primary text-white">
             <tr>
-              <th>Task ID</th>
+              <th>Task</th>
               <th>Description</th>
               <th>Status</th>
               <th>Due Date</th>
@@ -77,10 +77,10 @@ const Tasks = () => {
           <tbody>
             {tasks.map(task => (
               <tr key={task.id}>
-                <td>{task.id}</td>
-                <td>{task.description}</td>
-                <td>{renderStatusBadge(task.status)}</td>
-                <td>{task.dueDate}</td>
+                <td>{task.title || 'No Title'}</td>
+                <td>{task.description || 'No Description'}</td>
+                <td>{renderStatusBadge(task.status || 'N/A')}</td>
+                <td>{task.due_date ? new Date(task.due_date).toLocaleDateString() : 'N/A'}</td>
               </tr>
             ))}
           </tbody>
@@ -91,3 +91,4 @@ const Tasks = () => {
 };
 
 export default Tasks;
+

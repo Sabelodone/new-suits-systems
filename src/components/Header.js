@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Navbar, Nav, Form, FormControl, Button, Modal, Tab, Nav as BootstrapNav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaSearch, FaFilter, FaUser } from 'react-icons/fa';
-import './Header.css'; // Ensure this CSS file is properly linked
+import { useUser } from './UserContext'; // Import UserContext to access user state
+import axios from 'axios'; // Import axios for API requests
+import './Header.css';
 
 const Header = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -11,6 +13,7 @@ const Header = () => {
     const [profilePic, setProfilePic] = useState(null);
     const [username, setUsername] = useState('User Name');
     const [email, setEmail] = useState('user@example.com');
+    const { setUser } = useUser(); // Get setUser from UserContext
 
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
@@ -36,6 +39,17 @@ const Header = () => {
         e.preventDefault();
         console.log('Profile updated:', { username, email, profilePic });
         handleClose();
+    };
+
+    const handleLogout = async () => {
+        try {
+            await axios.post('http://34.35.32.197/api/users/logout'); // Call the backend logout endpoint
+            localStorage.removeItem('user'); // Clear user data from local storage
+            setUser(null); // Clear user state in context
+            window.location.href = '/signin'; // Redirect to login page
+        } catch (error) {
+            console.error('Logout failed', error); // Handle any errors
+        }
     };
 
     return (
@@ -141,7 +155,7 @@ const Header = () => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="logout">
                                 <p>Are you sure you want to log out?</p>
-                                <Button variant="danger" onClick={handleClose}>
+                                <Button variant="danger" onClick={handleLogout}> {/* Updated to use handleLogout */}
                                     Logout
                                 </Button>
                             </Tab.Pane>
@@ -154,3 +168,4 @@ const Header = () => {
 };
 
 export default Header;
+

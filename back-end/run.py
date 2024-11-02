@@ -21,7 +21,7 @@ with app.app_context():
     import random
     from app.models.gender import Gender
 
-    for i in range(0, 10):
+    '''for i in range(0, 10):
         random_num = random.randrange(1, 1000)
         gender = Gender(name='female')
         try:
@@ -30,7 +30,7 @@ with app.app_context():
         except Exception as e:
             print(f"Error: {e}")
         print(gender)
-        print('--')
+        print('--')'''
 
     test_connection()
 

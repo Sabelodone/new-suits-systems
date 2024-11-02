@@ -71,8 +71,8 @@ def create_app():
     # from app.routes.payments import payments_blueprint
     # app.register_blueprint(payments_blueprint, url_prefix='/payments')
 
-    # from app.routes.tasks import tasks_blueprint
-    # app.register_blueprint(tasks_blueprint, url_prefix='/tasks')
+    from app.routes.tasks import tasks_blueprint
+    app.register_blueprint(tasks_blueprint, url_prefix='/api/tasks')
 
     from app.routes.workflows import workflows_blueprint
     app.register_blueprint(workflows_blueprint, url_prefix='/api/workflows')
