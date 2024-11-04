@@ -71,12 +71,12 @@ const DocumentManager = () => {
   const getIconForDocumentType = (type) => {
     switch (type) {
       case 'application/pdf':
-        return '📄'; 
+        return '📄';
       case 'image/jpeg':
       case 'image/png':
-        return '📄'; 
+        return '📄';
       default:
-        return '📄'; 
+        return '📄';
     }
   };
 
@@ -106,8 +106,8 @@ const DocumentManager = () => {
   };
 
   return (
-    <div className="doc-management-container my-5 p-4 bg-light rounded shadow">
-      <h2 className="doc-management-title mb-4 text-primary border-bottom pb-2">Documents</h2>
+    <div className="doc-management-container p-4 bg-light  shadow !m-0 flex flex-col gap-4 !bg-[#e3dce7] rounded-xl">
+      <h3 className='text-2xl text-primary-purple font-bold text-center'>Documents</h3>
 
       {error && <div className="alert alert-danger">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}

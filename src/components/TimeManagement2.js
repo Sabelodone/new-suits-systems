@@ -46,7 +46,7 @@ const TimeManagement = () => {
   });
 
   return (
-    <div className="container mt-5 time-management-container">
+    <div className="container time-management-container">
       <Nav className="mb-4">
         <Nav.Link as={Link} to="/cases" className="text-indigo">Cases</Nav.Link>
         <Nav.Link as={Link} to="/tasks" className="text-indigo">Tasks</Nav.Link>

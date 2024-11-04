@@ -12,7 +12,7 @@ const Settings = () => {
   };
 
   return (
-    <Container className="mt-5 settings-container">
+    <Container className=" settings-container">
       <h1 className="text-center mb-4">Settings</h1>
 
       <Row>
@@ -132,22 +132,22 @@ const Settings = () => {
 
           {selectedTab === 'law-firm-settings' && (
             <Card>
-            <Card.Header>Law Firm Settings</Card.Header>
-            <Card.Body>
-              <Form>
-                <Form.Group controlId="formFirmName">
-                  <Form.Label>Firm Name</Form.Label>
-                  <Form.Control type="text" placeholder="Enter law firm name" />
-                </Form.Group>
-                <Form.Group controlId="formFirmLogo">
-                  <Form.Label>Upload Logo</Form.Label>
-                  <Form.Control type="file" />
-                </Form.Group>
-                <Button variant="primary" type="submit">Save Settings</Button>
-              </Form>
-            </Card.Body>
-          </Card>
-          
+              <Card.Header>Law Firm Settings</Card.Header>
+              <Card.Body>
+                <Form>
+                  <Form.Group controlId="formFirmName">
+                    <Form.Label>Firm Name</Form.Label>
+                    <Form.Control type="text" placeholder="Enter law firm name" />
+                  </Form.Group>
+                  <Form.Group controlId="formFirmLogo">
+                    <Form.Label>Upload Logo</Form.Label>
+                    <Form.Control type="file" />
+                  </Form.Group>
+                  <Button variant="primary" type="submit">Save Settings</Button>
+                </Form>
+              </Card.Body>
+            </Card>
+
           )}
 
           {selectedTab === 'manage-activities' && (
@@ -177,28 +177,28 @@ const Settings = () => {
               </Card.Body>
             </Card>
           )}
-        {selectedTab === 'manage-documents' && (
-  <Card>
-    <Card.Header>Manage Documents</Card.Header>
-    <Card.Body>
-      <Form>
-        <Form.Group controlId="formDocumentTitle">
-          <Form.Label>Document Title</Form.Label>
-          <Form.Control type="text" placeholder="Enter document title" />
-        </Form.Group>
-        <Form.Group controlId="formDocumentUpload">
-          <Form.Label>Upload Document</Form.Label>
-          <Form.Control type="file" />
-        </Form.Group>
-        <Button variant="primary" type="submit">Upload Document</Button>
-      </Form>
-      <ListGroup className="mt-4">
-        <ListGroup.Item>Document 1 - Contract.pdf</ListGroup.Item>
-        <ListGroup.Item>Document 2 - Invoice.docx</ListGroup.Item>
-      </ListGroup>
-    </Card.Body>
-  </Card>
-)}
+          {selectedTab === 'manage-documents' && (
+            <Card>
+              <Card.Header>Manage Documents</Card.Header>
+              <Card.Body>
+                <Form>
+                  <Form.Group controlId="formDocumentTitle">
+                    <Form.Label>Document Title</Form.Label>
+                    <Form.Control type="text" placeholder="Enter document title" />
+                  </Form.Group>
+                  <Form.Group controlId="formDocumentUpload">
+                    <Form.Label>Upload Document</Form.Label>
+                    <Form.Control type="file" />
+                  </Form.Group>
+                  <Button variant="primary" type="submit">Upload Document</Button>
+                </Form>
+                <ListGroup className="mt-4">
+                  <ListGroup.Item>Document 1 - Contract.pdf</ListGroup.Item>
+                  <ListGroup.Item>Document 2 - Invoice.docx</ListGroup.Item>
+                </ListGroup>
+              </Card.Body>
+            </Card>
+          )}
 
 
           {selectedTab === 'manage-practice-areas' && (

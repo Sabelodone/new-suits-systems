@@ -1,7 +1,7 @@
 
 import { Nav, Table, Badge, Button, Form } from 'react-bootstrap';
-import React, { useEffect, useState} from 'react';
-import { Link } from 'react-router-dom'; 
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './Tasks.css';
 import axios from 'axios';
 
@@ -37,27 +37,27 @@ const Tasks = () => {
 
 
 
-//const Tasks = () => {
+  //const Tasks = () => {
   // task data
- // const [tasks, setTasks] = useState([]);
- // const [loading, setLoading] = useState(true);
- // const [error, setError] = useState(null);
+  // const [tasks, setTasks] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
 
   // Fetch tasks from the backend server
   //useEffect(()=> {
-   //const fetchTasks = async () => {
-    //  try {
-      //  const response = await axios.get('http://34.35.32.197/api/tasks'); //Backend URL API
+  //const fetchTasks = async () => {
+  //  try {
+  //  const response = await axios.get('http://34.35.32.197/api/tasks'); //Backend URL API
   //	setTasks(response.data);
-    //  } catch (err) {
+  //  } catch (err) {
   //	setError (err.response?.data?.error || 'An error occcured while fetching tasks');
-    //  } finally {
+  //  } finally {
   //	setLoading(false);
-    //  }
-    //};
+  //  }
+  //};
 
- // fetchTasks();
-//}, []);
+  // fetchTasks();
+  //}, []);
 
 
   // Function to display status badge
@@ -80,29 +80,31 @@ const Tasks = () => {
   };
 
   return (
-    <div className="container mt-5 tasks-container">
-      <Nav className="mb-4">
+    <div className="container tasks-container !mt-0 p-4 bg-[#e3dce7] rounded-xl ">
+      {/* <Nav className="mb-4">
         <Nav.Link as={Link} to="/cases" className="text-indigo">Cases</Nav.Link>
         <Nav.Link as={Link} to="/time-management" className="text-indigo">Time Management</Nav.Link>
         <Nav.Link as={Link} to="/clients" className="text-indigo">Clients</Nav.Link>
         <Nav.Link as={Link} to="/documents" className="text-indigo">Documents</Nav.Link>
-      </Nav>
-      <h1 className="mb-4 text-center">Tasks</h1>
+      </Nav> */}
 
-      {/* Buttons Section */}
-      <div className="mb-4 d-flex justify-content-between">
-        <Button variant="primary" onClick={toggleAddTaskForm}>
-          {showAddTaskForm ? 'Close Add Task' : 'Add Task'}
-        </Button>
-        <Button variant="primary" onClick={toggleAddAppointmentForm}>
-          {showAddAppointmentForm ? 'Close Add Appointment' : 'Add Appointment'}
-        </Button>
-        <Button variant="primary" onClick={toggleAgendaSection}>
-          {showAgendaSection ? 'Close Agenda' : 'Agenda'}
-        </Button>
-        <Button variant="primary" onClick={toggleCalendarSection}>
-          {showCalendarSection ? 'Close Calendar' : 'Calendar'}
-        </Button>
+      <div className='flex flex-col gap-4'>
+        <h3 className='text-2xl text-primary-purple font-bold  text-center'>Tasks</h3>
+        {/* Buttons Section */}
+        <div className="mb-4 d-flex justify-content-between">
+          <Button variant="primary" onClick={toggleAddTaskForm}>
+            {showAddTaskForm ? 'Close Add Task' : 'Add Task'}
+          </Button>
+          <Button variant="primary" onClick={toggleAddAppointmentForm}>
+            {showAddAppointmentForm ? 'Close Add Appointment' : 'Add Appointment'}
+          </Button>
+          <Button variant="primary" onClick={toggleAgendaSection}>
+            {showAgendaSection ? 'Close Agenda' : 'Agenda'}
+          </Button>
+          <Button variant="primary" onClick={toggleCalendarSection}>
+            {showCalendarSection ? 'Close Calendar' : 'Calendar'}
+          </Button>
+        </div>
       </div>
 
       {/* Add Task Form */}

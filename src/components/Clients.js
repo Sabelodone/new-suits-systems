@@ -7,35 +7,35 @@ import { Table } from 'react-bootstrap';
 const Clients = () => {
   // Initial client data
   const [clients, setClients] = useState([
-    { 
+    {
       id: '1', // Use string for ID
-      name: 'John Doe', 
-      contact: 'johndoe@example.com', 
-      phone: '555-1234', 
-      address: '123 Main St', 
-      cases: 5, 
-      registrationDate: '2023-05-12', 
-      status: 'Active' 
+      name: 'John Doe',
+      contact: 'johndoe@example.com',
+      phone: '555-1234',
+      address: '123 Main St',
+      cases: 5,
+      registrationDate: '2023-05-12',
+      status: 'Active'
     },
-    { 
+    {
       id: '2', // Use string for ID
-      name: 'Jane Smith', 
-      contact: 'janesmith@example.com', 
-      phone: '555-5678', 
-      address: '456 Elm St', 
-      cases: 3, 
-      registrationDate: '2023-06-22', 
-      status: 'Inactive' 
+      name: 'Jane Smith',
+      contact: 'janesmith@example.com',
+      phone: '555-5678',
+      address: '456 Elm St',
+      cases: 3,
+      registrationDate: '2023-06-22',
+      status: 'Inactive'
     },
-    { 
+    {
       id: '3', // Use string for ID
-      name: 'David Johnson', 
-      contact: 'davidjohnson@example.com', 
-      phone: '555-9012', 
-      address: '789 Oak St', 
-      cases: 2, 
-      registrationDate: '2023-07-10', 
-      status: 'Active' 
+      name: 'David Johnson',
+      contact: 'davidjohnson@example.com',
+      phone: '555-9012',
+      address: '789 Oak St',
+      cases: 2,
+      registrationDate: '2023-07-10',
+      status: 'Active'
     },
   ]);
 
@@ -66,15 +66,16 @@ const Clients = () => {
   };
 
   return (
-    <div className="container mt-5 clients-container">
-      <Nav className="mb-4">
+    <div className="container clients-container mt-0">
+      {/* <Nav className="mb-4">
         <Nav.Link as={Link} to="/cases" className="text-indigo">Cases</Nav.Link>
         <Nav.Link as={Link} to="/tasks" className="text-indigo">Tasks</Nav.Link>
         <Nav.Link as={Link} to="/time-management" className="text-indigo">Time Management</Nav.Link>
         <Nav.Link as={Link} to="/documents-management" className="text-indigo">Document Manager</Nav.Link>
-      </Nav>
+      </Nav> */}
 
-      <h1 className="mb-4 text-center">Client Management</h1>
+      <h3 className='text-2xl text-primary-purple font-bold text-center '>Client Management</h3>
+
       <div className="table-responsive">
         <Table striped bordered hover className="custom-table">
           <thead>
