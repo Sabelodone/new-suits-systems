@@ -1,14 +1,14 @@
 // Cases.js
 
 import React, { useState, useEffect } from 'react';
-import { Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import './Cases.css'; // Custom CSS for additional styling
 import { Table, Row, Col } from 'react-bootstrap';
 import { FaClipboardList } from 'react-icons/fa'; // Keep the clipboard list icon
 import { Button } from '@mantine/core';
 import { useNavigate } from 'react-router-dom'; // UseNavigate, to navigate back once the case is added
 import axios from 'axios';
+import { modals,  } from '@mantine/modals';
+import { CaseDetail } from './CaseDetail';
 
 const Cases = () => {
   const [cases, setCases] = useState([]);
@@ -68,8 +68,14 @@ const Cases = () => {
         <div className="client-files w-full">
           <Row>
             {cases.map((caseItem, index) => (
-              <Col key={index} md={6} lg={4} className="mb-3 text-center">
-                <div className="folder-icon" style={{ padding: '10px', borderRadius: '5px' }}>
+              <Col key={index} md={6} lg={4} className="mb-3 text-center" >
+                <div className="folder-icon" style={{ padding: '10px', borderRadius: '5px',cursor:'pointer' }}  onClick={()=>{
+                  modals.open({
+                  children:<CaseDetail caseItem={caseItem}/>,
+                  id:{index},
+                  withCloseButton:false,
+                  centered:true
+                })}}>
                   <span> 📂 </span> {/* Folder emoji */}
                   <div className="folder-details">
                     <strong>Client ID:</strong> {caseItem.id}
@@ -101,7 +107,13 @@ const Cases = () => {
             </thead>
             <tbody>
               {cases.map((caseItem, index) => (
-                <tr key={index}>
+                <tr key={index} className='cursor-pointer' onClick={()=>{
+                  modals.open({
+                  children:<CaseDetail caseItem={caseItem}/>,
+                  id:{index},
+                  withCloseButton:false,
+                  centered:true
+                })}}>
                   <td>{caseItem.id}</td>
                   <td>{caseItem.title}</td>
                   <td>{caseItem.description}</td>
