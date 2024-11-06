@@ -7,7 +7,7 @@ class Workflow(PrimaryKeyBaseModel):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    statuses = db.relationship('CaseStatus', backref='workflow', lazy=True)
+    # statuses = db.relationship('CaseStatus', backref='workflow', lazy=True)
 
     def to_dict(self):
         return {

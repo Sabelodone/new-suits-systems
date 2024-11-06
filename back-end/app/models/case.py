@@ -8,10 +8,6 @@ class Case(PrimaryKeyBaseModel):
     title = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Text, nullable=False)
 
-    # Jameson addition please aline to the model design where possible.
-    workflow_id = db.Column(db.Integer, db.ForeignKey('workflows.id'), nullable=True)
-    workflow = db.relationship('Workflow', backref='cases', lazy=True)
-
     status_id = db.Column(db.String(32), db.ForeignKey('case_status.id'))
     status = db.relationship('CaseStatus', backref='cases')
 

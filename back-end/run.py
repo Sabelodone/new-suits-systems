@@ -7,6 +7,7 @@ app = create_app()
 with app.app_context():
     print("Creating databases tables...")
     db.create_all()
+    # db.drop_all()
     print("Database tables created")
 
     def test_connection():
@@ -18,19 +19,19 @@ with app.app_context():
         except Exception as e:
             print(f"Database connection failed: {e}")
 
-    import random
-    from app.models.gender import Gender
+    # import random
+    # from app.models.gender import Gender
 
-    for i in range(0, 10):
-        random_num = random.randrange(1, 1000)
-        gender = Gender(name='female')
-        try:
-            gender.save()
-            print("yes")
-        except Exception as e:
-            print(f"Error: {e}")
-        print(gender)
-        print('--')
+    # for i in range(0, 10):
+    #     random_num = random.randrange(1, 1000)
+    #     gender = Gender(name='female')
+    #     try:
+    #         gender.save()
+    #         print("yes")
+    #     except Exception as e:
+    #         print(f"Error: {e}")
+    #     print(gender)
+    #     print('--')
 
     test_connection()
 
