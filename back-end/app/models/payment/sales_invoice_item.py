@@ -9,7 +9,7 @@ class SalesInvoiceItem(BaseModel):
     sales_invoice = db.relationship('SalesInvoice', back_populates='items')
 
     item_id = db.Column(db.String(32), db.ForeignKey('task.id'), nullable=False, primary_key=True)
-    item = db.relationship('Item')
+    item = db.relationship('Task')
 
     quantity = db.Column(db.Float, nullable=False)
     base_rate = db.Column(db.Float, nullable=False) # before discount

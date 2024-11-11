@@ -46,8 +46,8 @@ def create_app():
     from app.models.case_category import CaseCategory
     from app.models.case_status import CaseStatus
     from app.models import customer, base_model, primarykey_base_model, phone_number
-    from app.models import task_status, document_status, document_history, client_phone
-    from app.models.payment import sales_invoice, sales_invoice_item, payment_methods, payment
+    from app.models import task_status, document_status, document_history, client_phone, subscription_plan
+    from app.models.payment import sales_invoice, sales_invoice_item, payment_methods, payment, sales_invoice_taxes
     
     print("Successfully Imported all models")
     from app.routes.users import users_blueprint

@@ -1,5 +1,5 @@
 {
-    "gender": [
+    "Gender": [
         { "name": "Female"},
         { "name": "Male"},
         { "name": "Prefer not to say"}
@@ -36,7 +36,7 @@
         { "name": "Other"}
     ],
     "SubscriptionPlan": [
-        { "name": "Monthly", "duration_in_months": 1, "description": "Monthly Subscription Plan", "cost": 10.00},
+        { "name": "Monthly","duration_in_months": 1, "description": "Monthly Subscription Plan", "cost": 10.00},
         { "name": "Quarterly", "duration_in_months": 3, "description": "Quarterly Subscription Plan", "cost": 25.00},
         { "name": "Half Yearly", "duration_in_months": 6, "description": "Half Yearly Subscription Plan", "cost": 50.00},
         { "name": "Yearly", "duration_in_months": 12, "description": "Yearly Subscription Plan", "cost": 100.00}
@@ -52,16 +52,19 @@
         { "name": "Director"}
     ],
     "PaymentMethods": [
-        { "name": "Credit Card"},
-        { "name": "Debit Card"},
-        { "name": "Net Banking"},
-        { "name": "UPI"},
-        { "name": "Wallet"},
-        { "name": "Cash"}
+        { "name": "Credit Card", "description": "Credit Card Payment"},
+        { "name": "Debit Card", "description": "Debit Card Payment"},
+        { "name": "Net Banking", "description": "Net Banking Payment"},
+        { "name": "UPI", "description": "UPI Payment"},
+        { "name": "Wallet", "description": "Wallet Payment"},
+        { "name": "Cash", "description": "Cash Payment"}
     ],
     "SalesInvoiceTaxes": [
-        { "name": "GST", "percentage": 18},
-        { "name": "VAT", "percentage": 5},
-        { "name": "Service Tax", "percentage": 10}
+        { "tax_type": "GST", "tax_subtype": "btats" ,"percentage": 18, "amount": 0},
+        { "tax_type": "VAT", "tax_subtype": "btats" ,"percentage": 5, "amount": 0},
+        { "tax_type": "Service Tax", "tax_subtype": "btats" ,"percentage": 10, "amount": 0},
+        { "tax_type": "CGST", "tax_subtype": "btats" ,"percentage": 9, "amount": 0},
+        { "tax_type": "SGST", "tax_subtype": "btats" ,"percentage": 9, "amount": 0},
+        { "tax_type": "IGST", "tax_subtype": "btats" ,"percentage": 18, "amount": 0}
     ]
 }
