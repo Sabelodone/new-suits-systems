@@ -39,13 +39,31 @@ const Cases = () => {
     console.log('Navigating to create a new case...');
     navigate('/create-case'); // Navgeting back to create case route
   };
+    
+  let clickTimeOut; 
+
+  const handleClick =(caseItem,index)=>{
+    clickTimeOut=setTimeout(()=>{
+      modals.open({
+        children:<CaseDetail caseItem={caseItem}/>,
+        id:{index},
+        withCloseButton:false,
+        centered:true
+      })
+    },1000);
+  };
+
+  const handleDoubleClick = ()=>{
+    clearTimeout(clickTimeOut);
+    navigate('/document-management');
+
+  }
 
   return (
     <div className="container cases-container bg-[#e3dce7] rounded-lg flex flex-col gap-6 items-center w-full !mt-0">
 
       {/* Page Header */}
-      <h3 className='text-2xl text-primary-purple font-bold '>Case Management</h3>
-
+      <h3 className='text-2xl text-primary-purple font-bold '>Case Management</h3> 
 
       <div className='flex !items-center gap-8'>
         {/*Create case button*/}
@@ -69,13 +87,15 @@ const Cases = () => {
           <Row>
             {cases.map((caseItem, index) => (
               <Col key={index} md={6} lg={4} className="mb-3 text-center" >
-                <div className="folder-icon" style={{ padding: '10px', borderRadius: '5px',cursor:'pointer' }}  onClick={()=>{
-                  modals.open({
-                  children:<CaseDetail caseItem={caseItem}/>,
-                  id:{index},
-                  withCloseButton:false,
-                  centered:true
-                })}}>
+                <div className="folder-icon" style={{ padding: '10px', borderRadius: '5px',cursor:'pointer' }} 
+                onClick={()=>{
+               handleClick(caseItem,index);
+              }}
+              onDoubleClick={()=>{
+                handleDoubleClick();
+              }}
+              
+              >
                   <span> 📂 </span> {/* Folder emoji */}
                   <div className="folder-details">
                     <strong>Client ID:</strong> {caseItem.id}

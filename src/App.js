@@ -33,7 +33,6 @@ function App() {
   return (
     <MantineProvider>
       <ModalsProvider>
-
       <UserProvider>
         <Router>
           <Header />
@@ -43,7 +42,6 @@ function App() {
         </Router>
       </UserProvider>
       </ModalsProvider>
-
     </MantineProvider>
   );
 }
