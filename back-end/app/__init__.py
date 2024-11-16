@@ -12,10 +12,10 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # Set to 10 MB
     app.config.from_object(Config)
 
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'  # You can update this with your MySQL configuration
-    # app.config['SECRET_KEY'] = os.urandom(24).hex()
-    # app.config['SESSION_PERMANENT'] = False
-    # app.config['SESSION_TYPE'] = 'filesystem'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'  # You can update this with your MySQL configuration
+    app.config['SECRET_KEY'] = os.urandom(24).hex()
+    app.config['SESSION_PERMANENT'] = False
+    app.config['SESSION_TYPE'] = 'filesystem'
 
     # Initialize extensions
     db.init_app(app)
@@ -45,6 +45,7 @@ def create_app():
     from app.models import task, case_status, case_category, document,document_type
     from app.models.case_category import CaseCategory
     from app.models.case_status import CaseStatus
+    from app.models.event import Event
     from app.models import customer, base_model, primarykey_base_model, phone_number
     from app.models import task_status, document_status, document_history, client_phone, subscription_plan
     from app.models.payment import sales_invoice, sales_invoice_item, payment_methods, payment, sales_invoice_taxes
@@ -71,8 +72,11 @@ def create_app():
     # from app.routes.payments import payments_blueprint
     # app.register_blueprint(payments_blueprint, url_prefix='/payments')
 
-    # from app.routes.tasks import tasks_blueprint
-    # app.register_blueprint(tasks_blueprint, url_prefix='/tasks')
+    from app.routes.tasks import tasks_blueprint
+    app.register_blueprint(tasks_blueprint, url_prefix='/api/tasks')
+
+    from app.routes.events import events_blueprint
+    app.register_blueprint(events_blueprint, url_prefix='/api/events')
 
     from app.routes.workflows import workflows_blueprint
     app.register_blueprint(workflows_blueprint, url_prefix='/api/workflows')

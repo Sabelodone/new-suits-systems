@@ -1,36 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Nav, Form, ListGroup } from 'react-bootstrap';
-import './Settings.css'; // Add your custom CSS for styling
+import { FaChevronDown, FaChevronRight } from 'react-icons/fa'; // Icons for toggle indication
 
 const Settings = () => {
-  const [selectedTab, setSelectedTab] = useState('manage-users');
+  const [selectedTab, setSelectedTab] = useState('manage-workflows');
   const [workflows, setWorkflows] = useState([]);
-  const [statuses, setStatuses] = useState([]);
-  const [roles, setRoles] = useState([]); // State for roles
   const [newWorkflow, setNewWorkflow] = useState('');
-  const [newStatus, setNewStatus] = useState('');
-  const [selectedWorkflowId, setSelectedWorkflowId] = useState('');
-
-  const handleTabSelect = (tab) => {
-    setSelectedTab(tab);
-  };
+  const [newStep, setNewStep] = useState({ name: '', step_order: '', requires_payment: false });
+  const [selectedWorkflowId, setSelectedWorkflowId] = useState(null); // Toggle selection
+  const [editingWorkflowId, setEditingWorkflowId] = useState(null);
+  const [editingStepId, setEditingStepId] = useState(null);
+  const [editWorkflowName, setEditWorkflowName] = useState('');
+  const [editStep, setEditStep] = useState({ name: '', step_order: '', requires_payment: false });
 
   useEffect(() => {
-    const fetchWorkflows = async () => {
-      const response = await fetch('/api/workflows');
-      const data = await response.json();
-      setWorkflows(data);
-    };
-
-    const fetchRoles = async () => {
-      const response = await fetch('/api/roles'); // Adjust API endpoint
-      const data = await response.json();
-      setRoles(data);
-    };
-
     fetchWorkflows();
-    fetchRoles(); // Fetch roles on component mount
   }, []);
+
+  const fetchWorkflows = async () => {
+    const response = await fetch('/api/workflows');
+    const data = await response.json();
+    setWorkflows(data);
+  };
 
   const handleCreateWorkflow = async (event) => {
     event.preventDefault();
@@ -46,67 +37,102 @@ const Settings = () => {
     }
   };
 
-  const handleCreateStatus = async (event) => {
+  const handleCreateStep = async (event) => {
     event.preventDefault();
-    const response = await fetch('/api/statuses', {
+    const response = await fetch(`/api/workflows/${selectedWorkflowId}/steps`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newStatus, workflow_id: selectedWorkflowId }),
+      body: JSON.stringify(newStep),
     });
     if (response.ok) {
-      const newStatusData = await response.json();
-      setStatuses([...statuses, newStatusData]);
-      setNewStatus('');
+      const newStepData = await response.json();
+      const updatedWorkflows = workflows.map(workflow =>
+        workflow.id === selectedWorkflowId
+          ? { ...workflow, steps: [...workflow.steps, newStepData] }
+          : workflow
+      );
+      setWorkflows(updatedWorkflows);
+      setNewStep({ name: '', step_order: '', requires_payment: false });
     }
   };
 
-  const handleSelectWorkflow = async (workflowId) => {
-    setSelectedWorkflowId(workflowId);
-    const response = await fetch(`/api/statuses/${workflowId}`);
-    const data = await response.json();
-    setStatuses(data);
+  const toggleWorkflowSteps = (workflowId) => {
+    setSelectedWorkflowId(selectedWorkflowId === workflowId ? null : workflowId);
+  };
+
+  const handleDeleteWorkflow = async (workflowId) => {
+    const response = await fetch(`/api/workflows/${workflowId}`, { method: 'DELETE' });
+    if (response.ok) {
+      setWorkflows(workflows.filter(workflow => workflow.id !== workflowId));
+    }
+  };
+
+  const handleDeleteStep = async (workflowId, stepId) => {
+    const response = await fetch(`/api/workflows/${workflowId}/steps/${stepId}`, { method: 'DELETE' });
+    if (response.ok) {
+      const updatedWorkflows = workflows.map(workflow =>
+        workflow.id === workflowId
+          ? { ...workflow, steps: workflow.steps.filter(step => step.id !== stepId) }
+          : workflow
+      );
+      setWorkflows(updatedWorkflows);
+    }
+  };
+
+  const handleEditWorkflow = async (event) => {
+    event.preventDefault();
+    const response = await fetch(`/api/workflows/${editingWorkflowId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: editWorkflowName }),
+    });
+    if (response.ok) {
+      const updatedWorkflows = workflows.map(workflow =>
+        workflow.id === editingWorkflowId ? { ...workflow, name: editWorkflowName } : workflow
+      );
+      setWorkflows(updatedWorkflows);
+      setEditingWorkflowId(null);
+      setEditWorkflowName('');
+    }
+  };
+
+  const handleEditStep = async (event) => {
+    event.preventDefault();
+    const response = await fetch(`/api/workflows/${selectedWorkflowId}/steps/${editingStepId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editStep),
+    });
+    if (response.ok) {
+      const updatedWorkflows = workflows.map(workflow =>
+        workflow.id === selectedWorkflowId
+          ? {
+              ...workflow,
+              steps: workflow.steps.map(step =>
+                step.id === editingStepId ? { ...step, ...editStep } : step
+              ),
+            }
+          : workflow
+      );
+      setWorkflows(updatedWorkflows);
+      setEditingStepId(null);
+      setEditStep({ name: '', step_order: '', requires_payment: false });
+    }
   };
 
   return (
     <Container className="mt-5 settings-container">
       <h1 className="text-center mb-4">Settings</h1>
-
       <Row>
-        <Col md={3} className="mb-4">
+        <Col md={3}>
           <Nav className="flex-column">
-            <Nav.Link onClick={() => handleTabSelect('manage-users')} active={selectedTab === 'manage-users'}>
-              Manage Users
+            <Nav.Link onClick={() => setSelectedTab('manage-workflows')} active={selectedTab === 'manage-workflows'}>
+              Manage Workflows
             </Nav.Link>
-            <Nav.Link onClick={() => handleTabSelect('manage-roles')} active={selectedTab === 'manage-roles'}>
-              Manage Roles
-            </Nav.Link>
-            {/* Add more tabs as needed */}
           </Nav>
         </Col>
 
         <Col md={9}>
-          {selectedTab === 'manage-roles' && (
-            <Card>
-              <Card.Header>Manage Roles</Card.Header>
-              <Card.Body>
-                <Form>
-                  <Form.Group controlId="formRoleName">
-                    <Form.Label>Role Name</Form.Label>
-                    <Form.Control type="text" placeholder="Enter role name" />
-                  </Form.Group>
-                  <Button variant="primary" type="submit">Add Role</Button>
-                </Form>
-                <ListGroup className="mt-4">
-                  {roles.map(role => (
-                    <ListGroup.Item key={role.id}>
-                      {role.name}
-                      <Button variant="danger" className="float-end">Remove</Button>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              </Card.Body>
-            </Card>
-          )}
           {selectedTab === 'manage-workflows' && (
             <Card>
               <Card.Header>Manage Workflows</Card.Header>
@@ -123,35 +149,171 @@ const Settings = () => {
                   </Form.Group>
                   <Button variant="primary" type="submit">Add Workflow</Button>
                 </Form>
+
                 <ListGroup className="mt-4">
                   {workflows.map((workflow) => (
-                    <ListGroup.Item key={workflow.id} onClick={() => handleSelectWorkflow(workflow.id)}>
-                      {workflow.name}
-                    </ListGroup.Item>
+                    <React.Fragment key={workflow.id}>
+                      <ListGroup.Item>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div
+                            className="d-flex align-items-center"
+                            onClick={() => toggleWorkflowSteps(workflow.id)}
+                            style={{ cursor: 'pointer', flexGrow: 1 }}
+                          >
+                            {selectedWorkflowId === workflow.id ? (
+                              <FaChevronDown className="mr-2" />
+                            ) : (
+                              <FaChevronRight className="mr-2" />
+                            )}
+                            <span>{workflow.name}</span>
+                          </div>
+                          <div className="d-flex flex-column align-items-end"> {/* Align buttons to the right */}
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() => handleDeleteWorkflow(workflow.id)}
+                              className="mt-1" // Margin above
+                            >
+                              Delete
+                            </Button>
+                            <Button
+                              variant="warning"
+                              size="sm"
+                              className="mt-1" // Margin above
+                              onClick={() => {
+                                setEditingWorkflowId(workflow.id);
+                                setEditWorkflowName(workflow.name);
+                              }}
+                            >
+                              Edit
+                            </Button>
+                          </div>
+                        </div>
+                      </ListGroup.Item>
+
+                      {selectedWorkflowId === workflow.id && (
+                        <ListGroup className="ml-4">
+                          {workflow.steps.map((step) => (
+                            <ListGroup.Item key={step.id}>
+                              <div className="d-flex justify-content-between align-items-center">
+                                <span>{step.step_order}. {step.name} {step.requires_payment ? "(Requires Payment)" : ""}</span>
+                                <div className="d-flex flex-column align-items-end"> {/* Align buttons to the right */}
+                                  <Button
+                                    variant="danger"
+                                    size="sm"
+                                    onClick={() => handleDeleteStep(workflow.id, step.id)}
+                                    className="mt-1" // Margin above
+                                  >
+                                    Delete
+                                  </Button>
+                                  <Button
+                                    variant="warning"
+                                    size="sm"
+                                    className="mt-1" // Margin above
+                                    onClick={() => {
+                                      setEditingStepId(step.id);
+                                      setEditStep({
+                                        name: step.name,
+                                        step_order: step.step_order,
+                                        requires_payment: step.requires_payment,
+                                      });
+                                    }}
+                                  >
+                                    Edit
+                                  </Button>
+                                </div>
+                              </div>
+                            </ListGroup.Item>
+                          ))}
+                        </ListGroup>
+                      )}
+                    </React.Fragment>
                   ))}
                 </ListGroup>
-                {selectedWorkflowId && (
-                  <Form onSubmit={handleCreateStatus}>
-                    <Form.Group controlId="formStatusName">
-                      <Form.Label>Status Name</Form.Label>
+
+                {editingWorkflowId && (
+                  <Form onSubmit={handleEditWorkflow} className="mt-3">
+                    <Form.Group controlId="editWorkflowName">
+                      <Form.Label>Edit Workflow Name</Form.Label>
                       <Form.Control
                         type="text"
-                        placeholder="Enter status name"
-                        value={newStatus}
-                        onChange={(e) => setNewStatus(e.target.value)}
+                        placeholder="Enter new workflow name"
+                        value={editWorkflowName}
+                        onChange={(e) => setEditWorkflowName(e.target.value)}
                       />
                     </Form.Group>
-                    <Button variant="primary" type="submit">Add Status</Button>
+                    <Button variant="success" type="submit">Save Changes</Button>
+                    <Button variant="secondary" onClick={() => setEditingWorkflowId(null)} className="ml-2">
+                      Cancel
+                    </Button>
                   </Form>
                 )}
-                {statuses.length > 0 && (
-                  <ListGroup className="mt-4">
-                    {statuses.map((status) => (
-                      <ListGroup.Item key={status.id}>
-                        {status.name}
-                      </ListGroup.Item>
-                    ))}
-                  </ListGroup>
+
+                {editingStepId && (
+                  <Form onSubmit={handleEditStep} className="mt-3">
+                    <Form.Group controlId="editStepName">
+                      <Form.Label>Edit Step Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter new step name"
+                        value={editStep.name}
+                        onChange={(e) => setEditStep({ ...editStep, name: e.target.value })}
+                      />
+                    </Form.Group>
+                    <Form.Group controlId="editStepOrder">
+                      <Form.Label>Edit Step Order</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter step order"
+                        value={editStep.step_order}
+                        onChange={(e) => setEditStep({ ...editStep, step_order: e.target.value })}
+                      />
+                    </Form.Group>
+                    <Form.Group controlId="editRequiresPayment">
+                      <Form.Check
+                        type="checkbox"
+                        label="Requires Payment"
+                        checked={editStep.requires_payment}
+                        onChange={(e) => setEditStep({ ...editStep, requires_payment: e.target.checked })}
+                      />
+                    </Form.Group>
+                    <Button variant="success" type="submit">Save Changes</Button>
+                    <Button variant="secondary" onClick={() => setEditingStepId(null)} className="ml-2">
+                      Cancel
+                    </Button>
+                  </Form>
+                )}
+
+                {selectedWorkflowId && (
+                  <Form onSubmit={handleCreateStep} className="mt-3">
+                    <Form.Group controlId="formStepName">
+                      <Form.Label>Step Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter step name"
+                        value={newStep.name}
+                        onChange={(e) => setNewStep({ ...newStep, name: e.target.value })}
+                      />
+                    </Form.Group>
+                    <Form.Group controlId="formStepOrder">
+                      <Form.Label>Step Order</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter step order"
+                        value={newStep.step_order}
+                        onChange={(e) => setNewStep({ ...newStep, step_order: e.target.value })}
+                      />
+                    </Form.Group>
+                    <Form.Group controlId="formRequiresPayment">
+                      <Form.Check
+                        type="checkbox"
+                        label="Requires Payment"
+                        checked={newStep.requires_payment}
+                        onChange={(e) => setNewStep({ ...newStep, requires_payment: e.target.checked })}
+                      />
+                    </Form.Group>
+                    <Button variant="primary" type="submit">Add Step</Button>
+                  </Form>
                 )}
               </Card.Body>
             </Card>

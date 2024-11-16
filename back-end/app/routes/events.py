@@ -2,7 +2,7 @@
 
 from flask import Blueprint, jsonify, request
 from app import db
-from app.models import Event
+from app.models.event import Event
 from flask_login import login_required
 from datetime import datetime
 from dateutil import parser #converting time format
@@ -28,8 +28,10 @@ def create_event():
 
     try:
         # Convert strings to datetime objects
-        start_time = parser.isoparser(data['start_time'])  # converting start time
+        start_time = parser.isoparse(data['start_time'])  # converting start time
         end_time = parser.isoparse(data['end_time'])      # converting end time
+
+        print(f"Parsed start_time: {start_time}, Parsed end_time: {end_time}")  # Log parsed times
 
         new_event = Event(
             title=data['title'],

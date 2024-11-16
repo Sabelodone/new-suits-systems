@@ -2,7 +2,7 @@
 
 from flask import Blueprint, request, jsonify
 from app import db
-from app.models import Task
+from app.models.task import Task
 from flask_login import login_required
 
 tasks_blueprint = Blueprint('tasks', __name__)
@@ -17,7 +17,9 @@ def create_task():
     try:
         new_task = Task(
             title=data['title'],
-            description=data['description']
+            description=data['description'],
+            task_status_id=data.get('task_status_id'),
+            due_date=data.get('due_date')
         )
         db.session.add(new_task)
         db.session.commit()
@@ -29,7 +31,15 @@ def create_task():
 #@login_required
 def get_tasks():
     tasks = Task.query.all()
-    return jsonify([task.to_dict() for task in tasks]), 200
+    tasks_list = []
+    for task in tasks:
+        tasks_list.append({
+            'task_id': task.id,
+            'description': task.description,
+            'created_at': task.created_at,  # Adjust according to your model
+            'updated_at': task.updated_at
+        })
+    return jsonify(tasks_list), 200
 
 @tasks_blueprint.route('/<int:task_id>', methods=['GET'])
 #@login_required

@@ -3,7 +3,6 @@ from sqlalchemy import text  # Import this at the top
 from Seeding.seed import seed
 import os
 
-
 app = create_app()
 
 if __name__ == '__main__':
