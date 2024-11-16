@@ -1,0 +1,70 @@
+{
+    "Gender": [
+        { "name": "Female"},
+        { "name": "Male"},
+        { "name": "Prefer not to say"}
+    ],
+    "CaseCategory": [
+        { "name": "General"},
+        { "name": "Legal"},
+        { "name": "Medical"},
+        { "name": "Financial"},
+        { "name": "Other"}
+    ],
+    "CaseStatus": [
+        { "name": "Open"},
+        { "name": "Closed"},
+        { "name": "Pending"}
+    ],
+    "TaskStatus": [
+        { "name": "Inprogress"},
+        { "name": "Completed"},
+        { "name": "Overdue"},
+        { "name": "Pending"},
+        { "name": "Cancelled"},
+        { "name": "On Hold"}
+    ],
+    "DocumentStatus": [
+        { "name": "Pending"},
+        { "name": "Approved"},
+        { "name": "Rejected"}
+    ],
+    "DocumentType": [
+        { "name": "Passport"},
+        { "name": "ID"},
+        { "name": "Driver License"},
+        { "name": "Other"}
+    ],
+    "SubscriptionPlan": [
+        { "name": "Monthly","duration_in_months": 1, "description": "Monthly Subscription Plan", "cost": 10.00},
+        { "name": "Quarterly", "duration_in_months": 3, "description": "Quarterly Subscription Plan", "cost": 25.00},
+        { "name": "Half Yearly", "duration_in_months": 6, "description": "Half Yearly Subscription Plan", "cost": 50.00},
+        { "name": "Yearly", "duration_in_months": 12, "description": "Yearly Subscription Plan", "cost": 100.00}
+    ],
+    "Role": [
+        { "name": "SuperUser"},
+        { "name": "Admin"},
+        { "name": "LawFirm"}
+    ],
+    "LawfirmRole": [
+        { "name": "Lawyer"},
+        { "name": "Paralegal"},
+        { "name": "Director"}
+    ],
+    "PaymentMethods": [
+        { "name": "Credit Card", "description": "Credit Card Payment"},
+        { "name": "Debit Card", "description": "Debit Card Payment"},
+        { "name": "Net Banking", "description": "Net Banking Payment"},
+        { "name": "UPI", "description": "UPI Payment"},
+        { "name": "Wallet", "description": "Wallet Payment"},
+        { "name": "Cash", "description": "Cash Payment"}
+    ],
+    "SalesInvoiceTaxes": [
+        { "tax_type": "GST", "tax_subtype": "btats" ,"percentage": 18, "amount": 0},
+        { "tax_type": "VAT", "tax_subtype": "btats" ,"percentage": 5, "amount": 0},
+        { "tax_type": "Service Tax", "tax_subtype": "btats" ,"percentage": 10, "amount": 0},
+        { "tax_type": "CGST", "tax_subtype": "btats" ,"percentage": 9, "amount": 0},
+        { "tax_type": "SGST", "tax_subtype": "btats" ,"percentage": 9, "amount": 0},
+        { "tax_type": "IGST", "tax_subtype": "btats" ,"percentage": 18, "amount": 0}
+    ]
+}

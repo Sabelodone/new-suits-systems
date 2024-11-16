@@ -17,6 +17,8 @@ class Client(PrimaryKeyBaseModel):
     gender_id = db.Column(db.String(32), db.ForeignKey('gender.id'), nullable=False)
     gender = db.relationship('Gender', backref='clients')
 
+    sales_invoices = db.relationship('SalesInvoice', back_populates='client', cascade="all, delete-orphan")
+
     def age(self):
         if self.birthdate:
             today = datetime.today()
