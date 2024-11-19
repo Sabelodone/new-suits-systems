@@ -6,15 +6,16 @@ import { Table } from 'react-bootstrap';
 
 const Documents = () => {
   return (
-    <div className="container mt-5">
-      <Nav className="mb-4">
+    <div className="container mt-0">
+      {/* <Nav className="mb-4">
         <Nav.Link as={Link} to="/cases" className="text-indigo">Cases</Nav.Link>
         <Nav.Link as={Link} to="/tasks" className="text-indigo">Tasks</Nav.Link>
         <Nav.Link as={Link} to="/time-management" className="text-indigo">Time Management</Nav.Link>
         <Nav.Link as={Link} to="/clients" className="text-indigo">Clients</Nav.Link>
        
-      </Nav>
-      <h1 className="mb-4 text-center">Documents</h1>
+      </Nav> */}
+      <h3 className='text-2xl text-primary-purple font-bold '>Documents</h3>
+
       <Table striped bordered hover className="shadow-sm">
         <thead className="bg-primary text-white">
           <tr>

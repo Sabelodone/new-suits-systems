@@ -27,10 +27,12 @@ import { MantineProvider } from '@mantine/core';
 import CreateCase from './components/CreateCase'; // Importing the CreateCase component
 import AddTask from './components/AddTask'; // Importing AddTask component
 import './App.css'; // Assuming you have a global stylesheet
+import { ModalsProvider } from '@mantine/modals';
 
 function App() {
   return (
     <MantineProvider>
+      <ModalsProvider>
       <UserProvider>
         <Router>
           <Header />
@@ -39,6 +41,7 @@ function App() {
           <Footer />
         </Router>
       </UserProvider>
+      </ModalsProvider>
     </MantineProvider>
   );
 }

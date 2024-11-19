@@ -210,7 +210,7 @@ const LegalTemplates = () => {
   return (
     <div className="legal-templates">
       <div className="sidebar">
-        <h2>Legal Document Templates</h2>
+        <h3 className='text-2xl text-primary-purple font-bold '>Legal Document Templates</h3>
         <div className="template-list">
           {templates.map((template) => (
             <Card key={template.id} className="template-card mb-4">

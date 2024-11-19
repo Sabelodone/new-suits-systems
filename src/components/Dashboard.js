@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
 import './Chatbot.css';
-import {  Button } from 'react-bootstrap';
 import { Card, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRobot, faTimes, faFileAlt } from '@fortawesome/free-solid-svg-icons'; // Added faFileAlt icon
 import { Link } from 'react-router-dom';
 import { Line, Pie, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement, ArcElement } from 'chart.js';
+import { Button } from '@mantine/core';
 
 // Register Chart.js components
 ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement, ArcElement);
@@ -91,16 +91,17 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h1 className="mb-4 text-center">Dashboard</h1>
-      {/* Time Period Buttons */}
-      <Row className="mb-3">
-        <Col className="text-center">
-          <Button variant="outline-primary" className="mx-2">Daily</Button>
-          <Button variant="outline-primary" className="mx-2">Weekly</Button>
-          <Button variant="outline-primary" className="mx-2">Monthly</Button>
-        </Col>
-      </Row>
+    <div className="container p-4 flex flex-col gap-2 bg-[#e3dce7] rounded-lg">
+      <div className='flex flex-col gap-3'>
+        <h3 className='text-2xl text-primary-purple font-bold text-center'>Dashboard</h3>
+        {/* Time Period Buttons */}
+        <div className="text-center flex items-center gap-4 justify-center">
+          <Button className='flex items-center bg-transparent border !border-primary-purple text-primary-purple px-3 h-[46px] hover:text-primary-purple hover:bg-transparent cursor-pointer'  >Daily</Button>
+          <Button className='flex items-center bg-transparent border !border-primary-purple text-primary-purple px-3 h-[46px] hover:text-primary-purple hover:bg-transparent cursor-pointer'  >Weekly</Button>
+          <Button className='flex items-center bg-transparent border !border-primary-purple text-primary-purple px-3 h-[46px] hover:text-primary-purple hover:bg-transparent cursor-pointer'  >Monthly</Button>
+
+        </div>
+      </div>
 
       {/* Records section at the top of the charts */}
       <div className="d-flex justify-content-end align-items-center mb-4">
