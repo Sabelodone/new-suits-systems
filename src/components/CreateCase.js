@@ -14,7 +14,7 @@ const CreateCase = () => {
     event.preventDefault();
     console.log('Submitting new case with title:', title, 'and description:', description);
 
-    axios.post('http://34.35.32.197/api/cases', { title, description })
+    axios.post('http://34.35.69.207/api/cases', { title, description })
       .then(response => {
         console.log('Case created successfully:', response.data); // Log successful case creation
 	alert('Case created successfully!');

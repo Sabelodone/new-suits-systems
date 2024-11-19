@@ -39,7 +39,7 @@ const TimeManagement = () => {
     const title = prompt('New Event');
     if (title) {
       try {
-        await axios.post('http://34.35.32.197/api/events', {
+        await axios.post('http://34.35.69.207/api/events', {
           title,
           start_time: start.toISOString(),
           end_time: end.toISOString(),

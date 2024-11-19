@@ -26,7 +26,7 @@ const Cases = () => {
   // Fetch cases from the backend
   useEffect(() => {
 	  console.log('Fetching cases from the backend...');
-	  axios.get('http://34.35.32.197/api/cases') // Route for fetching all the cases
+	  axios.get('http://34.35.69.207/api/cases') // Route for fetching all the cases
 	  .then(response => {
 		  console.log('Cases fetched successfully', response.data);
 		  setCases (response.data);

@@ -13,7 +13,7 @@ const Tasks = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get('http://34.35.32.197/api/tasks');
+        const response = await axios.get('http://34.35.69.207/api/tasks');
 	console.log('Fetched Tasks:', response.data); // For Debugging
         setTasks(response.data);
       } catch (err) {

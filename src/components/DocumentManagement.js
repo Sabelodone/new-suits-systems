@@ -57,7 +57,7 @@ const DocumentManager = () => {
           //file_content: base64File, // Use base64 encoded content
         };
 
-        await axios.post('http://34.35.32.197/api/documents', newDocument); // Adjust the URL as needed
+        await axios.post('http://34.35.69.207/api/documents', newDocument); // Adjust the URL as needed
 
         setDocuments([...documents, newDocument]);
         setSuccess('Document uploaded successfully!');

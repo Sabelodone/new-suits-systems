@@ -18,7 +18,7 @@ function SignIn() {
     setError('');
 
     try {
-      const response = await axios.post('http://34.35.32.197/api/users/login', { email, password }); // Send request to backend
+      const response = await axios.post('http://34.35.69.207/api/users/login', { email, password }); // Send request to backend
 	    console.log('Response from login', response.data) // Logging for Debbuging
 	if (response.data.message === 'User logged in successfully') {
 	 //const { roles } = response.data; // Extract roles from response

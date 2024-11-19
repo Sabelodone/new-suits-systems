@@ -24,7 +24,7 @@ function SignUp() {
   useEffect(() => {
     const fetchGenders = async () => {
       try {
-        const response = await axios.get('http://34.35.32.197/users/api/genders'); // Update the endpoint as needed
+        const response = await axios.get('http://34.35.69.207/users/api/genders'); // Update the endpoint as needed
         setGenders(response.data);
       } catch (err) {
         setError('Failed to fetch gender options.');

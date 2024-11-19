@@ -20,6 +20,9 @@ class Case(PrimaryKeyBaseModel):
     tasks = db.relationship('Task', back_populates='case', cascade="all, delete-orphan")
     documents = db.relationship('Document', back_populates='case', cascade="all, delete-orphan")
 
+    workflow_id = db.Column(db.Integer, db.ForeignKey('workflow.id'))
+    workflow = db.relationship("Workflow", back_populates="cases")
+
     def to_dict(self):
 
         return {
@@ -30,6 +33,7 @@ class Case(PrimaryKeyBaseModel):
             'workflow': self.workflow.name if self.workflow else 'N/A',
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'workflow': self.workflow.name if self.workflow else 'N/A',
         }
 
 db.Index('idx_case_title', Case.title)

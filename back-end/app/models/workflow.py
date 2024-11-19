@@ -9,8 +9,8 @@ class Workflow(BaseModel):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    
-    # statuses = db.relationship('CaseStatus', backref='workflow', lazy=True)
+    cases = db.relationship('Case', backref='workflow', lazy=True)
+    statuses = db.relationship('CaseStatus', backref='workflow', lazy=True)
     steps = db.relationship('WorkflowStep', backref='workflow', lazy=True, cascade="all, delete-orphan")
 
     def to_dict(self):
