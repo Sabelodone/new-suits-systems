@@ -6,6 +6,14 @@
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
+<<<<<<< Updated upstream
+=======
+    "@ibnlanre/portal": "^2.3.1",
+    "@mantine/core": "^7.13.3",
+    "@mantine/form": "^7.13.3",
+    "@mantine/hooks": "^7.13.3",
+    "@mantine/modals": "^7.13.4",
+>>>>>>> Stashed changes
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
