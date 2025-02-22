@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 from app import db
 from app.models.case import Case
 from flask_login import login_required
-
+#command to test commit and push to the repo
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
