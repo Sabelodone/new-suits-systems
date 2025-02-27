@@ -14,7 +14,8 @@ def create_workflow():
         if not data or 'name' not in data:
             return jsonify({"error": "Invalid input"}), 400
         workflow = Workflow(name=data['name'])
-        workflow.save()
+        db.session.add(workflow)
+        db.session.commit() 
         return jsonify(workflow.to_dict()), 201
     except Exception as e:
         logging.error(f"Error creating workflow: {str(e)}")

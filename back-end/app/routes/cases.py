@@ -1,9 +1,11 @@
 import logging
 from flask import Blueprint, request, jsonify
 from app import db
-from app.models.case import Case
+from app.models.case import Case, CaseStatusHistory
+from app.models.case_type import CaseType
+from app.models.workflow import WorkflowStep
 from flask_login import login_required
-#command to test commit and push to the repo
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -16,13 +18,19 @@ def create_case():
     data = request.get_json()
     logging.debug(f'Request data: {data}') # Log data received
 
-    if not data.get('title') or not data.get('description'):
-        logging.warning('Missing required fields') #More log for failure
-        return jsonify({'error': 'Title and description are required'}), 400
+    if not all([data.get('title'), data.get('description'), data.get('case_type_id')]):
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    # Get first step of the workflow through case type
+    case_type = CaseType.query.get(data['case_type_id'])
+    if not case_type or not case_type.workflow.steps:
+        return jsonify({'error': 'Invalid case type or workflow configuration'}), 400
 
     new_case = Case(
         title=data['title'],
-        description=data['description']
+        description=data['description'],
+        case_type_id=data['case_type_id'],
+        current_step_id=case_type.workflow.steps[0].id  # Set to first step
     )
 
     try:
@@ -72,4 +80,38 @@ def delete_case(case_id):
         return jsonify({'message': 'Case deleted successfully'}), 200
     else:
         return jsonify({'error': 'Case not found'}), 404
+    
+@cases_blueprint.route('/<string:case_id>/transition', methods=['POST'])
+@login_required
+def transition_case(case_id):
+    try:
+        case = Case.query.get_or_404(case_id)
+        data = request.get_json()
+        
+        if not data.get('status_id'):
+            return jsonify({'error': 'status_id required'}), 400
+
+        # Get current step and validate status
+        current_step = WorkflowStep.query.get(case.current_step_id)
+        selected_status = next((s for s in current_step.statuses if s.id == data['status_id']), None)
+        
+        if not selected_status:
+            return jsonify({'error': 'Invalid status for current step'}), 400
+
+        # Record history
+        history = CaseStatusHistory(
+            case_id=case_id,
+            step_id=current_step.id,
+            status_id=selected_status.id
+        )
+        db.session.add(history)
+
+        # Update current step
+        case.current_step_id = selected_status.next_step_id
+        db.session.commit()
+
+        return jsonify(case.to_dict()), 200
+    except Exception as e:
+        logging.error(f'Transition error: {str(e)}')
+        return jsonify({'error': 'Server error'}), 500
 

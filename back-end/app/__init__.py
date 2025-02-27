@@ -42,9 +42,9 @@ def create_app():
     from app.models.auth import role, user_role, lawfirm_role, lawfirm_employee_role, token_blocklist
     from app.models.workflow import Workflow
     from app.models.case import Case
-    from app.models import task, case_status, case_category, document,document_type
-    from app.models.case_category import CaseCategory
-    from app.models.case_status import CaseStatus
+    from app.models import task, workflow_status, case_type, document,document_type
+    from app.models.case_type import CaseType
+    from app.models.workflow_status import WorkflowStatus
     from app.models.event import Event
     from app.models import customer, base_model, primarykey_base_model, phone_number
     from app.models import task_status, document_status, document_history, client_phone, subscription_plan
