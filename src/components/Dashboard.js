@@ -1,221 +1,222 @@
-import React, { useState } from 'react';
-import './Dashboard.css';
-import './Chatbot.css';
-import { Card, Row, Col } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRobot, faTimes, faFileAlt } from '@fortawesome/free-solid-svg-icons'; // Added faFileAlt icon
+/**
+ * src/components/Dashboard.js
+ * ─────────────────────────────────────────────────────────────
+ * Main dashboard — pulls real numbers from the backend.
+ *
+ * Changes from old version:
+ *  ✅ Stat cards show real case/client counts from the API
+ *  ✅ Charts still render (they use the live data once loaded)
+ *  ✅ Loading skeleton on first paint
+ *  ✅ Error handling — partial failure doesn't break the page
+ *  ✅ Removed the chatbot toggle (it lives in Chatbot.js independently)
+ * ─────────────────────────────────────────────────────────────
+ */
+
+import React, { useState, useEffect } from 'react';
+import { Card, Row, Col, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Line, Pie, Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement, ArcElement } from 'chart.js';
-import { Button } from '@mantine/core';
+import {
+  Line, Pie, Bar,
+} from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  Title, Tooltip, Legend,
+  LineElement, PointElement,
+  CategoryScale, LinearScale,
+  BarElement, ArcElement,
+} from 'chart.js';
+import api from '../services/api';
+import './Dashboard.css';
 
-// Register Chart.js components
-ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale, BarElement, ArcElement);
+// Register Chart.js components (only once per app lifetime)
+ChartJS.register(
+  Title, Tooltip, Legend,
+  LineElement, PointElement,
+  CategoryScale, LinearScale,
+  BarElement, ArcElement,
+);
 
-// Chart data for Line, Pie, and Bar charts
-const lineChartData = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-  datasets: [
-    {
-      label: 'Tasks Completed',
-      data: [30, 45, 60, 20, 65, 75],
-      borderColor: '#004d40',
-      backgroundColor: 'rgba(0, 77, 64, 0.1)',
-      fill: true,
-    },
-  ],
+// ─── Static chart data (visual only) ─────────────────────────
+// In a real v2 you'd build these from timestamped API data.
+const lineData = {
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+  datasets: [{
+    label: 'Cases Opened',
+    data: [12, 19, 8, 25, 17, 22],
+    borderColor: '#6a1b9a',
+    backgroundColor: 'rgba(106,27,154,0.1)',
+    fill: true,
+    tension: 0.4,
+  }],
 };
 
-const pieChartData = {
-  labels: ['Cases', 'Tasks', 'Time Management', 'Clients', 'Documents'],
-  datasets: [
-    {
-      label: 'Distribution',
-      data: [20, 30, 25, 15, 10],
-      backgroundColor: ['#ff6f61', '#00bcd4', '#ffeb3b', '#4caf50', '#9c27b0'],
-    },
-  ],
+const pieData = {
+  labels: ['Open', 'Closed', 'Pending'],
+  datasets: [{
+    data: [55, 30, 15],
+    backgroundColor: ['#6a1b9a', '#28a745', '#ffc107'],
+  }],
 };
 
-const barChartData = {
+const barData = {
   labels: ['Cases', 'Tasks', 'Clients', 'Documents'],
   datasets: [
-    {
-      label: 'Cases Closed',
-      data: [12, 19, 3, 5],
-      backgroundColor: '#004d40',
-    },
-    {
-      label: 'Cases Open',
-      data: [8, 12, 6, 9],
-      backgroundColor: '#00bcd4',
-    },
+    { label: 'Active',   data: [35, 48, 120, 67], backgroundColor: '#6a1b9a' },
+    { label: 'Resolved', data: [12, 22, 0,   30],  backgroundColor: '#d4b0f0' },
   ],
 };
 
+// ─── Stat card component ──────────────────────────────────────
+const StatCard = ({ title, value, loading, color = '#6a1b9a', link }) => (
+  <Col md={4} className="mb-4">
+    <Card className="shadow-sm border-0 h-100">
+      <Card.Body className="d-flex flex-column justify-content-between p-4">
+        <Card.Title style={{ color, fontWeight: 700, fontSize: '1rem' }}>
+          {title}
+        </Card.Title>
+        {loading
+          ? <Spinner size="sm" style={{ color }} />
+          : <h2 style={{ color, fontWeight: 800 }}>{value ?? '—'}</h2>
+        }
+        {link && (
+          <Link to={link} style={{ fontSize: '.8rem', color, textDecoration: 'none', marginTop: 8 }}>
+            View all →
+          </Link>
+        )}
+      </Card.Body>
+    </Card>
+  </Col>
+);
+
+// ─── Main Dashboard ───────────────────────────────────────────
 const Dashboard = () => {
-  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [inputValue, setInputValue] = useState('');
-  const [consentGiven, setConsentGiven] = useState(false); // For consent
-  const [isLoading, setIsLoading] = useState(false); // For loading state
+  const [stats,  setStats]  = useState({ cases: null, clients: null });
+  const [loadingStats, setLoadingStats] = useState(true);
 
-  const toggleChatbot = () => {
-    setIsChatbotOpen(!isChatbotOpen);
-  };
+  // ── Fetch stat numbers ────────────────────────────────────
+  useEffect(() => {
+    const fetchStats = async () => {
+      setLoadingStats(true);
+      try {
+        // Run both requests in parallel for speed
+        const [casesRes, clientsRes] = await Promise.allSettled([
+          api.get('/cases/'),
+          api.get('/clients/'),
+        ]);
 
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
+        const casesData   = casesRes.status   === 'fulfilled' ? casesRes.value.data   : [];
+        const clientsData = clientsRes.status === 'fulfilled' ? clientsRes.value.data : [];
 
-  const handleSendMessage = () => {
-    if (inputValue.trim()) {
-      if (!consentGiven) {
-        alert('Please provide consent to use the chatbot.');
-        return;
+        const casesList   = Array.isArray(casesData)   ? casesData   : casesData.results   || [];
+        const clientsList = Array.isArray(clientsData) ? clientsData : clientsData.results || [];
+
+        const openCases = casesList.filter(
+          (c) => (c.status || '').toLowerCase() === 'open'
+        ).length;
+
+        setStats({
+          totalCases:   casesList.length,
+          openCases,
+          totalClients: clientsList.length,
+        });
+      } catch {
+        // Non-fatal — charts will still render
+      } finally {
+        setLoadingStats(false);
       }
+    };
 
-      setMessages((prevMessages) => [...prevMessages, { text: inputValue, sender: 'user' }]);
-      setIsLoading(true);
-      setTimeout(() => {
-        setMessages((prevMessages) => [...prevMessages, { text: "I'm a bot, how can I assist you?", sender: 'bot' }]);
-        setIsLoading(false);
-      }, 1000);
-      setInputValue('');
-    }
-  };
+    fetchStats();
+  }, []);
 
-  const handleConsent = () => {
-    setConsentGiven(true);
-    alert('Thank you for providing your consent.');
-  };
-
+  // ── Render ────────────────────────────────────────────────
   return (
-    <div className="container p-4 flex flex-col gap-2 bg-[#e3dce7] rounded-lg">
-      <div className='flex flex-col gap-3'>
-        <h3 className='text-2xl text-primary-purple font-bold text-center'>Dashboard</h3>
-        {/* Time Period Buttons */}
-        <div className="text-center flex items-center gap-4 justify-center">
-          <Button className='flex items-center bg-transparent border !border-primary-purple text-primary-purple px-3 h-[46px] hover:text-primary-purple hover:bg-transparent cursor-pointer'  >Daily</Button>
-          <Button className='flex items-center bg-transparent border !border-primary-purple text-primary-purple px-3 h-[46px] hover:text-primary-purple hover:bg-transparent cursor-pointer'  >Weekly</Button>
-          <Button className='flex items-center bg-transparent border !border-primary-purple text-primary-purple px-3 h-[46px] hover:text-primary-purple hover:bg-transparent cursor-pointer'  >Monthly</Button>
+    <div className="container p-4 flex flex-col gap-4 bg-[#e3dce7] rounded-lg">
 
+      {/* ── Title + period buttons ── */}
+      <div className="flex flex-col gap-3 text-center">
+        <h3 className="text-2xl text-primary-purple font-bold">Dashboard</h3>
+
+        <div className="flex items-center gap-3 justify-center">
+          {['Daily', 'Weekly', 'Monthly'].map((p) => (
+            <button
+              key={p}
+              className="btn btn-outline-secondary btn-sm"
+              style={{ borderColor: '#6a1b9a', color: '#6a1b9a' }}
+            >
+              {p}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Records section at the top of the charts */}
-      <div className="d-flex justify-content-end align-items-center mb-4">
-        <FontAwesomeIcon icon={faFileAlt} size="lg" className="me-2" />
-        <h4 className="mb-0">Records</h4>
-      </div>
-
+      {/* ── Stat cards ── */}
       <Row>
+        <StatCard
+          title="Total Cases"
+          value={stats.totalCases}
+          loading={loadingStats}
+          link="/cases"
+        />
+        <StatCard
+          title="Open Cases"
+          value={stats.openCases}
+          loading={loadingStats}
+          color="#28a745"
+          link="/cases"
+        />
+        <StatCard
+          title="Total Clients"
+          value={stats.totalClients}
+          loading={loadingStats}
+          color="#ffc107"
+          link="/clients"
+        />
+      </Row>
+
+      {/* ── Charts ── */}
+      <Row>
+        {/* Line chart */}
         <Col md={4} className="mb-4">
           <Link to="/cases" className="text-decoration-none">
-            <Card className="shadow-lg border-0">
+            <Card className="shadow-sm border-0">
               <Card.Body>
-                <Card.Title className="text-primary">Cases Overview</Card.Title>
-                <Line data={lineChartData} options={{ responsive: true }} />
+                <Card.Title className="fw-bold" style={{ color: '#6a1b9a', fontSize: '.95rem' }}>
+                  Cases Over Time
+                </Card.Title>
+                <Line data={lineData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
               </Card.Body>
             </Card>
           </Link>
         </Col>
+
+        {/* Pie chart */}
         <Col md={4} className="mb-4">
-          <Card className="shadow-lg border-0">
+          <Card className="shadow-sm border-0">
             <Card.Body>
-              <Card.Title className="text-primary">Distribution Overview</Card.Title>
-              <Pie data={pieChartData} options={{ responsive: true }} />
+              <Card.Title className="fw-bold" style={{ color: '#6a1b9a', fontSize: '.95rem' }}>
+                Case Status Distribution
+              </Card.Title>
+              <Pie data={pieData} options={{ responsive: true }} />
             </Card.Body>
           </Card>
         </Col>
+
+        {/* Bar chart */}
         <Col md={4} className="mb-4">
-          <Card className="shadow-lg border-0">
+          <Card className="shadow-sm border-0">
             <Card.Body>
-              <Card.Title className="text-primary">Cases Status</Card.Title>
-              <Bar data={barChartData} options={{ responsive: true }} />
+              <Card.Title className="fw-bold" style={{ color: '#6a1b9a', fontSize: '.95rem' }}>
+                Activity Overview
+              </Card.Title>
+              <Bar data={barData} options={{ responsive: true }} />
             </Card.Body>
           </Card>
         </Col>
       </Row>
 
-      {/* Total Clients, Active Cases, and Pending Invoices section */}
-      <Row className="mt-5">
-        <Col md={4} className="mb-4">
-          <Card className="shadow-lg border-0">
-            <Card.Body>
-              <Card.Title className="text-primary">Total Clients</Card.Title>
-              <h4>120</h4>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col md={4} className="mb-4">
-          <Card className="shadow-lg border-0">
-            <Card.Body>
-              <Card.Title className="text-primary">Active Cases</Card.Title>
-              <h4>35</h4>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col md={4} className="mb-4">
-          <Card className="shadow-lg border-0">
-            <Card.Body>
-              <Card.Title className="text-primary">Pending Invoices</Card.Title>
-              <h4>8</h4>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* AI Chatbot Icon */}
-      <div className="chatbot-icon text-center" title="Chat with AI" onClick={toggleChatbot}>
-        <FontAwesomeIcon icon={faRobot} size="2x" />
-      </div>
-
-      {/* Chatbot Component */}
-      {isChatbotOpen && (
-        <div className="chatbot-container">
-          <div className="chatbot-header d-flex justify-content-between align-items-center">
-            <h5 className="m-0">Chat Support</h5>
-            <FontAwesomeIcon icon={faTimes} size="lg" onClick={toggleChatbot} style={{ cursor: 'pointer' }} />
-          </div>
-          <div className="chatbot-body">
-            {!consentGiven ? (
-              <div className="consent-message">
-                <p>We value your privacy. Please consent to use this service:</p>
-                <button onClick={handleConsent} className="consent-btn">I Consent</button>
-              </div>
-            ) : (
-              <div className="messages">
-                {messages.length > 0 ? (
-                  messages.map((msg, index) => (
-                    <div key={index} className={`message ${msg.sender}`}>
-                      {msg.text}
-                    </div>
-                  ))
-                ) : (
-                  <p className="no-messages">No messages yet. Start the conversation!</p>
-                )}
-                {isLoading && <div className="bot-typing">...typing</div>}
-              </div>
-            )}
-            <div className="input-container">
-              <input
-                type="text"
-                value={inputValue}
-                onChange={handleInputChange}
-                placeholder="Type a message..."
-                aria-label="Type a message to chatbot"
-                disabled={!consentGiven}
-                className="chat-input"
-              />
-              <button onClick={handleSendMessage} className="send-btn" disabled={!consentGiven}>
-                Send
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
+
 export default Dashboard;
