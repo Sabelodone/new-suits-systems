@@ -36,12 +36,12 @@ function SignIn() {
     // Basic client-side validation
     if (!username.trim()) return setError('Username is required.');
     if (!password)        return setError('Password is required.');
-    if (!tenantCode.trim()) return setError('Tenant code is required (ask your admin).');
+    // if (!tenantCode.trim()) return setError('Tenant code is required (ask your admin).');
 
     setLoading(true);
 
     try {
-      await signIn(username.trim(), password, tenantCode.trim().toUpperCase());
+      await signIn(username.trim(), password, tenantCode ? tenantCode.trim().toUpperCase() : null);
       navigate('/dashboard'); // ✅ success
     } catch (err) {
       // Django returns 401 with { detail: "No active account found..." }
@@ -86,7 +86,7 @@ function SignIn() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
-            required
+            //required
           />
         </div>
 
