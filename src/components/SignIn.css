@@ -1,131 +1,247 @@
-/* SignIn Container Styles */
-.signin-container {
-  background: rgba(240, 234, 214, 0.4); /* Semi-transparent glass background */
-  padding: 40px; /* Padding for spacious feel */
-  border-radius: 15px; /* Rounded corners */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 255, 255, 0.3); /* Subtle shadow and glow */
-  max-width: 400px; /* Maximum width for the container */
-  margin: 0 auto; /* Center align container */
-  animation: fadeIn 0.5s ease-in-out; /* Fade-in effect */
-  position: relative; /* Position relative for shine effect */
-  backdrop-filter: blur(10px); /* Blur for glass effect */
-  overflow: hidden; /* Contain the shine effect */
+/* ============================================================
+   SignIn.css
+   Split-layout login page:
+     LEFT  → white background + illustration
+     RIGHT → blue rounded card with clean underline inputs
+   Matches the design reference image.
+   ============================================================ */
+
+/* ── Full-page wrapper ────────────────────────────────────── */
+.signin-page {
+  display: flex;              /* Side-by-side layout */
+  min-height: 100vh;          /* Always fills the viewport */
+  width: 100%;
+  background: #ffffff;        /* White base */
+  overflow: hidden;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* Glass shine effect */
-.signin-container::before {
-  content: "";
-  position: absolute;
-  top: -100%; /* Start off-screen */
-  left: -150%;
-  width: 200%;
-  height: 300%;
-  background: rgba(255, 255, 255, 0.3);
-  transform: skewX(-45deg);
-  transition: all 0.7s ease-in-out;
-  pointer-events: none;
-  animation: glassShine 4s infinite;
-  filter: blur(5px); /* Slight blur for the shine effect */
+/* ── LEFT panel (illustration) ───────────────────────────── */
+.signin-left {
+  flex: 1;                    /* Takes up half the screen */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  padding: 40px;
+  min-height: 100vh;
 }
 
-/* Keyframes for the glass shine animation */
-@keyframes glassShine {
-  0% {
-    left: -150%;
-  }
-  100% {
-    left: 150%;
-  }
+/* SVG illustration sizing */
+.signin-illustration {
+  width: 100%;
+  max-width: 480px;           /* Caps size on very wide screens */
+  height: auto;
 }
 
-/* SignIn Heading Styles */
-.signin-heading {
-  font-family: 'Comic Sans MS', cursive, sans-serif; /* Fun font */
-  color: #333;
-  text-align: center; /* Center align text */
-  margin-bottom: 25px; /* Space below heading */
-  font-size: 28px; /* Font size */
-  transition: transform 0.3s; /* Transition for hover effect */
+/* ── RIGHT panel (blue login card) ───────────────────────── */
+.signin-right {
+  flex: 1;                    /* Takes up other half */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;        /* White behind the card */
+  padding: 40px 32px;
 }
 
-.signin-heading:hover {
-  transform: scale(1.1); /* Scale effect on hover */
+/* The blue rounded card — matches the image exactly */
+.signin-card {
+  background: #2563EB;        /* Blue from the design */
+  border-radius: 40px;        /* Large rounded corners */
+  padding: 56px 52px 48px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;                     /* We'll use margins per field */
+  box-shadow: 0 24px 64px rgba(37, 99, 235, 0.35); /* Blue glow shadow */
 }
 
-/* SignIn Form Styles */
-.signin-form {
-  display: flex; /* Flex layout */
-  flex-direction: column; /* Stack elements vertically */
-  gap: 20px; /* Space between elements */
+/* ── Individual field wrapper ─────────────────────────────── */
+.signin-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 32px;        /* Space between Email and Password blocks */
 }
 
-/* Input and Button Styles */
+/* Field label — bold white, large like in the design */
+.signin-label {
+  font-size: 1.75rem;         /* "Email" and "Password" are big in the image */
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 12px;
+  letter-spacing: 0.01em;
+}
+
+/* Underline-only input — no border box, white underline */
 .signin-input {
-  padding: 15px; /* Padding for inputs */
-  border: 2px solid purple; /* Border color matching the heading */
-  border-radius: 8px; /* Rounded borders */
-  font-size: 16px; /* Font size */
-  transition: border-color 0.3s, transform 0.2s; /* Smooth transitions */
+  background: transparent;    /* No background fill */
+  border: none;               /* Remove all borders */
+  border-bottom: 2px solid rgba(255, 255, 255, 0.6); /* Bottom line only */
+  color: #ffffff;
+  font-size: 1.1rem;
+  padding: 8px 0 10px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s ease;
 }
 
+/* Placeholder text — lighter white */
+.signin-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* On focus, the underline brightens */
 .signin-input:focus {
-  border-color: #ffcc00; /* Change border color on focus */
-  outline: none; /* Remove default outline */
-  transform: scale(1.02); /* Slight scale on focus */
+  border-bottom-color: #ffffff;
 }
 
-/* Button Styles */
-.signin-button {
-  background-color: purple; /* Button background color */
-  color: white; /* White text */
-  font-size: 18px; /* Button text size */
-  padding: 12px; /* Padding for button */
-  border: none; /* Remove default border */
-  border-radius: 8px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor */
-  transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
-}
-
-.signin-button:hover {
-  background-color: #4b0082; /* Darker purple on hover */
-  transform: translateY(-2px); /* Lift effect on hover */
-}
-
-/* Link Styles */
-.forgot-password-link,
-.signin-link {
-  text-align: center; /* Center align text */
-  margin-top: 15px; /* Space above link */
-  font-size: 14px; /* Font size */
-}
-
-.signin-link a {
-  color: #2196f3; /* Blue link color */
-  text-decoration: none; /* No underline */
-  transition: color 0.3s; /* Smooth color transition */
-}
-
-.signin-link a:hover {
-  color: #1976d2; /* Darker blue on hover */
-  text-decoration: underline; /* Underline on hover */
-}
-
-/* Error Message Styles */
+/* ── Error message ────────────────────────────────────────── */
 .signin-error {
-  color: red; /* Red for error messages */
-  text-align: center; /* Center align text */
-  font-weight: bold; /* Bold text */
-  margin-top: 10px; /* Space above error message */
+  color: #FCA5A5;             /* Soft red readable on blue */
+  font-size: 0.9rem;
+  margin: -16px 0 20px;
+  text-align: center;
 }
 
-/* Animation Keyframes */
-@keyframes fadeIn {
-  from {
-    opacity: 0; /* Start transparent */
-    transform: translateY(-20px); /* Slide in from top */
+/* ── Login button ─────────────────────────────────────────── */
+/* Dark pill button — matches the image's "Login" style */
+.signin-btn-login {
+  background: #1E293B;        /* Dark navy / charcoal */
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;        /* Full pill shape */
+  padding: 18px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 8px;
+  margin-bottom: 28px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.signin-btn-login:hover {
+  background: #0F172A;
+  transform: translateY(-1px);
+}
+
+.signin-btn-login:active {
+  transform: translateY(0);
+}
+
+.signin-btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Divider "Don't have an account yet?" ─────────────────── */
+.signin-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* The horizontal line on each side */
+.signin-divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* The text between the lines */
+.signin-divider-text {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* ── Sign up button ───────────────────────────────────────── */
+/* Same dark pill but slightly different treatment */
+.signin-btn-signup {
+  background: #1E293B;
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  padding: 16px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  width: 100%;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.signin-btn-signup:hover {
+  background: #0F172A;
+  transform: translateY(-1px);
+}
+
+/* ── Forgot password link ─────────────────────────────────── */
+.signin-forgot {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.88rem;
+  text-decoration: none;
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.signin-forgot:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* ── RESPONSIVE DESIGN ────────────────────────────────────── */
+
+/* Tablets and smaller: stack vertically, illustration on top */
+@media (max-width: 900px) {
+  .signin-page {
+    flex-direction: column;
   }
-  to {
-    opacity: 1; /* Fully visible */
-    transform: translateY(0); /* No transform */
+
+  .signin-left {
+    min-height: 40vh;
+    padding: 24px;
+  }
+
+  .signin-illustration {
+    max-width: 280px;
+  }
+
+  .signin-right {
+    padding: 24px 20px 40px;
+  }
+
+  .signin-card {
+    padding: 40px 32px;
+    border-radius: 28px;
+  }
+
+  .signin-label {
+    font-size: 1.4rem;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .signin-card {
+    padding: 32px 24px;
+    border-radius: 20px;
+  }
+
+  .signin-label {
+    font-size: 1.2rem;
+  }
+
+  .signin-btn-login,
+  .signin-btn-signup {
+    padding: 15px;
+    font-size: 1rem;
   }
 }

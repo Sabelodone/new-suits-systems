@@ -4,187 +4,179 @@
  * Form to create a new case via POST /api/cases/
  *
  * Changes from old version:
- *  ✅ Uses the central api service (auth + tenant headers auto-added)
- *  ✅ Loads real clients from GET /api/clients/
- *  ✅ Sends the correct fields (code, title, client, end_date)
- *  ✅ Shows validation + server errors inline
- *  ✅ Redirects back to /cases on success
+ *  Uses the central api service (auth + tenant headers auto-added)
+ *  Loads real clients from GET /api/clients/
+ *  Sends the correct fields (code, title, client, end_date)
+ *  Shows validation + server errors inline
+ *  Redirects back to /cases on success
  * ─────────────────────────────────────────────────────────────
  */
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate }  from 'react-router-dom';
-import { Form, Alert }  from 'react-bootstrap';
-import { Button }       from '@mantine/core';
-import api              from '../services/api';
-import './Cases.css';
+/**
+ * Second Changes
+ */
 
-const CreateCase = () => {
+// CreateCase.js
+// 📁 "Open a Case/File" form — matches the centered white form from the design image
+// Fields: Client name, Description, Type | Submit button
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './CreateCase.css';
+
+// Case type options (matches typical law firm categories)
+const CASE_TYPES = [
+  'Litigation',
+  'Family Law',
+  'Criminal Defense',
+  'Corporate Law',
+  'Property / Conveyancing',
+  'Employment Law',
+  'Immigration',
+  'Intellectual Property',
+  'Other',
+];
+
+function CreateCase() {
   const navigate = useNavigate();
 
-  // ── Form fields ───────────────────────────────────────────
-  const [form, setForm] = useState({
-    code:     '',
-    title:    '',
-    client:   '',    // client id
-    end_date: '',
-  });
+  // Form state — mirrors what the API expects
+  const [clientName,   setClientName]   = useState('');
+  const [description,  setDescription]  = useState('');
+  const [caseType,     setCaseType]     = useState('');
+  const [error,        setError]        = useState('');
+  const [loading,      setLoading]      = useState(false);
 
-  // ── Support data & UI state ───────────────────────────────
-  const [clients,  setClients]  = useState([]);
-  const [loading,  setLoading]  = useState(false);
-  const [error,    setError]    = useState('');
-  const [fieldErr, setFieldErr] = useState({});
-
-  // ── Load clients so the user can pick one ─────────────────
-  useEffect(() => {
-    api.get('/clients/')
-      .then(({ data }) => setClients(Array.isArray(data) ? data : data.results || []))
-      .catch(() => {}); // non-fatal — user can still type
-  }, []);
-
-  // ── Field change handler ──────────────────────────────────
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-    // Clear field-level error as user types
-    setFieldErr((fe) => ({ ...fe, [name]: '' }));
-  };
-
-  // ── Validate before submitting ────────────────────────────
-  const validate = () => {
-    const errs = {};
-    if (!form.code.trim())   errs.code  = 'Case code is required.';
-    if (!form.title.trim())  errs.title = 'Title is required.';
-    if (!form.client)        errs.client = 'Please select a client.';
-    return errs;
-  };
-
-  // ── Submit ────────────────────────────────────────────────
+  // ── Handle form submission ──────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    const errs = validate();
-    if (Object.keys(errs).length) {
-      setFieldErr(errs);
-      return;
-    }
+    // Basic validation
+    if (!clientName.trim())  { setError('Please enter a client name.');    return; }
+    if (!description.trim()) { setError('Please add a description.');       return; }
+    if (!caseType)           { setError('Please select a case type.');      return; }
 
     setLoading(true);
     try {
-      await api.post('/cases/', form);
+      // POST to your backend API
+      const response = await fetch('http://127.0.0.1:5000/api/cases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title:       clientName,   // "title" is what your backend expects
+          description,
+          type:        caseType,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to create case.');
+
+      // Success — go back to cases list
       navigate('/cases');
     } catch (err) {
-      // Backend may return field-level errors, e.g. { code: ["already exists"] }
-      const data = err.response?.data || {};
-      if (typeof data === 'object' && !data.detail) {
-        // Field errors from DRF
-        const mapped = {};
-        for (const [k, v] of Object.entries(data)) {
-          mapped[k] = Array.isArray(v) ? v[0] : v;
-        }
-        setFieldErr(mapped);
-      } else {
-        setError(data.detail || 'Failed to create case. Please try again.');
-      }
+      console.error(err);
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // ── Render ────────────────────────────────────────────────
   return (
-    <div className="container cases-container !mt-0">
-      <h3 className="text-2xl text-primary-purple font-bold text-center mb-4">
-        New Case
-      </h3>
+    // Light grey page background
+    <div className="cc-page">
+      <div className="cc-card">
 
-      {error && <Alert variant="danger">{error}</Alert>}
-
-      <Form onSubmit={handleSubmit} className="mx-auto" style={{ maxWidth: 560 }}>
-
-        {/* Case Code */}
-        <Form.Group className="mb-3">
-          <Form.Label>Case Code <span className="text-danger">*</span></Form.Label>
-          <Form.Control
-            name="code"
-            placeholder="e.g. 2024-PI-001"
-            value={form.code}
-            onChange={handleChange}
-            isInvalid={!!fieldErr.code}
-          />
-          <Form.Control.Feedback type="invalid">{fieldErr.code}</Form.Control.Feedback>
-          <Form.Text className="text-muted">
-            A unique identifier for this case within your firm.
-          </Form.Text>
-        </Form.Group>
-
-        {/* Title */}
-        <Form.Group className="mb-3">
-          <Form.Label>Title <span className="text-danger">*</span></Form.Label>
-          <Form.Control
-            name="title"
-            placeholder="Brief description of the case"
-            value={form.title}
-            onChange={handleChange}
-            isInvalid={!!fieldErr.title}
-          />
-          <Form.Control.Feedback type="invalid">{fieldErr.title}</Form.Control.Feedback>
-        </Form.Group>
-
-        {/* Client */}
-        <Form.Group className="mb-3">
-          <Form.Label>Client <span className="text-danger">*</span></Form.Label>
-          <Form.Select
-            name="client"
-            value={form.client}
-            onChange={handleChange}
-            isInvalid={!!fieldErr.client}
-          >
-            <option value="">— Select a client —</option>
-            {clients.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.first_name} {c.last_name}
-              </option>
-            ))}
-          </Form.Select>
-          <Form.Control.Feedback type="invalid">{fieldErr.client}</Form.Control.Feedback>
-        </Form.Group>
-
-        {/* End Date (optional) */}
-        <Form.Group className="mb-4">
-          <Form.Label>Expected End Date</Form.Label>
-          <Form.Control
-            type="date"
-            name="end_date"
-            value={form.end_date}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        {/* Buttons */}
-        <div className="d-flex gap-3">
-          <Button
-            type="submit"
-            className="bg-primary-purple hover:bg-primary-purple cursor-pointer flex-1"
-            disabled={loading}
-          >
-            {loading ? 'Creating…' : 'Create Case'}
-          </Button>
-
-          <Button
-            variant="default"
-            className="cursor-pointer"
-            onClick={() => navigate('/cases')}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
+        {/* ── Header ── */}
+        <div className="cc-header">
+          <h1 className="cc-title">Open a Case/File</h1>
         </div>
-      </Form>
+
+        {/* ── Form ── */}
+        <form onSubmit={handleSubmit} className="cc-form" noValidate>
+
+          {/* Client name */}
+          <div className="cc-field">
+            <label className="cc-label" htmlFor="cc-client">Client name</label>
+            <input
+              id="cc-client"
+              type="text"
+              className="cc-input"
+              placeholder="Enter client's full name"
+              value={clientName}
+              onChange={(e) => setClientName(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Description — textarea because it's multi-line */}
+          <div className="cc-field">
+            <label className="cc-label" htmlFor="cc-description">Description</label>
+            <textarea
+              id="cc-description"
+              className="cc-input cc-textarea"
+              placeholder="Brief description of the case…"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+              required
+            />
+          </div>
+
+          {/* Type — dropdown selector */}
+          <div className="cc-field">
+            <label className="cc-label" htmlFor="cc-type">Type</label>
+            <div className="cc-select-wrapper">
+              <select
+                id="cc-type"
+                className="cc-input cc-select"
+                value={caseType}
+                onChange={(e) => setCaseType(e.target.value)}
+                required
+              >
+                <option value="" disabled>Select case type</option>
+                {CASE_TYPES.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+              {/* Dropdown chevron icon */}
+              <svg className="cc-select-icon" viewBox="0 0 20 20" fill="none"
+                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="#6B7280"
+                  strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          {/* Error message */}
+          {error && <p className="cc-error" role="alert">{error}</p>}
+
+          {/* Action buttons row */}
+          <div className="cc-actions">
+            {/* Cancel — goes back without saving */}
+            <button
+              type="button"
+              className="cc-btn-cancel"
+              onClick={() => navigate('/cases')}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="cc-btn-submit"
+              disabled={loading}
+            >
+              {loading ? 'Creating…' : 'Submit'}
+            </button>
+          </div>
+
+        </form>
+      </div>
     </div>
   );
-};
+}
 
 export default CreateCase;

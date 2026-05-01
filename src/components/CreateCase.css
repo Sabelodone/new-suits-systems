@@ -1,0 +1,205 @@
+/* ============================================================
+   CreateCase.css
+   "Open a Case/File" — white card on light grey page
+   Blue title, bordered inputs, blue submit button
+   Matches the design reference image exactly.
+   ============================================================ */
+
+/* ── Page wrapper ────────────────────────────────────── */
+.cc-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F9FAFB;
+  padding: 40px 20px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ── White card ──────────────────────────────────────── */
+.cc-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 48px 52px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+  animation: cc-fadeIn 0.3s ease;
+}
+
+@keyframes cc-fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Header ──────────────────────────────────────────── */
+.cc-header {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1.5px solid #E5E7EB;
+}
+
+/* "OPEN A CASE/FILE" — blue, bold, uppercase like in design */
+.cc-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2563EB;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+/* ── Form ────────────────────────────────────────────── */
+.cc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Field wrapper ───────────────────────────────────── */
+.cc-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 22px;
+}
+
+/* Label — small, medium-weight, dark grey */
+.cc-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+/* ── Input / Textarea base ───────────────────────────── */
+.cc-input {
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 0.9rem;
+  color: #111827;
+  background: #FFFFFF;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cc-input::placeholder {
+  color: #9CA3AF;
+}
+
+.cc-input:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Textarea — resize vertical only */
+.cc-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+/* ── Select wrapper (for the chevron icon) ───────────── */
+.cc-select-wrapper {
+  position: relative;
+}
+
+.cc-select {
+  appearance: none;       /* Hide default browser arrow */
+  -webkit-appearance: none;
+  padding-right: 40px;    /* Room for custom chevron */
+  cursor: pointer;
+  background: #FFFFFF;
+}
+
+/* Custom chevron arrow */
+.cc-select-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;   /* Clicks pass through to select */
+}
+
+/* ── Error message ───────────────────────────────────── */
+.cc-error {
+  background: #FEF2F2;
+  color: #EF4444;
+  border: 1px solid #FCA5A5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+/* ── Action buttons row ──────────────────────────────── */
+.cc-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;   /* Right-aligned like in design */
+  margin-top: 8px;
+}
+
+/* Cancel — ghost / outlined style */
+.cc-btn-cancel {
+  background: transparent;
+  color: #6B7280;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 50px;
+  padding: 11px 24px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.cc-btn-cancel:hover {
+  border-color: #9CA3AF;
+  color: #374151;
+}
+
+/* Submit — solid blue pill matching design image */
+.cc-btn-submit {
+  background: #2563EB;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 50px;
+  padding: 11px 32px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.cc-btn-submit:hover {
+  background: #1D4ED8;
+  transform: translateY(-1px);
+}
+
+.cc-btn-submit:active  { transform: translateY(0); }
+.cc-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+@media (max-width: 580px) {
+  .cc-card {
+    padding: 36px 24px;
+  }
+  .cc-actions {
+    flex-direction: column-reverse;
+  }
+  .cc-btn-cancel,
+  .cc-btn-submit {
+    width: 100%;
+    text-align: center;
+  }
+}
