@@ -23,6 +23,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateCase.css';
+import api from '../services/api';
 
 // Case type options (matches typical law firm categories)
 const CASE_TYPES = [
@@ -60,7 +61,7 @@ function CreateCase() {
     setLoading(true);
     try {
       // POST to your backend API
-      const response = await fetch('http://127.0.0.1:5000/api/cases', {
+      const response = await api.post('/cases/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -73,6 +74,7 @@ function CreateCase() {
       if (!response.ok) throw new Error('Failed to create case.');
 
       // Success — go back to cases list
+      alert('Case created successfully');
       navigate('/cases');
     } catch (err) {
       console.error(err);

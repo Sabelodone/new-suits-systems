@@ -1,113 +1,333 @@
-/* General styles */
-body {
-  margin: 0;
-  font-family: "Arial", sans-serif;
+/* ============================================================
+   Header.css
+   Top application bar — matches design screenshot.
+   Height: 64px fixed, white background, bottom border.
+   ============================================================ */
+
+/* ── App header bar ────────────────────────────────────────── */
+.app-header {
+  position:        sticky;
+  top:             0;
+  z-index:         100;         /* Above page content, below modals */
+  height:          64px;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             16px;
+  padding:         0 24px;
+  background:      #FFFFFF;
+  border-bottom:   1px solid #E5E7EB;
+  box-sizing:      border-box;
+  font-family:     'Segoe UI', system-ui, sans-serif;
 }
 
-/* Navbar styles */
-.navbar {
-  background-color: #e2e1e3; /* Light background */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  padding: 0.5rem 1rem;
+/* ── Left section: hamburger + brand ──────────────────────── */
+.header-left {
+  display:     flex;
+  align-items: center;
+  gap:         12px;
+  flex-shrink: 0;
 }
 
-.navbar .navbar-brand {
-  color: #6f42c1; /* Indigo color */
-  font-size: 1.5rem; /* Adjust brand size for readability */
+/* Mobile menu button (hamburger) — hidden on desktop */
+.header-menu-btn {
+  background:  none;
+  border:      none;
+  padding:     6px;
+  cursor:      pointer;
+  color:       #374151;
+  display:     flex;
+  align-items: center;
+  border-radius: 6px;
+  transition:  background 0.15s;
+}
+.header-menu-btn:hover { background: #F3F4F6; }
+.header-menu-btn svg   { width: 20px; height: 20px; }
+
+/* Brand — blue dot + "Suites System" text */
+.header-brand {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  cursor:      pointer;
+  user-select: none;
 }
 
-.navbar .nav-link {
-  color: #6f42c1; /* Indigo color */
-  transition: background 0.3s ease, color 0.3s ease; /* Smooth transition */
+/* The small filled blue circle before the brand name */
+.header-brand-dot {
+  width:         10px;
+  height:        10px;
+  border-radius: 50%;
+  background:    #2563EB;
+  flex-shrink:   0;
 }
 
-.navbar .nav-link:hover {
-  /* background: linear-gradient(to right, #5a098e, #d8a507); Gradient on hover */
-  color: white; /* Change text color on hover */
+.header-brand-name {
+  font-size:    1rem;
+  font-weight:  700;
+  color:        #111827;
+  white-space:  nowrap;
+  letter-spacing: -0.01em;
 }
 
-/* Custom search styles */
-.custom-search {
-  border: 1px solid #6f42c1; /* Indigo border */
-  border-radius: 0.25rem; /* Slightly rounded corners */
-  transition: border-color 0.3s ease;
-  max-width: 300px; /* Limit width for small screens */
-  flex-grow: 1; /* Allow it to grow to fill space */
-  padding: 0.5rem;
+/* ── Centre: search bar ────────────────────────────────────── */
+.header-search {
+  flex:        1;              /* Fills all available middle space */
+  max-width:   480px;
+  position:    relative;
+  display:     flex;
+  align-items: center;
 }
 
-.custom-search:focus {
-  border-color: #5a2a9a; /* Darker shade on focus */
-  box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25); /* Shadow on focus */
+/* Search icon (left side of input) */
+.header-search-icon {
+  position: absolute;
+  left:     12px;
+  color:    #9CA3AF;
+  display:  flex;
+  pointer-events: none; /* Clicks pass through to the input */
+}
+.header-search-icon svg { width: 16px; height: 16px; }
+
+.header-search-input {
+  width:         100%;
+  height:        38px;
+  padding:       0 16px 0 38px; /* left padding leaves room for the icon */
+  border:        1px solid #E5E7EB;
+  border-radius: 20px;          /* Pill shape like the screenshot */
+  font-size:     0.875rem;
+  color:         #374151;
+  background:    #F9FAFB;
+  outline:       none;
+  transition:    border-color 0.2s, background 0.2s;
+}
+.header-search-input::placeholder { color: #9CA3AF; }
+.header-search-input:focus {
+  border-color: #2563EB;
+  background:   #FFFFFF;
 }
 
-/* Custom button styles */
-.custom-button {
-  background-color: transparent;
-  border: 1px solid #6f42c1; /* Indigo border */
-  padding: 0.5rem 1rem;
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* ── Right section: icon buttons + avatar ─────────────────── */
+.header-right {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  flex-shrink: 0;
 }
 
-.custom-button:hover {
-  background: linear-gradient(
-    to right,
-    #5a098e,
-    #d8a507
-  ); /* Gradient on hover */
-  color: white; /* White text on hover */
+/* Generic icon button (Help, Bell) */
+.header-icon-btn {
+  position:      relative;   /* For notification dot positioning */
+  background:    none;
+  border:        none;
+  padding:       7px;
+  cursor:        pointer;
+  color:         #6B7280;
+  border-radius: 50%;
+  display:       flex;
+  align-items:   center;
+  transition:    background 0.15s, color 0.15s;
+}
+.header-icon-btn:hover { background: #F3F4F6; color: #111827; }
+.header-icon-btn svg   { width: 20px; height: 20px; }
+
+/* Small red dot on the bell icon for unread notifications */
+.header-notif-dot {
+  position:      absolute;
+  top:           7px;
+  right:         7px;
+  width:         7px;
+  height:        7px;
+  border-radius: 50%;
+  background:    #EF4444;
+  border:        2px solid #FFFFFF;
 }
 
-/* Modal styles */
-.luxury-modal .modal-content {
-  border-radius: 0.5rem; /* Rounded corners */
+/* ── Avatar + display name ─────────────────────────────────── */
+.header-avatar-wrap {
+  position: relative; /* Anchor for the dropdown */
 }
 
-.luxury-modal .modal-header {
-  background-color: #6f42c1; /* Indigo background */
-  color: white; /* White text */
+.header-avatar-btn {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  background:    none;
+  border:        none;
+  padding:       4px 8px;
+  cursor:        pointer;
+  border-radius: 20px;
+  transition:    background 0.15s;
+}
+.header-avatar-btn:hover { background: #F3F4F6; }
+
+/* Circular avatar with initials */
+.header-avatar {
+  width:         34px;
+  height:        34px;
+  border-radius: 50%;
+  background:    #2563EB;
+  color:         #FFFFFF;
+  font-size:     0.78rem;
+  font-weight:   600;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  flex-shrink:   0;
+  letter-spacing: 0.02em;
 }
 
-.luxury-modal .modal-title {
-  font-weight: bold;
-}
-
-/* Adjust backdrop if necessary */
-.modal-backdrop.show {
-  opacity: 0.5; /* Make sure this is not too dark */
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-  .navbar .navbar-brand {
-    font-size: 1.25rem; /* Smaller text for mobile */
-  }
-
-  .navbar .nav-link {
-    font-size: 0.875rem; /* Slightly smaller nav links */
-  }
-
-  .custom-search {
-    max-width: 100%; /* Full width on smaller screens */
-    margin-bottom: 0.5rem; /* Add spacing below search bar */
-  }
-
-  .custom-button {
-    width: 100%; /* Full-width button on small screens */
-    text-align: center; /* Center text */
-  }
+/* "W.Sarah" text beside avatar — hidden on small screens */
+.header-displayname {
+  font-size:   0.875rem;
+  font-weight: 500;
+  color:       #374151;
+  white-space: nowrap;
 }
 
 @media (max-width: 576px) {
-  .navbar {
-    padding: 0.25rem 0.5rem; /* Reduce padding on extra small screens */
-  }
-
-  .custom-button {
-    font-size: 0.875rem; /* Adjust button text size for smaller screens */
-  }
-
-  .luxury-modal .modal-content {
-    padding: 1rem; /* Add more padding to modal on small screens */
-  }
+  .header-displayname { display: none; }
 }
+
+/* ── Avatar dropdown menu ─────────────────────────────────── */
+.header-dropdown {
+  position:      absolute;
+  top:           calc(100% + 8px);
+  right:         0;
+  width:         220px;
+  background:    #FFFFFF;
+  border:        1px solid #E5E7EB;
+  border-radius: 12px;
+  box-shadow:    0 8px 24px rgba(0,0,0,0.1);
+  z-index:       200;
+  overflow:      hidden;
+  padding:       8px 0;
+}
+
+/* User info section at top of dropdown */
+.header-dropdown-info {
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
+  padding:        10px 16px;
+}
+.header-dropdown-info strong {
+  font-size:   0.875rem;
+  font-weight: 600;
+  color:       #111827;
+}
+.header-dropdown-info span {
+  font-size: 0.78rem;
+  color:     #6B7280;
+}
+.header-dropdown-firm {
+  margin-top:    4px;
+  font-size:     0.72rem !important;
+  font-weight:   600 !important;
+  color:         #2563EB !important;
+  background:    #EFF6FF;
+  border-radius: 4px;
+  padding:       2px 6px;
+  display:       inline-block;
+  width:         fit-content;
+}
+
+.header-dropdown-divider {
+  border:     none;
+  border-top: 1px solid #E5E7EB;
+  margin:     6px 0;
+}
+
+.header-dropdown-item {
+  display:     block;
+  width:       100%;
+  padding:     9px 16px;
+  text-align:  left;
+  background:  none;
+  border:      none;
+  font-size:   0.875rem;
+  color:       #374151;
+  cursor:      pointer;
+  transition:  background 0.15s;
+}
+.header-dropdown-item:hover { background: #F9FAFB; }
+
+/* Danger (sign out) item */
+.header-dropdown-item--danger       { color: #DC2626; }
+.header-dropdown-item--danger:hover { background: #FEF2F2; }
+
+/* ── Sign In button (when not authenticated) ──────────────── */
+.header-signin-btn {
+  background:    #2563EB;
+  color:         #FFFFFF;
+  border:        none;
+  border-radius: 20px;
+  padding:       8px 20px;
+  font-size:     0.875rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    background 0.2s;
+}
+.header-signin-btn:hover { background: #1D4ED8; }
+
+/* ── Mobile nav drawer ────────────────────────────────────── */
+/* Semi-transparent overlay covering the whole screen */
+.header-drawer-overlay {
+  position:   fixed;
+  inset:      0;
+  background: rgba(0,0,0,0.4);
+  z-index:    300;
+  display:    flex;
+}
+
+/* White drawer sliding in from the left */
+.header-drawer {
+  width:          260px;
+  background:     #FFFFFF;
+  height:         100%;
+  display:        flex;
+  flex-direction: column;
+  padding:        16px;
+  gap:            4px;
+  overflow-y:     auto;
+  box-shadow:     4px 0 20px rgba(0,0,0,0.15);
+}
+
+.header-drawer-top {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   16px;
+}
+
+/* Nav link inside the mobile drawer */
+.header-drawer-link {
+  display:         block;
+  padding:         10px 12px;
+  border-radius:   8px;
+  font-size:       0.9rem;
+  font-weight:     500;
+  color:           #374151;
+  text-decoration: none;
+  transition:      background 0.15s, color 0.15s;
+}
+.header-drawer-link:hover { background: #F3F4F6; color: #111827; }
+.header-drawer-link--active {
+  background: #2563EB;
+  color:      #FFFFFF;
+}
+
+.header-drawer-signout {
+  margin-top:    auto;
+  padding:       10px 12px;
+  border:        none;
+  border-radius: 8px;
+  background:    #FEF2F2;
+  color:         #DC2626;
+  font-size:     0.9rem;
+  font-weight:   500;
+  cursor:        pointer;
+  text-align:    left;
+  transition:    background 0.15s;
+}
+.header-drawer-signout:hover { background: #FEE2E2; }

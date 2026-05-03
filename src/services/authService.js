@@ -1,20 +1,29 @@
 // src/services/authService.js
 //
-// Handles all authentication calls against the Django/DRF backend.
+// ─────────────────────────────────────────────────────────────────────────────
+// Authentication service — all login/logout logic lives here.
 //
-// KEY BEHAVIOURS:
-//  - BASE_URL points to the live Render deployment (no localhost).
-//  - login() sends username + password, receives JWT access + refresh tokens.
-//  - Backend already returns user object inside /api/auth/login/ response.
-//  - For ADMIN / SUPERUSER accounts the tenant-code field is ignored —
-//    they can log in without providing one, just like Django admin.
-//  - For regular users the typed tenant code is validated against the
-//    server-side value; mismatch = clear tokens + meaningful error.
+// WHAT CHANGED & WHY:
+//
+//   Previously, the backend's LoginView only returned { id, username, email }.
+//   The backend NOW returns is_staff, is_superuser, tenant_code, tenant_name.
+//
+//   ✅ Admin detection: uses user.is_staff || user.is_superuser from the
+//      server response (was unreliable before because these weren't sent).
+//
+//   ✅ Tenant code storage: now stores user.tenant_code (the server's real
+//      value) instead of the typed input — the server's value is authoritative.
+//      If the server returns null (e.g. for admins), we store "" which the
+//      API interceptor treats as "no tenant header" → skips the X-Tenant-Code.
+//
+//   ✅ Tenant validation: for firm users, the typed code is still compared
+//      against the server's code to give a clear error message if they mistype.
+//      Admin users skip this check entirely.
+// ─────────────────────────────────────────────────────────────────────────────
 
-// ── 1. Base URL ──────────────────────────────────────────────────────────────
 const BASE_URL = "https://suits-webapp-backend.onrender.com";
 
-// ── 2. Helpers ───────────────────────────────────────────────────────────────
+// ── Shared fetch wrapper ───────────────────────────────────────────────────
 async function apiFetch(path, options = {}) {
   const response = await fetch(`${BASE_URL}${path}`, {
     ...options,
@@ -35,6 +44,7 @@ async function apiFetch(path, options = {}) {
     const message =
       body.detail ||
       (body.non_field_errors && body.non_field_errors[0]) ||
+      body.message ||
       `Request failed with status ${response.status}`;
     throw new Error(message);
   }
@@ -42,13 +52,13 @@ async function apiFetch(path, options = {}) {
   return body;
 }
 
-// ── 3. Main login function ───────────────────────────────────────────────────
+// ── Main login function ────────────────────────────────────────────────────
 export async function login(username, password, tenantCode = "") {
-  // 🔥 DO NOT CHANGE: backend expects "login", NOT username/password object change
+  // The backend expects "login" (not "username") in the request body
   const tokens = await apiFetch("/api/auth/login/", {
     method: "POST",
     body: JSON.stringify({
-      login: username,
+      login:    username,
       password: password,
     }),
   });
@@ -58,21 +68,26 @@ export async function login(username, password, tenantCode = "") {
   if (!access) {
     throw new Error("No access token received. Check backend configuration.");
   }
-
   if (!user) {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
     throw new Error("User data not returned from login.");
   }
 
-  // Store tokens immediately
-  localStorage.setItem("accessToken", access);
+  // Store tokens immediately — needed for subsequent API calls
+  localStorage.setItem("accessToken",  access);
   localStorage.setItem("refreshToken", refresh);
 
-  // ── Tenant validation (unchanged logic) ────────────────────────────────────
+  // ── Determine if this is an admin account ─────────────────────────────────
+  // The backend now reliably sends these booleans — we don't guess.
   const isAdmin = user.is_staff || user.is_superuser;
 
-  if (!isAdmin) {
+  if (isAdmin) {
+    // Admin users don't have a tenant — they see all data across all firms.
+    // Store empty string so the API interceptor skips the X-Tenant-Code header.
+    localStorage.setItem("tenantCode", "");
+  } else {
+    // ── Firm user validation ─────────────────────────────────────────────────
+    //
+    // Firm users must provide a tenant code at login (enforced on the form).
     if (!tenantCode.trim()) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
@@ -81,29 +96,32 @@ export async function login(username, password, tenantCode = "") {
       );
     }
 
+    // Compare the typed code against the server's authoritative value.
+    // If the server returns null/empty (shouldn't happen for firm users),
+    // we trust the typed code and skip validation.
     const serverCode = (user.tenant_code || "").trim().toLowerCase();
-    const typedCode = tenantCode.trim().toLowerCase();
+    const typedCode  = tenantCode.trim().toLowerCase();
 
     if (serverCode && typedCode !== serverCode) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       throw new Error(
-        "Firm Code does not match your account. Please check the code and try again."
+        "Firm Code does not match your account. Please check and try again."
       );
     }
 
-    localStorage.setItem("tenantCode", user.tenant_code || "");
-  } else {
-    localStorage.setItem("tenantCode", "");
+    // ✅ Store the server's tenant code (not the raw typed input) so that
+    //    casing is always consistent with what the backend expects.
+    localStorage.setItem("tenantCode", user.tenant_code || tenantCode);
   }
 
-  // Store user
+  // Store the full user object for use by UserContext and components
   localStorage.setItem("user", JSON.stringify(user));
 
   return user;
 }
 
-// ── 4. Logout ────────────────────────────────────────────────────────────────
+// ── Logout ─────────────────────────────────────────────────────────────────
 export function logout() {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
@@ -111,17 +129,16 @@ export function logout() {
   localStorage.removeItem("user");
 }
 
-// ── 5. Token accessors ───────────────────────────────────────────────────────
-export const getAccessToken = () => localStorage.getItem("accessToken");
+// ── Token helpers ──────────────────────────────────────────────────────────
+export const getAccessToken  = () => localStorage.getItem("accessToken");
 export const getRefreshToken = () => localStorage.getItem("refreshToken");
-export const getTenantCode = () => localStorage.getItem("tenantCode");
+export const getTenantCode   = () => localStorage.getItem("tenantCode");
 export const isAuthenticated = () => Boolean(getAccessToken());
 
-// ── 6. Current user ──────────────────────────────────────────────────────────
+// ── Current user helper ────────────────────────────────────────────────────
 export function getCurrentUser() {
   const raw = localStorage.getItem("user");
   if (!raw) return null;
-
   try {
     return JSON.parse(raw);
   } catch {

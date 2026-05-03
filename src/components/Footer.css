@@ -1,83 +1,54 @@
-footer {
-  background-color: #f8f9fa; /* Light background for contrast */
-  padding: 2rem 1.5rem; /* More spacious feel */
-  text-align: center; /* Center-align text */
-  position: relative; /* Ensure proper layout positioning */
-  font-size: 0.9rem; /* Base font size for readability */
-  border-top: 1px solid #ddd; /* Subtle border on top for separation */
+/* ============================================================
+   Footer.css
+   Slim single-line footer — sits below the main content area.
+   ============================================================ */
+
+.app-footer {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  flex-wrap:       wrap;
+  gap:             8px;
+  padding:         14px 28px;
+  background:      #FFFFFF;
+  border-top:      1px solid #E5E7EB;
+  font-family:     'Segoe UI', system-ui, sans-serif;
+  font-size:       0.8rem;
+  color:           #6B7280;
 }
 
-footer p {
-  margin: 0; /* Remove default margin */
-  color: #555; /* Dark grey for readability */
-  line-height: 1.6; /* Increased line height for better readability */
+/* Copyright text on the left */
+.footer-copy {
+  white-space: nowrap;
 }
 
-.footer-company {
-  font-weight: bold;
-  color: #4b0082; /* Indigo color for emphasis */
+/* Policy links on the right */
+.footer-links {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
 }
 
-.footer-address {
-  font-size: 0.85rem; /* Slightly smaller font for address */
-  color: #777; /* Light grey for secondary information */
-}
-
-.footer-contact {
-  margin: 0.5rem 0; /* Space above and below contact info */
+/* Separator dot between links */
+.footer-sep {
+  color: #D1D5DB;
 }
 
 .footer-link {
-  color: #4b0082; /* Indigo color for links */
-  text-decoration: none; /* Remove underline */
-  margin: 0 8px; /* Space between links */
+  color:           #6B7280;
+  text-decoration: none;
+  transition:      color 0.15s;
 }
-
 .footer-link:hover {
-  text-decoration: underline; /* Underline on hover for better visibility */
+  color:           #2563EB;
+  text-decoration: underline;
 }
 
-/* Social icons styling */
-.social-icons {
-  margin: 1rem 0; /* Space around social icons */
-}
-
-.icon {
-  color: #4b0082; /* Indigo color for icons */
-  font-size: 1.5rem; /* Size of social icons */
-  margin: 0 10px; /* Space between icons */
-  transition: transform 0.3s; /* Smooth scaling effect */
-}
-
-.icon:hover {
-  transform: scale(1.1); /* Slightly enlarge icon on hover */
-}
-
-/* Quick links styling */
-.quick-links {
-  margin-top: 10px; /* Space above links */
-  font-size: 0.8rem; /* Slightly smaller font for links */
-}
-
-.quick-links a {
-  color: #4b0082; /* Indigo color for quick links */
-}
-
-.quick-links span {
-  color: #777; /* Light grey for separator */
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  footer {
-    padding: 1rem; /* Reduced padding on smaller screens */
-  }
-
-  footer p {
-    font-size: 0.75rem; /* Smaller font size on small screens */
-  }
-
-  .footer-link {
-    font-size: 0.8rem; /* Slightly smaller font for links */
+/* Responsive: stack on tiny screens */
+@media (max-width: 480px) {
+  .app-footer {
+    flex-direction: column;
+    text-align:     center;
+    padding:        12px 16px;
   }
 }
