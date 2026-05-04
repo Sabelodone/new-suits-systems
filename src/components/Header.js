@@ -7,10 +7,10 @@
  *   Top application bar — rendered on every page (auth and protected).
  *   Layout (left → centre → right) matches the design screenshot:
  *
- *     [ ● Suites System ]   [ 🔍 Search... ]   [ ? ] [ 🔔● ] [ Avatar  W.Sarah ▾ ]
+ *     [ ● Suits System ]   [ 🔍 Search... ]   [ ? ] [ 🔔● ] [ Avatar  W.Sarah ▾ ]
  *
  *   FEATURES:
- *    Brand: blue dot + "Suites System" — clicking navigates to dashboard/home
+ *    Brand: blue dot + "Suits System" — clicking navigates to dashboard/home
  *    Search bar: pill-shaped, centred, grows to fill available space
  *    Help icon, notification bell with unread dot, avatar button
  *    Avatar shows initials (first + last name initials, falls back to username[0])
