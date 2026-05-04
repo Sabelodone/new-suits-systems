@@ -1,90 +1,186 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-/* Sidebar Styles */
+/* ============================================================
+   Sidebar.css
+   ─────────────────────────────────────────────────────────
+   White left nav panel:
+   - Fills the <Col md={2}> Col that App.js provides
+   - Active link: solid blue bg + white text
+   - Inactive: grey text, hover gets light grey bg
+   - Firm badge at top, user strip at bottom
+   ============================================================ */
+
+/* ── Container ────────────────────────────────────────────── */
+/*
+ * .sidebar fills its parent Col entirely.
+ * sticky + top:64px keeps it below the fixed header as the page scrolls.
+ * min-height ensures it reaches the bottom even on short pages.
+ */
 .sidebar {
-  background-color: #f8f9fa;
-  min-height: 100vh;
-  border-right: 1px solid #ddd;
-  padding-top: 1.5rem; /* Increase top padding */
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  width: 300px; /* Increase the width of the sidebar */
+  display:        flex;
+  flex-direction: column;
+  width:          100%;
+  min-height:     calc(100vh - 64px);  /* 64px = header height */
+  background:     #FFFFFF;
+  border-right:   1px solid #E5E7EB;
+  padding:        20px 12px 16px;
+  box-sizing:     border-box;
+  font-family:    'Segoe UI', system-ui, sans-serif;
+  position:       sticky;
+  top:            64px;
+  overflow-y:     auto;
 }
 
-/* Navigation Link Styles */
-.nav-link {
-  /* font-size: 1.3rem; Increase font size */
-  font-weight: 600; /* Make text bolder for emphasis */
-  color: #333;
-  padding: 1rem 1.5rem; /* Increased padding for more space */
-  margin-bottom: 0.75rem; /* Increase margin for better spacing */
-  border-radius: 0.75rem; /* Softer, larger rounded corners */
-  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth color transition */
+/* ── Firm / tenant badge ──────────────────────────────────── */
+/*
+ * Blue pill badge showing the firm name.
+ * Visible only when user.tenant_name is truthy (firm users only).
+ */
+.sidebar-tenant {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  font-size:     0.74rem;
+  font-weight:   600;
+  color:         #2563EB;
+  background:    #EFF6FF;
+  border-radius: 8px;
+  padding:       6px 10px;
+  margin-bottom: 20px;
+  letter-spacing: 0.02em;
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
 }
 
-/* Hover and Focus States */
-.nav-link:hover {
-  background-color: rgba(
-    90,
-    9,
-    142,
-    0.2
-  ); /* Slightly more prominent hover background */
-  color: #5a098e; /* Primary brand color */
-  text-decoration: none; /* Remove underline on hover */
+/* Small filled circle indicator before the firm name */
+.sidebar-tenant-dot {
+  width:         7px;
+  height:        7px;
+  border-radius: 50%;
+  background:    #2563EB;
+  flex-shrink:   0;
 }
 
-.nav-link:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(90, 9, 142, 0.3); /* Slightly larger focus state */
+/* ── Nav list ─────────────────────────────────────────────── */
+/*
+ * flex:1 pushes the user strip to the very bottom.
+ */
+.sidebar-nav {
+  flex:           1;
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
 }
 
-/* Active Link Styles */
-.nav-link.active {
-  background: linear-gradient(
-    to right,
-    #5a098e,
-    #d8a507
-  ); /* Gradient background for active link */
-  color: #fff;
-  box-shadow: 0 6px 12px rgba(90, 9, 142, 0.4); /* Add deeper shadow for active link */
+/* ── Individual nav link ──────────────────────────────────── */
+.sidebar-link {
+  display:         flex;
+  align-items:     center;
+  gap:             10px;
+  padding:         10px 12px;
+  border-radius:   10px;
+  color:           #374151;
+  font-size:       0.875rem;
+  font-weight:     500;
+  text-decoration: none;
+  transition:      background 0.15s, color 0.15s;
+  white-space:     nowrap;
+  overflow:        hidden;
 }
 
-.nav-link.active:hover {
-  background: linear-gradient(
-    to right,
-    #5a098e,
-    #d8a507
-  ); /* Ensure gradient persists on hover */
-  color: #fff;
+.sidebar-link:hover:not(.sidebar-link--active) {
+  background: #F3F4F6;
+  color:      #111827;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .sidebar {
-    min-height: auto;
-    padding-bottom: 1rem;
-    width: 250px; /* Adjust sidebar width for smaller screens */
-    box-shadow: none; /* Remove shadow on smaller screens */
-  }
-
-  .nav-link {
-    font-size: 1.1rem; /* Adjust font size for smaller screens */
-    padding: 0.75rem 1.25rem; /* Adjust padding for better spacing */
-  }
+/* ── Active link — solid blue ─────────────────────────────── */
+/*
+ * Matches the design screenshot: filled blue bg, white text and icon.
+ * The icon uses stroke="currentColor" so it turns white automatically.
+ */
+.sidebar-link--active {
+  background: #2563EB;
+  color:      #FFFFFF;
+}
+.sidebar-link--active:hover {
+  background: #1D4ED8;
+  color:      #FFFFFF;
 }
 
-/* Additional responsiveness for even smaller screens */
-@media (max-width: 576px) {
-  .sidebar {
-    position: relative; /* Allow sidebar to collapse */
-    width: 100%; /* Full width on small screens */
-    border-right: none; /* Remove border on small screens */
-  }
+/* ── Icon inside link ─────────────────────────────────────── */
+.sidebar-link-icon {
+  display:     flex;
+  align-items: center;
+  flex-shrink: 0;
+  width:       18px;
+  height:      18px;
+}
+.sidebar-link-icon svg {
+  width:  100%;
+  height: 100%;
+  /* stroke="currentColor" in each SVG inherits the link's color property */
+}
 
-  .nav-link {
-    font-size: 1rem; /* Adjust font size for very small screens */
-    /* padding: 0.6rem 1rem; Adjust padding for tighter space */
-    text-align: center; /* Center align text on smaller screens */
-  }
+/* ── Link label text ──────────────────────────────────────── */
+.sidebar-link-label {
+  line-height:   1;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Bottom user strip ────────────────────────────────────── */
+/*
+ * Shows avatar initials + user's display name + role label.
+ * Separated from the nav by a top border.
+ */
+.sidebar-user {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  padding:     12px 4px 4px;
+  margin-top:  16px;
+  border-top:  1px solid #E5E7EB;
+}
+
+/* Blue circle avatar with white initials */
+.sidebar-user-avatar {
+  width:            36px;
+  height:           36px;
+  border-radius:    50%;
+  background:       #2563EB;
+  color:            #FFFFFF;
+  font-size:        0.78rem;
+  font-weight:      600;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  flex-shrink:      0;
+  letter-spacing:   0.03em;
+}
+
+.sidebar-user-info {
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
+  overflow:       hidden;  /* Prevent long names breaking layout */
+}
+
+.sidebar-user-name {
+  font-size:     0.82rem;
+  font-weight:   600;
+  color:         #111827;
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user-role {
+  font-size:  0.72rem;
+  color:      #6B7280;
+  white-space: nowrap;
+}
+
+/* ── Responsive: hidden on mobile ────────────────────────── */
+/* App.js uses d-none d-md-block on the Col, so this is just a safety net */
+@media (max-width: 767px) {
+  .sidebar { display: none; }
 }
