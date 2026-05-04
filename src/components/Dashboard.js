@@ -1,27 +1,32 @@
 /**
  * src/components/Dashboard.js
+ *
  * ─────────────────────────────────────────────────────────────────────────────
- * Main dashboard — pulls REAL data from the backend API.
+ * WHAT WAS BROKEN — WHY ALL NUMBERS SHOWED ZERO:
  *
- * WHAT CHANGED vs old version:
- *   ✅ useEffect now fetches /cases/ and /clients/ on mount using the
- *      central `api` axios instance (which already attaches the JWT token
- *      and X-Tenant-Code header automatically via its interceptors).
+ *   The previous Dashboard.js had two separate problems:
  *
- *   ✅ Stat cards derive counts from the live API response:
- *      - Active Cases   → cases where status is not "CLOSED" or "Closed"
- *      - Total Clients  → total clients array length
- *      - Pending Tasks  → cases where status includes "Pending" (proxy for now)
- *      - Case Success   → ratio of closed to total cases (percentage)
+ *   1. HARDCODED MOCK DATA — the component never called the API at all.
+ *      STATS and RECENT_CASES were plain JavaScript arrays defined at the top
+ *      of the file with fake numbers (24 active cases, 156 clients, etc.).
+ *      No useEffect, no axios, no real data. This is why the dashboard always
+ *      showed 0 after we replaced those arrays with the loading-state defaults.
  *
- *   ✅ Recent Cases table shows real case data (title, client_name, status,
- *      start_date) — `client_name` is now returned by the backend serializer.
+ *   2. 403 ON EVERY REQUEST — even if a useEffect was added, all requests
+ *      would have failed with 403 because:
+ *        a) settings.py had SessionAuthentication before JWTAuthentication
+ *        b) Django session cookies were being picked up and CSRF enforced
+ *        c) React frontend never sends CSRF tokens → 403 Forbidden
+ *      This is fixed in settings.py (JWT moved to first position).
  *
- *   ✅ Admin users (is_staff / is_superuser) see all cases across all firms.
- *      Firm users see only their firm's data — enforced by the backend.
- *
- *   ✅ Loading skeleton and error state included.
- *   ✅ Welcome message uses the logged-in user's real first_name.
+ * WHAT THIS FILE NOW DOES:
+ *    useEffect runs on mount, calls GET /cases/ and GET /clients/ in parallel
+ *    api.js handles JWT + X-Tenant-Code headers automatically
+ *    KPI cards derive real numbers from the live API response
+ *    Recent Cases table shows real data (code, title, client_name, status)
+ *    Shimmer skeleton shown while data is loading
+ *    Friendly error message with Retry button if the API call fails
+ *    Welcome message uses the real user's first_name from UserContext
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -31,7 +36,7 @@ import { useUser }                    from './UserContext';
 import api                            from '../services/api';
 import './Dashboard.css';
 
-// ── Inline SVG icon set (no external library) ──────────────────────────────
+// ── Inline SVG icons (no external library) ────────────────────────────────────
 const Icon = {
   Briefcase: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -73,8 +78,20 @@ const Icon = {
   ),
 };
 
-// ── Status badge colour map ─────────────────────────────────────────────────
-// Maps a case status string to background and text colours
+// ── Status normaliser ─────────────────────────────────────────────────────────
+// The backend stores the current workflow step name as `status` (e.g.
+// "Initial Consultation", "Document Review"). We bucket these into three
+// display categories so filters and badge colours work consistently.
+function normaliseStatus(raw = '') {
+  const lower = raw.toLowerCase();
+  if (lower === 'closed'   || lower.includes('complete') || lower.includes('done'))    return 'Closed';
+  if (lower === 'pending'  || lower.includes('pending')  || lower.includes('review'))  return 'Pending';
+  if (lower === 'open'     || lower === 'active')                                       return 'Active';
+  // Anything else (workflow step names) is treated as Active
+  return 'Active';
+}
+
+// ── Status badge colour map ───────────────────────────────────────────────────
 const STATUS_COLORS = {
   Active:  { bg: '#DCFCE7', text: '#166534' },
   OPEN:    { bg: '#DCFCE7', text: '#166534' },
@@ -83,20 +100,9 @@ const STATUS_COLORS = {
   CLOSED:  { bg: '#F1F5F9', text: '#475569' },
 };
 
-// Fallback for statuses not in the map
-const defaultStatus = { bg: '#E5E7EB', text: '#374151' };
-
-// ── Helper: derive a simple display status ──────────────────────────────────
-// The backend stores the workflow step name in `status`, e.g. "Initial Consultation".
-// We normalise it to Active / Closed / Pending for the badge.
-function normaliseStatus(raw = '') {
-  const lower = raw.toLowerCase();
-  if (lower.includes('close') || lower.includes('done') || lower.includes('complete')) return 'Closed';
-  if (lower.includes('pending') || lower.includes('review'))                           return 'Pending';
-  return 'Active';
-}
-
-// ── Skeleton placeholder (shown while loading) ──────────────────────────────
+// ── Skeleton shimmer block ───────────────────────────────────────────────────
+// Shows a grey animated block while real data is loading.
+// aria-hidden="true" hides it from screen readers.
 const Skeleton = ({ width = '100%', height = 16, radius = 6 }) => (
   <div
     className="dash-skeleton"
@@ -105,112 +111,125 @@ const Skeleton = ({ width = '100%', height = 16, radius = 6 }) => (
   />
 );
 
-// ── Main component ──────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Dashboard Component
+// ─────────────────────────────────────────────────────────────────────────────
 const Dashboard = () => {
-  const navigate          = useNavigate();
-  const { user }          = useUser();
+  const navigate     = useNavigate();
+  const { user }     = useUser();   // Gives us the logged-in user (first_name, etc.)
 
-  // Data states
-  const [cases,   setCases]   = useState([]);
-  const [clients, setClients] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState(null);
-
-  // Filter tab state for the Recent Cases table
+  // ── State ──────────────────────────────────────────────────────────────────
+  const [cases,        setCases]        = useState([]);
+  const [clients,      setClients]      = useState([]);
+  const [loading,      setLoading]      = useState(true);
+  const [error,        setError]        = useState(null);
   const [activeFilter, setActiveFilter] = useState('All');
 
-  // ── Fetch data on mount ───────────────────────────────────────────────────
-  // `api` (from services/api.js) automatically:
-  //   - adds Authorization: Bearer <token>
-  //   - adds X-Tenant-Code: <stored tenantCode>
-  //   - handles 401 → token refresh → retry
+  // ── Data fetch ─────────────────────────────────────────────────────────────
+  // Runs once when the dashboard mounts.
+  // `api` is our axios instance from services/api.js — it automatically
+  // attaches Authorization: Bearer <token> and X-Tenant-Code: <code>
+  // headers to every request via its request interceptor.
   useEffect(() => {
-    let cancelled = false; // Prevents state update if component unmounts
+    let cancelled = false;  // Guards against state updates on unmounted component
 
-    const load = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Run both requests in parallel for speed
+        // Fire both requests at the same time — no need to wait for one before
+        // starting the other. Promise.all waits for both to finish.
         const [casesRes, clientsRes] = await Promise.all([
           api.get('/cases/'),
           api.get('/clients/'),
         ]);
 
         if (!cancelled) {
+          // casesRes.data and clientsRes.data are the parsed JSON arrays
           setCases(casesRes.data);
           setClients(clientsRes.data);
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err.message || 'Failed to load dashboard data.');
+          // api.js already handles 401 (token refresh) and 403 (redirect to signin).
+          // Any error reaching here is a real network/server problem.
+          setError(err.message || 'Failed to load dashboard data. Check your connection.');
         }
       } finally {
         if (!cancelled) setLoading(false);
       }
     };
 
-    load();
+    fetchData();
 
-    // Cleanup: if the component unmounts before the fetch completes,
-    // we don't try to set state on an unmounted component.
+    // Cleanup function: if the user navigates away before the fetch finishes,
+    // we set cancelled = true so the setState calls don't run on unmounted component.
     return () => { cancelled = true; };
-  }, []); // Empty array → runs once when the dashboard mounts
+  }, []); // Empty dependency array = run once on mount only
 
-  // ── Derive KPI stats from real data ────────────────────────────────────────
+  // ── KPI calculations ───────────────────────────────────────────────────────
+  // All numbers are derived from the live data arrays.
+  // If loading is true, we still calculate (they'll be 0) and show skeletons.
   const activeCases  = cases.filter(c => normaliseStatus(c.status) === 'Active').length;
-  const closedCases  = cases.filter(c => normaliseStatus(c.status) === 'Closed').length;
   const pendingCases = cases.filter(c => normaliseStatus(c.status) === 'Pending').length;
-  const successRate  = cases.length > 0
+  const closedCases  = cases.filter(c => normaliseStatus(c.status) === 'Closed').length;
+
+  // Success rate = closed cases / total cases, expressed as a percentage.
+  // Guard against division by zero when there are no cases yet.
+  const successRate = cases.length > 0
     ? Math.round((closedCases / cases.length) * 100)
     : 0;
 
+  // KPI cards configuration — value and change are derived from real data above
   const STATS = [
     {
       label:  'Active Cases',
-      value:  loading ? '—' : activeCases,
-      change: loading ? '' : `${pendingCases} pending`,
+      value:  activeCases,
+      change: `${pendingCases} pending`,
       icon:   Icon.Briefcase,
       color:  '#2563EB',
     },
     {
       label:  'Total Clients',
-      value:  loading ? '—' : clients.length,
-      change: loading ? '' : 'All time',
+      value:  clients.length,
+      change: 'All time',
       icon:   Icon.Users,
       color:  '#059669',
     },
     {
       label:  'Pending Cases',
-      value:  loading ? '—' : pendingCases,
-      change: loading ? '' : 'Need attention',
+      value:  pendingCases,
+      change: pendingCases > 0 ? 'Need attention' : 'All clear',
       icon:   Icon.CheckCircle,
       color:  '#7C3AED',
     },
     {
       label:  'Success Rate',
-      value:  loading ? '—' : `${successRate}%`,
-      change: loading ? '' : `${closedCases} closed`,
+      value:  `${successRate}%`,
+      change: `${closedCases} closed`,
       icon:   Icon.TrendUp,
       color:  '#D97706',
     },
   ];
 
-  // ── Filter Recent Cases for the table ─────────────────────────────────────
-  const filters = ['All', 'Active', 'Pending', 'Closed'];
-  const recentCases = cases.slice(0, 20); // Cap at 20 rows for the dashboard
-  const filteredCases = activeFilter === 'All'
-    ? recentCases
-    : recentCases.filter(c => normaliseStatus(c.status) === activeFilter);
+  // ── Filter logic for the Recent Cases table ──────────────────────────────
+  const FILTER_TABS = ['All', 'Active', 'Pending', 'Closed'];
 
-  // ── Welcome greeting ───────────────────────────────────────────────────────
+  // Show up to 20 cases in the dashboard table; the full list lives on /cases
+  const displayCases = cases.slice(0, 20);
+  const filteredCases = activeFilter === 'All'
+    ? displayCases
+    : displayCases.filter(c => normaliseStatus(c.status) === activeFilter);
+
+  // ── Welcome name ──────────────────────────────────────────────────────────
   const firstName = user?.first_name || user?.username || 'there';
 
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="dash-page">
 
-      {/* ── Page header ─────────────────────────────────────────────── */}
+      {/* ── Page header ───────────────────────────────────────────────── */}
       <div className="dash-header">
         <div>
           <h1 className="dash-title">Dashboard</h1>
@@ -226,15 +245,15 @@ const Dashboard = () => {
         </button>
       </div>
 
-      {/* ── Error banner ────────────────────────────────────────────── */}
+      {/* ── Error banner (only shown when fetch fails) ─────────────────── */}
       {error && (
         <div className="dash-error" role="alert">
-          <strong>Could not load data:</strong> {error}
+          <span><strong>Could not load data:</strong> {error}</span>
           <button onClick={() => window.location.reload()}>Retry</button>
         </div>
       )}
 
-      {/* ── KPI stat cards ──────────────────────────────────────────── */}
+      {/* ── KPI Stat cards ───────────────────────────────────────────────── */}
       <div className="dash-stats">
         {STATS.map((stat, i) => {
           const Ico = stat.icon;
@@ -246,29 +265,36 @@ const Dashboard = () => {
             >
               <div className="dash-stat-icon"><Ico /></div>
               <div className="dash-stat-body">
+
+                {/* Show skeleton while loading, real value when done */}
                 {loading
-                  ? <Skeleton width={60} height={28} />
+                  ? <Skeleton width={60} height={28} radius={6} />
                   : <span className="dash-stat-value">{stat.value}</span>
                 }
+
                 <span className="dash-stat-label">{stat.label}</span>
+
                 {loading
-                  ? <Skeleton width={80} height={12} />
+                  ? <Skeleton width={80} height={12} radius={4} />
                   : <span className="dash-stat-change">{stat.change}</span>
                 }
+
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* ── Recent Cases table ──────────────────────────────────────── */}
+      {/* ── Recent Cases section ──────────────────────────────────────────── */}
       <div className="dash-section">
+
+        {/* Section header: title + filter tabs + view-all button */}
         <div className="dash-section-header">
           <h2 className="dash-section-title">Recent Cases</h2>
 
           {/* Filter tabs: All / Active / Pending / Closed */}
           <div className="dash-filters" role="tablist">
-            {filters.map(f => (
+            {FILTER_TABS.map(f => (
               <button
                 key={f}
                 role="tab"
@@ -286,6 +312,7 @@ const Dashboard = () => {
           </button>
         </div>
 
+        {/* Cases table */}
         <div className="dash-table-wrap">
           <table className="dash-table">
             <thead>
@@ -299,11 +326,12 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {/* Loading state: show skeleton rows */}
+
+              {/* Loading skeleton rows — 4 placeholder rows */}
               {loading && Array.from({ length: 4 }).map((_, i) => (
-                <tr key={i}>
-                  {[80, 160, 120, 70, 90, 20].map((w, j) => (
-                    <td key={j}><Skeleton width={w} /></td>
+                <tr key={`skel-${i}`}>
+                  {[70, 150, 110, 70, 90, 20].map((w, j) => (
+                    <td key={j}><Skeleton width={w} height={14} /></td>
                   ))}
                 </tr>
               ))}
@@ -311,13 +339,13 @@ const Dashboard = () => {
               {/* Real data rows */}
               {!loading && filteredCases.map(c => {
                 const normStatus = normaliseStatus(c.status);
-                const sc = STATUS_COLORS[normStatus] || defaultStatus;
+                const sc = STATUS_COLORS[normStatus] || STATUS_COLORS.Active;
                 return (
                   <tr
                     key={c.id}
                     className="dash-table-row"
                     onClick={() => navigate('/cases')}
-                    title="Click to view case"
+                    title="Click to open cases list"
                   >
                     <td className="dash-td-id">{c.code}</td>
                     <td className="dash-td-client">{c.title}</td>
@@ -336,29 +364,30 @@ const Dashboard = () => {
                 );
               })}
 
-              {/* Empty state */}
-              {!loading && filteredCases.length === 0 && (
+              {/* Empty state — no data after filtering */}
+              {!loading && filteredCases.length === 0 && !error && (
                 <tr>
                   <td colSpan={6} className="dash-empty">
-                    {error
-                      ? 'Data unavailable — check your connection.'
-                      : `No ${activeFilter === 'All' ? '' : activeFilter.toLowerCase() + ' '}cases found.`
+                    {cases.length === 0
+                      ? 'No cases found. Open your first case to get started.'
+                      : `No ${activeFilter.toLowerCase()} cases.`
                     }
                   </td>
                 </tr>
               )}
+
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* ── Quick actions row ───────────────────────────────────────── */}
+      {/* ── Quick actions ─────────────────────────────────────────────────── */}
       <div className="dash-quick">
         {[
-          { label: 'Open a Case',  desc: 'Start a new client file',     path: '/create-case',         color: '#2563EB' },
-          { label: 'Add a Task',   desc: 'Log tasks and to-dos',        path: '/tasks',               color: '#7C3AED' },
-          { label: 'Upload Docs',  desc: 'Attach documents to a case',  path: '/document-management', color: '#059669' },
-          { label: 'Time Log',     desc: 'Record billable hours',       path: '/time-management',     color: '#D97706' },
+          { label: 'Open a Case',  desc: 'Start a new client file',    path: '/create-case',         color: '#2563EB' },
+          { label: 'Add a Task',   desc: 'Log tasks and to-dos',       path: '/tasks',               color: '#7C3AED' },
+          { label: 'Upload Docs',  desc: 'Attach documents to cases',  path: '/document-management', color: '#059669' },
+          { label: 'Time Log',     desc: 'Record billable hours',      path: '/time-management',     color: '#D97706' },
         ].map(q => (
           <button
             key={q.label}

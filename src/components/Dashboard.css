@@ -1,430 +1,413 @@
 /* ============================================================
    Dashboard.css
-   Clean professional white dashboard:
-   - Light grey page background (#F9FAFB)
-   - White cards with subtle shadows
-   - Blue (#2563EB) primary accent
-   - Light blue (#EFF6FF) icon containers
-   - Inter-style clean typography using Segoe UI
+   ─────────────────────────────────────────────────────────
+   Design tokens → KPI cards → table → quick actions → skeleton
+   All styles self-contained — no Bootstrap overrides needed.
    ============================================================ */
 
-/* ── Design tokens ───────────────────────────────────── */
+/* ── Design tokens ───────────────────────────────────────── */
 :root {
-  --blue:         #2563EB;
-  --blue-light:   #EFF6FF;
-  --blue-dark:    #1D4ED8;
-  --text-dark:    #111827;
-  --text-mid:     #374151;
-  --text-light:   #6B7280;
-  --border:       #E5E7EB;
-  --bg-page:      #F9FAFB;
-  --white:        #FFFFFF;
-  --shadow-card:  0 1px 8px rgba(0,0,0,0.06);
-  --radius:       12px;
-  --radius-sm:    8px;
+  --blue:        #2563EB;
+  --blue-light:  #EFF6FF;
+  --blue-dark:   #1D4ED8;
+  --text-dark:   #111827;
+  --text-mid:    #374151;
+  --text-light:  #6B7280;
+  --border:      #E5E7EB;
+  --bg-page:     #F9FAFB;
+  --white:       #FFFFFF;
+  --shadow:      0 1px 8px rgba(0, 0, 0, 0.06);
+  --radius:      12px;
+  --radius-sm:   8px;
 }
 
-/* ── Page wrapper ────────────────────────────────────── */
-/* This sits inside your <Col> content area in App.js   */
+/* ── Page wrapper ─────────────────────────────────────────── */
 .dash-page {
-  min-height: 100vh;
-  background: var(--bg-page);
-  padding: 32px 36px 60px;
+  min-height:  100vh;
+  background:  var(--bg-page);
+  padding:     32px 36px 60px;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  color: var(--text-dark);
-  box-sizing: border-box;
+  color:       var(--text-dark);
+  box-sizing:  border-box;
 }
 
-/* ── Page header ─────────────────────────────────────── */
+/* ── Page header ──────────────────────────────────────────── */
 .dash-header {
-  display: flex;
-  align-items: flex-start;
+  display:         flex;
+  align-items:     flex-start;
   justify-content: space-between;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
-  gap: 16px;
+  margin-bottom:   32px;
+  flex-wrap:       wrap;
+  gap:             16px;
 }
 
 .dash-title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--text-dark);
-  margin: 0 0 4px;
+  font-size:      1.6rem;
+  font-weight:    700;
+  color:          var(--text-dark);
+  margin:         0 0 4px;
   letter-spacing: -0.02em;
 }
 
 .dash-subtitle {
   font-size: 0.9rem;
-  color: var(--text-light);
-  margin: 0;
+  color:     var(--text-light);
+  margin:    0;
 }
 
-/* ── "New Case" button ───────────────────────────────── */
+/* ── "New Case" blue pill button ─────────────────────────── */
 .dash-btn-new {
-  display: flex;
+  display:     flex;
   align-items: center;
-  gap: 8px;
-  background: var(--blue);
-  color: var(--white);
-  border: none;
+  gap:         8px;
+  background:  var(--blue);
+  color:       var(--white);
+  border:      none;
   border-radius: 50px;
-  padding: 10px 20px;
-  font-size: 0.9rem;
+  padding:     10px 20px;
+  font-size:   0.9rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+  cursor:      pointer;
+  transition:  background 0.2s, transform 0.1s;
   white-space: nowrap;
 }
-.dash-btn-new:hover { background: var(--blue-dark); transform: translateY(-1px); }
+.dash-btn-new:hover  { background: var(--blue-dark); transform: translateY(-1px); }
 .dash-btn-new:active { transform: translateY(0); }
 
-.dash-btn-icon {
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-}
+.dash-btn-icon { width: 18px; height: 18px; display: flex; align-items: center; }
 .dash-btn-icon svg { width: 100%; height: 100%; }
 
-/* ── KPI Stat cards row ──────────────────────────────── */
-/* 4 cards side-by-side, each with a coloured icon  */
+/* ── Error banner ─────────────────────────────────────────── */
+/*
+ * Only visible when the API call fails.
+ * Shows a red background with the error message and a Retry button.
+ */
+.dash-error {
+  display:       flex;
+  align-items:   center;
+  justify-content: space-between;
+  gap:           12px;
+  background:    #FEF2F2;
+  border:        1px solid #FECACA;
+  border-radius: var(--radius-sm);
+  padding:       12px 16px;
+  margin-bottom: 24px;
+  font-size:     0.875rem;
+  color:         #DC2626;
+  flex-wrap:     wrap;
+}
+
+.dash-error button {
+  background:    #DC2626;
+  color:         var(--white);
+  border:        none;
+  border-radius: 6px;
+  padding:       5px 14px;
+  font-size:     0.82rem;
+  font-weight:   600;
+  cursor:        pointer;
+  white-space:   nowrap;
+}
+.dash-error button:hover { background: #B91C1C; }
+
+/* ── KPI stat cards row ───────────────────────────────────── */
+/* 4 equal columns side by side */
 .dash-stats {
-  display: grid;
+  display:               grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 32px;
+  gap:                   20px;
+  margin-bottom:         32px;
 }
 
 .dash-stat-card {
-  background: var(--white);
+  background:    var(--white);
   border-radius: var(--radius);
-  padding: 24px 20px;
-  box-shadow: var(--shadow-card);
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  padding:       24px 20px;
+  box-shadow:    var(--shadow);
+  display:       flex;
+  align-items:   flex-start;
+  gap:           16px;
+  transition:    box-shadow 0.2s, transform 0.2s;
 }
 .dash-stat-card:hover {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform:  translateY(-2px);
 }
 
-/* Coloured icon square — uses CSS custom property --accent */
+/*
+ * Icon container — background is always light-blue for consistency.
+ * The icon SVG itself uses color: var(--accent) to pick up the card's
+ * CSS custom property (--accent) set inline in Dashboard.js.
+ */
 .dash-stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-sm);
-  background: var(--blue-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: var(--accent, var(--blue));  /* Uses the card's accent colour */
+  width:            48px;
+  height:           48px;
+  border-radius:    var(--radius-sm);
+  background:       var(--blue-light);
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  flex-shrink:      0;
+  color:            var(--accent, var(--blue));
 }
-.dash-stat-icon svg {
-  width: 22px;
-  height: 22px;
-}
+.dash-stat-icon svg { width: 22px; height: 22px; }
 
 .dash-stat-body {
-  display: flex;
+  display:        flex;
   flex-direction: column;
-  gap: 2px;
+  gap:            2px;
 }
 
-/* Big number value */
+/* Large KPI number */
 .dash-stat-value {
-  font-size: 1.7rem;
+  font-size:   1.7rem;
   font-weight: 700;
-  color: var(--text-dark);
+  color:       var(--text-dark);
   line-height: 1;
 }
 
-/* Label below the number */
+/* Small uppercase category label */
 .dash-stat-label {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-light);
+  font-size:      0.78rem;
+  font-weight:    500;
+  color:          var(--text-light);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin-top: 4px;
+  margin-top:     4px;
 }
 
-/* Small change text at the bottom */
+/* Trend text below the label */
 .dash-stat-change {
-  font-size: 0.78rem;
-  color: #059669;   /* Green — positive change */
+  font-size:   0.78rem;
+  color:       #059669;
   font-weight: 500;
-  margin-top: 4px;
+  margin-top:  4px;
 }
 
-/* ── Section wrapper (Recent Cases) ──────────────────── */
+/* ── Recent Cases section ─────────────────────────────────── */
 .dash-section {
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-card);
-  margin-bottom: 28px;
-  overflow: hidden;
+  background:     var(--white);
+  border-radius:  var(--radius);
+  box-shadow:     var(--shadow);
+  margin-bottom:  28px;
+  overflow:       hidden;
 }
 
-/* Section header: title + filters + view all */
 .dash-section-header {
-  display: flex;
+  display:     flex;
   align-items: center;
-  gap: 12px;
-  padding: 20px 24px 0;
-  flex-wrap: wrap;
+  gap:         12px;
+  padding:     20px 24px 0;
+  flex-wrap:   wrap;
 }
 
 .dash-section-title {
-  font-size: 1rem;
+  font-size:   1rem;
   font-weight: 700;
-  color: var(--text-dark);
-  margin: 0;
+  color:       var(--text-dark);
+  margin:      0;
   flex-shrink: 0;
 }
 
-/* Filter tab buttons */
+/* Filter tab row */
 .dash-filters {
   display: flex;
-  gap: 4px;
-  flex: 1;
+  gap:     4px;
+  flex:    1;
 }
 
 .dash-filter {
-  background: none;
-  border: none;
+  background:    none;
+  border:        none;
   border-radius: 20px;
-  padding: 5px 14px;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--text-light);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  padding:       5px 14px;
+  font-size:     0.82rem;
+  font-weight:   500;
+  color:         var(--text-light);
+  cursor:        pointer;
+  transition:    background 0.15s, color 0.15s;
 }
-
-/* Active filter tab */
 .dash-filter--active {
   background: var(--blue-light);
-  color: var(--blue);
+  color:      var(--blue);
   font-weight: 600;
 }
-
 .dash-filter:hover:not(.dash-filter--active) {
   background: var(--bg-page);
-  color: var(--text-mid);
+  color:      var(--text-mid);
 }
 
-/* "View all →" link */
+/* "View all →" button */
 .dash-view-all {
   background: none;
-  border: none;
-  color: var(--blue);
-  font-size: 0.85rem;
+  border:     none;
+  color:      var(--blue);
+  font-size:  0.85rem;
   font-weight: 600;
-  cursor: pointer;
-  display: flex;
+  cursor:     pointer;
+  display:    flex;
   align-items: center;
-  gap: 4px;
-  padding: 0;
+  gap:        4px;
+  padding:    0;
   transition: color 0.2s;
   margin-left: auto;
 }
-.dash-view-all svg { width: 16px; height: 16px; }
+.dash-view-all svg   { width: 16px; height: 16px; }
 .dash-view-all:hover { color: var(--blue-dark); }
 
-/* ── Cases table ─────────────────────────────────────── */
-.dash-table-wrap {
-  overflow-x: auto;
-  padding: 12px 0 0;
-}
+/* ── Cases table ──────────────────────────────────────────── */
+.dash-table-wrap { overflow-x: auto; padding: 12px 0 0; }
 
 .dash-table {
-  width: 100%;
+  width:           100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size:       0.875rem;
 }
 
-/* Table header row */
 .dash-table thead th {
-  padding: 12px 24px;
-  text-align: left;
-  font-size: 0.75rem;
-  font-weight: 600;
+  padding:        12px 24px;
+  text-align:     left;
+  font-size:      0.75rem;
+  font-weight:    600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-light);
-  border-bottom: 1.5px solid var(--border);
-  white-space: nowrap;
+  color:          var(--text-light);
+  border-bottom:  1.5px solid var(--border);
+  white-space:    nowrap;
 }
 
-/* Table body rows */
-.dash-table-row {
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
+.dash-table-row { cursor: pointer; transition: background 0.15s; }
 .dash-table-row:hover { background: var(--blue-light); }
 
 .dash-table tbody td {
-  padding: 14px 24px;
-  color: var(--text-mid);
-  border-bottom: 1px solid var(--border);
+  padding:        14px 24px;
+  color:          var(--text-mid);
+  border-bottom:  1px solid var(--border);
   vertical-align: middle;
 }
 
-/* Case ID — blue, monospace-feel */
-.dash-td-id {
-  font-weight: 600;
-  color: var(--blue) !important;
-  font-size: 0.85rem;
-}
-
-/* Client name — dark, bolder */
-.dash-td-client {
-  font-weight: 600;
-  color: var(--text-dark) !important;
-}
-
-/* Arrow column — right-aligned icon */
-.dash-td-arrow {
-  text-align: right !important;
-  color: var(--text-light) !important;
-}
+/* Case code — blue, semi-bold */
+.dash-td-id    { font-weight: 600; color: var(--blue) !important; font-size: 0.85rem; }
+/* Case title — dark, bold */
+.dash-td-client { font-weight: 600; color: var(--text-dark) !important; }
+/* Arrow cell — right-aligned, muted */
+.dash-td-arrow  { text-align: right !important; color: var(--text-light) !important; }
 .dash-td-arrow svg { width: 16px; height: 16px; }
 
-/* Status badge — coloured pill */
+/* Status badge — inline pill with injected background + text colours */
 .dash-badge {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-size: 0.78rem;
-  font-weight: 600;
+  display:        inline-flex;
+  align-items:    center;
+  border-radius:  20px;
+  padding:        3px 10px;
+  font-size:      0.78rem;
+  font-weight:    600;
   letter-spacing: 0.01em;
 }
 
-/* Empty state row */
+/* Empty state cell */
 .dash-empty {
-  text-align: center !important;
-  color: var(--text-light) !important;
-  padding: 32px !important;
-  font-style: italic;
+  text-align:  center !important;
+  color:       var(--text-light) !important;
+  padding:     36px !important;
+  font-style:  italic;
+  font-size:   0.9rem;
 }
 
-/* ── Quick action cards row ───────────────────────────── */
+/* ── Quick action cards ───────────────────────────────────── */
 .dash-quick {
-  display: grid;
+  display:               grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap:                   16px;
 }
 
-/* Individual quick action card */
 .dash-quick-card {
-  background: var(--white);
-  border: 1.5px solid var(--border);
+  background:    var(--white);
+  border:        1.5px solid var(--border);
   border-radius: var(--radius);
-  padding: 18px 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-align: left;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
-  position: relative;
+  padding:       18px 16px;
+  cursor:        pointer;
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+  text-align:    left;
+  transition:    border-color 0.2s, box-shadow 0.2s, transform 0.15s;
 }
 .dash-quick-card:hover {
   border-color: var(--qcolor, var(--blue));
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  transform: translateY(-2px);
+  box-shadow:   0 4px 16px rgba(0, 0, 0, 0.08);
+  transform:    translateY(-2px);
 }
 
-/* Coloured dot indicator */
+/* Coloured dot — picks up --qcolor from inline style set in Dashboard.js */
 .dash-quick-dot {
-  width: 10px;
-  height: 10px;
+  width:         10px;
+  height:        10px;
   border-radius: 50%;
-  background: var(--qcolor, var(--blue));
-  flex-shrink: 0;
+  background:    var(--qcolor, var(--blue));
+  flex-shrink:   0;
 }
 
 .dash-quick-label {
-  font-size: 0.88rem;
+  font-size:   0.88rem;
   font-weight: 700;
-  color: var(--text-dark);
-  margin: 0 0 2px;
+  color:       var(--text-dark);
+  margin:      0 0 2px;
 }
-
 .dash-quick-desc {
   font-size: 0.78rem;
-  color: var(--text-light);
-  margin: 0;
+  color:     var(--text-light);
+  margin:    0;
 }
 
-/* Arrow at end of quick card */
 .dash-quick-arrow {
-  margin-left: auto;
-  color: var(--text-light);
-  display: flex;
-  align-items: center;
+  margin-left:  auto;
+  color:        var(--text-light);
+  display:      flex;
+  align-items:  center;
 }
 .dash-quick-arrow svg { width: 16px; height: 16px; }
 
-/* ── Responsive breakpoints ──────────────────────────── */
+/* ── Skeleton shimmer animation ──────────────────────────── */
+/*
+ * Shown in stat cards and table rows while data is loading.
+ * The gradient moves left-to-right creating the shimmer effect.
+ * aria-hidden="true" is set in the component so screen readers skip it.
+ */
+.dash-skeleton {
+  display:          inline-block;
+  background:       #E5E7EB;
+  background-image: linear-gradient(
+    90deg,
+    #E5E7EB 25%,
+    #F3F4F6 50%,
+    #E5E7EB 75%
+  );
+  background-size: 200% 100%;
+  animation:       dash-shimmer 1.4s infinite linear;
+}
+
+@keyframes dash-shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Responsive breakpoints ──────────────────────────────── */
 @media (max-width: 1100px) {
   .dash-stats { grid-template-columns: repeat(2, 1fr); }
-  .dash-quick  { grid-template-columns: repeat(2, 1fr); }
+  .dash-quick { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
-  .dash-page { padding: 20px 16px 40px; }
-  .dash-stats { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .dash-page   { padding: 20px 16px 40px; }
+  .dash-stats  { grid-template-columns: 1fr 1fr; gap: 12px; }
   .dash-quick  { grid-template-columns: 1fr 1fr; }
   .dash-section-header { flex-direction: column; align-items: flex-start; }
   .dash-view-all { margin-left: 0; }
 }
 
 @media (max-width: 480px) {
-  .dash-stats { grid-template-columns: 1fr; }
+  .dash-stats  { grid-template-columns: 1fr; }
   .dash-quick  { grid-template-columns: 1fr; }
   .dash-header { flex-direction: column; }
 }
-/* ── Loading skeleton animation ──────────────────────────── */
-.dash-skeleton {
-  background:          #E5E7EB;
-  background-image:    linear-gradient(90deg, #E5E7EB 25%, #F3F4F6 50%, #E5E7EB 75%);
-  background-size:     200% 100%;
-  animation:           shimmer 1.4s infinite;
-  display:             inline-block;
-}
-
-@keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* ── Error banner ─────────────────────────────────────────── */
-.dash-error {
-  display:        flex;
-  align-items:    center;
-  gap:            12px;
-  background:     #FEF2F2;
-  border:         1px solid #FECACA;
-  border-radius:  10px;
-  padding:        12px 16px;
-  margin-bottom:  24px;
-  font-size:      0.875rem;
-  color:          #DC2626;
-}
-
-.dash-error button {
-  margin-left:   auto;
-  background:    #DC2626;
-  color:         #FFFFFF;
-  border:        none;
-  border-radius: 6px;
-  padding:       4px 12px;
-  font-size:     0.8rem;
-  cursor:        pointer;
-}
-.dash-error button:hover { background: #B91C1C; }

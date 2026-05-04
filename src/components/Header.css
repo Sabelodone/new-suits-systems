@@ -1,14 +1,14 @@
 /* ============================================================
    Header.css
-   Top application bar — matches design screenshot.
-   Height: 64px fixed, white background, bottom border.
+   Fixed 64px top bar — white bg, bottom border, flex layout.
+   Left: brand  |  Centre: search  |  Right: icons + avatar
    ============================================================ */
 
 /* ── App header bar ────────────────────────────────────────── */
 .app-header {
-  position:        sticky;
+  position:        sticky;   /* Stays at top while content scrolls below */
   top:             0;
-  z-index:         100;         /* Above page content, below modals */
+  z-index:         100;      /* Above page content, below modals (which use 200+) */
   height:          64px;
   display:         flex;
   align-items:     center;
@@ -21,30 +21,33 @@
   font-family:     'Segoe UI', system-ui, sans-serif;
 }
 
-/* ── Left section: hamburger + brand ──────────────────────── */
+/* ── LEFT section ─────────────────────────────────────────── */
 .header-left {
   display:     flex;
   align-items: center;
   gap:         12px;
-  flex-shrink: 0;
+  flex-shrink: 0;   /* Never compressed — brand must always be visible */
 }
 
-/* Mobile menu button (hamburger) — hidden on desktop */
+/* Hamburger button — only visible on mobile (CSS hides on desktop) */
 .header-menu-btn {
-  background:  none;
-  border:      none;
-  padding:     6px;
-  cursor:      pointer;
-  color:       #374151;
-  display:     flex;
-  align-items: center;
+  display:       flex;
+  align-items:   center;
+  background:    none;
+  border:        none;
+  padding:       6px;
+  cursor:        pointer;
+  color:         #374151;
   border-radius: 6px;
-  transition:  background 0.15s;
+  transition:    background 0.15s;
 }
 .header-menu-btn:hover { background: #F3F4F6; }
 .header-menu-btn svg   { width: 20px; height: 20px; }
 
-/* Brand — blue dot + "Suites System" text */
+/* Hide hamburger on md+ screens */
+@media (min-width: 768px) { .header-menu-btn { display: none; } }
+
+/* Brand: blue dot + "Suites System" text */
 .header-brand {
   display:     flex;
   align-items: center;
@@ -52,8 +55,9 @@
   cursor:      pointer;
   user-select: none;
 }
+.header-brand:focus-visible { outline: 2px solid #2563EB; border-radius: 4px; }
 
-/* The small filled blue circle before the brand name */
+/* Small filled blue circle — the "logo dot" from the design */
 .header-brand-dot {
   width:         10px;
   height:        10px;
@@ -63,38 +67,39 @@
 }
 
 .header-brand-name {
-  font-size:    1rem;
-  font-weight:  700;
-  color:        #111827;
-  white-space:  nowrap;
+  font-size:      1rem;
+  font-weight:    700;
+  color:          #111827;
+  white-space:    nowrap;
   letter-spacing: -0.01em;
 }
 
-/* ── Centre: search bar ────────────────────────────────────── */
+/* ── CENTRE section: search bar ──────────────────────────── */
 .header-search {
-  flex:        1;              /* Fills all available middle space */
+  flex:        1;          /* Grows to fill all available middle space */
   max-width:   480px;
   position:    relative;
   display:     flex;
   align-items: center;
 }
 
-/* Search icon (left side of input) */
+/* Search icon — absolute-positioned on left inside the input */
 .header-search-icon {
-  position: absolute;
-  left:     12px;
-  color:    #9CA3AF;
-  display:  flex;
-  pointer-events: none; /* Clicks pass through to the input */
+  position:       absolute;
+  left:           12px;
+  color:          #9CA3AF;
+  display:        flex;
+  pointer-events: none;  /* Clicks pass through to the input underneath */
 }
 .header-search-icon svg { width: 16px; height: 16px; }
 
+/* Pill-shaped search input */
 .header-search-input {
   width:         100%;
   height:        38px;
-  padding:       0 16px 0 38px; /* left padding leaves room for the icon */
+  padding:       0 16px 0 38px;  /* Left padding = room for the icon */
   border:        1px solid #E5E7EB;
-  border-radius: 20px;          /* Pill shape like the screenshot */
+  border-radius: 20px;            /* Pill shape */
   font-size:     0.875rem;
   color:         #374151;
   background:    #F9FAFB;
@@ -105,19 +110,20 @@
 .header-search-input:focus {
   border-color: #2563EB;
   background:   #FFFFFF;
+  box-shadow:   0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* ── Right section: icon buttons + avatar ─────────────────── */
+/* ── RIGHT section ────────────────────────────────────────── */
 .header-right {
   display:     flex;
   align-items: center;
-  gap:         6px;
+  gap:         4px;
   flex-shrink: 0;
 }
 
-/* Generic icon button (Help, Bell) */
+/* Generic icon button: Help, Bell */
 .header-icon-btn {
-  position:      relative;   /* For notification dot positioning */
+  position:      relative;    /* For the notification dot */
   background:    none;
   border:        none;
   padding:       7px;
@@ -128,10 +134,10 @@
   align-items:   center;
   transition:    background 0.15s, color 0.15s;
 }
-.header-icon-btn:hover { background: #F3F4F6; color: #111827; }
-.header-icon-btn svg   { width: 20px; height: 20px; }
+.header-icon-btn:hover  { background: #F3F4F6; color: #111827; }
+.header-icon-btn svg    { width: 20px; height: 20px; }
 
-/* Small red dot on the bell icon for unread notifications */
+/* Red dot on the notification bell */
 .header-notif-dot {
   position:      absolute;
   top:           7px;
@@ -143,15 +149,13 @@
   border:        2px solid #FFFFFF;
 }
 
-/* ── Avatar + display name ─────────────────────────────────── */
-.header-avatar-wrap {
-  position: relative; /* Anchor for the dropdown */
-}
+/* ── Avatar button ────────────────────────────────────────── */
+.header-avatar-wrap { position: relative; }   /* Anchor point for the dropdown */
 
 .header-avatar-btn {
   display:       flex;
   align-items:   center;
-  gap:           8px;
+  gap:           7px;
   background:    none;
   border:        none;
   padding:       4px 8px;
@@ -161,23 +165,23 @@
 }
 .header-avatar-btn:hover { background: #F3F4F6; }
 
-/* Circular avatar with initials */
+/* Circle with initials */
 .header-avatar {
-  width:         34px;
-  height:        34px;
-  border-radius: 50%;
-  background:    #2563EB;
-  color:         #FFFFFF;
-  font-size:     0.78rem;
-  font-weight:   600;
-  display:       flex;
-  align-items:   center;
+  width:           34px;
+  height:          34px;
+  border-radius:   50%;
+  background:      #2563EB;
+  color:           #FFFFFF;
+  font-size:       0.78rem;
+  font-weight:     600;
+  display:         flex;
+  align-items:     center;
   justify-content: center;
-  flex-shrink:   0;
-  letter-spacing: 0.02em;
+  flex-shrink:     0;
+  letter-spacing:  0.02em;
 }
 
-/* "W.Sarah" text beside avatar — hidden on small screens */
+/* "W.Sarah" label */
 .header-displayname {
   font-size:   0.875rem;
   font-weight: 500;
@@ -185,50 +189,73 @@
   white-space: nowrap;
 }
 
+/* Small chevron after displayname */
+.header-chevron {
+  display: flex;
+  color:   #9CA3AF;
+}
+.header-chevron svg { width: 16px; height: 16px; }
+
+/* Hide displayname on narrow screens */
 @media (max-width: 576px) {
   .header-displayname { display: none; }
+  .header-chevron     { display: none; }
 }
 
-/* ── Avatar dropdown menu ─────────────────────────────────── */
+/* ── Dropdown menu ────────────────────────────────────────── */
 .header-dropdown {
   position:      absolute;
   top:           calc(100% + 8px);
   right:         0;
-  width:         220px;
+  width:         230px;
   background:    #FFFFFF;
   border:        1px solid #E5E7EB;
-  border-radius: 12px;
-  box-shadow:    0 8px 24px rgba(0,0,0,0.1);
+  border-radius: 14px;
+  box-shadow:    0 8px 24px rgba(0, 0, 0, 0.1);
   z-index:       200;
   overflow:      hidden;
   padding:       8px 0;
+  animation:     dropdown-in 0.15s ease;
 }
 
-/* User info section at top of dropdown */
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Top info block inside dropdown */
 .header-dropdown-info {
   display:        flex;
   flex-direction: column;
-  gap:            2px;
+  gap:            3px;
   padding:        10px 16px;
 }
-.header-dropdown-info strong {
-  font-size:   0.875rem;
-  font-weight: 600;
-  color:       #111827;
-}
-.header-dropdown-info span {
-  font-size: 0.78rem;
-  color:     #6B7280;
-}
+.header-dropdown-info strong { font-size: 0.875rem; font-weight: 600; color: #111827; }
+.header-dropdown-info span   { font-size: 0.78rem;  color: #6B7280; }
+
+/* Firm name badge inside dropdown */
 .header-dropdown-firm {
-  margin-top:    4px;
+  display:       inline-block;
   font-size:     0.72rem !important;
   font-weight:   600 !important;
   color:         #2563EB !important;
   background:    #EFF6FF;
   border-radius: 4px;
-  padding:       2px 6px;
+  padding:       2px 8px;
+  margin-top:    4px;
+  width:         fit-content;
+}
+
+/* Admin badge inside dropdown */
+.header-dropdown-admin {
   display:       inline-block;
+  font-size:     0.72rem !important;
+  font-weight:   600 !important;
+  color:         #7C3AED !important;
+  background:    #F5F3FF;
+  border-radius: 4px;
+  padding:       2px 8px;
+  margin-top:    2px;
   width:         fit-content;
 }
 
@@ -252,11 +279,11 @@
 }
 .header-dropdown-item:hover { background: #F9FAFB; }
 
-/* Danger (sign out) item */
+/* Sign Out item */
 .header-dropdown-item--danger       { color: #DC2626; }
 .header-dropdown-item--danger:hover { background: #FEF2F2; }
 
-/* ── Sign In button (when not authenticated) ──────────────── */
+/* ── "Sign In" button (public pages) ─────────────────────── */
 .header-signin-btn {
   background:    #2563EB;
   color:         #FFFFFF;
@@ -270,29 +297,36 @@
 }
 .header-signin-btn:hover { background: #1D4ED8; }
 
-/* ── Mobile nav drawer ────────────────────────────────────── */
-/* Semi-transparent overlay covering the whole screen */
+/* ── Mobile drawer overlay ────────────────────────────────── */
+/* Dark transparent overlay covering the whole viewport */
 .header-drawer-overlay {
   position:   fixed;
   inset:      0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   z-index:    300;
   display:    flex;
 }
 
-/* White drawer sliding in from the left */
+/* White drawer panel sliding in from the left */
 .header-drawer {
   width:          260px;
-  background:     #FFFFFF;
   height:         100%;
+  background:     #FFFFFF;
   display:        flex;
   flex-direction: column;
-  padding:        16px;
+  padding:        16px 12px;
   gap:            4px;
   overflow-y:     auto;
-  box-shadow:     4px 0 20px rgba(0,0,0,0.15);
+  box-shadow:     4px 0 20px rgba(0, 0, 0, 0.15);
+  animation:      drawer-in 0.2s ease;
 }
 
+@keyframes drawer-in {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+/* Drawer top bar: brand name + close button */
 .header-drawer-top {
   display:         flex;
   align-items:     center;
@@ -300,7 +334,7 @@
   margin-bottom:   16px;
 }
 
-/* Nav link inside the mobile drawer */
+/* Nav links inside the drawer */
 .header-drawer-link {
   display:         block;
   padding:         10px 12px;
@@ -312,11 +346,10 @@
   transition:      background 0.15s, color 0.15s;
 }
 .header-drawer-link:hover { background: #F3F4F6; color: #111827; }
-.header-drawer-link--active {
-  background: #2563EB;
-  color:      #FFFFFF;
-}
+.header-drawer-link--active { background: #2563EB; color: #FFFFFF; }
+.header-drawer-link--active:hover { background: #1D4ED8; color: #FFFFFF; }
 
+/* Sign Out button at bottom of drawer */
 .header-drawer-signout {
   margin-top:    auto;
   padding:       10px 12px;

@@ -1,6 +1,5 @@
 /* ============================================================
-   Footer.css
-   Slim single-line footer — sits below the main content area.
+   Footer.css — Slim single-line footer
    ============================================================ */
 
 .app-footer {
@@ -17,22 +16,15 @@
   color:           #6B7280;
 }
 
-/* Copyright text on the left */
-.footer-copy {
-  white-space: nowrap;
-}
+.footer-copy  { white-space: nowrap; }
 
-/* Policy links on the right */
 .footer-links {
   display:     flex;
   align-items: center;
   gap:         8px;
 }
 
-/* Separator dot between links */
-.footer-sep {
-  color: #D1D5DB;
-}
+.footer-sep { color: #D1D5DB; }
 
 .footer-link {
   color:           #6B7280;
@@ -44,7 +36,6 @@
   text-decoration: underline;
 }
 
-/* Responsive: stack on tiny screens */
 @media (max-width: 480px) {
   .app-footer {
     flex-direction: column;
