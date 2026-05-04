@@ -1,123 +1,238 @@
 /**
  * src/components/Dashboard.js
- * ─────────────────────────────────────────────────────────────
- * Main dashboard — pulls real numbers from the backend.
  *
- * Changes from old version:
- *  Stat cards show real case/client counts from the API
- *  Charts still render (they use the live data once loaded)
- *  Loading skeleton on first paint
- *  Error handling — partial failure doesn't break the page
- *  Removed the chatbot toggle (it lives in Chatbot.js independently)
- * ─────────────────────────────────────────────────────────────
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT WAS BROKEN — WHY ALL NUMBERS SHOWED ZERO:
+ *
+ *   The previous Dashboard.js had two separate problems:
+ *
+ *   1. HARDCODED MOCK DATA — the component never called the API at all.
+ *      STATS and RECENT_CASES were plain JavaScript arrays defined at the top
+ *      of the file with fake numbers (24 active cases, 156 clients, etc.).
+ *      No useEffect, no axios, no real data. This is why the dashboard always
+ *      showed 0 after we replaced those arrays with the loading-state defaults.
+ *
+ *   2. 403 ON EVERY REQUEST — even if a useEffect was added, all requests
+ *      would have failed with 403 because:
+ *        a) settings.py had SessionAuthentication before JWTAuthentication
+ *        b) Django session cookies were being picked up and CSRF enforced
+ *        c) React frontend never sends CSRF tokens → 403 Forbidden
+ *      This is fixed in settings.py (JWT moved to first position).
+ *
+ * WHAT THIS FILE NOW DOES:
+ *    useEffect runs on mount, calls GET /cases/ and GET /clients/ in parallel
+ *    api.js handles JWT + X-Tenant-Code headers automatically
+ *    KPI cards derive real numbers from the live API response
+ *    Recent Cases table shows real data (code, title, client_name, status)
+ *    Shimmer skeleton shown while data is loading
+ *    Friendly error message with Retry button if the API call fails
+ *    Welcome message uses the real user's first_name from UserContext
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 
-/**
- * Second Changes
- */
-
-// Dashboard.js
-// 📊 Clean professional dashboard matching the design image:
-// - Stats row (4 KPI cards)
-// - Recent cases table
-// - Quick-action cards
-// - Blue accents throughout, white cards, light blue (#EFF6FF) backgrounds
-// All logic (charts removed — replaced with lightweight stat cards) ✅
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate }                from 'react-router-dom';
+import { useUser }                    from './UserContext';
+import api                            from '../services/api';
 import './Dashboard.css';
 
-// ── Inline SVG icons ────────────────────────────────────
-// (No external icon library needed)
+// ── Inline SVG icons (no external library) ────────────────────────────────────
 const Icon = {
   Briefcase: () => (
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.8"/>
-      <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" strokeWidth="1.8"/>
-      <line x1="2" y1="13" x2="22" y2="13" stroke="currentColor" strokeWidth="1.8"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <rect x="2" y="7" width="20" height="14" rx="2"/>
+      <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+      <line x1="2" y1="13" x2="22" y2="13"/>
     </svg>
   ),
   Users: () => (
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth="1.8"/>
-      <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" strokeWidth="1.8"/>
-      <circle cx="17" cy="8" r="3" stroke="currentColor" strokeWidth="1.8"/>
-      <path d="M21 20c0-3.3-2.7-6-6-6" stroke="currentColor" strokeWidth="1.8"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="9" cy="8" r="3"/>
+      <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+      <circle cx="17" cy="8" r="3"/>
+      <path d="M21 20c0-3.3-2.7-6-6-6"/>
     </svg>
   ),
   CheckCircle: () => (
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8"/>
-      <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M8 12l3 3 5-5" strokeLinecap="round"/>
     </svg>
   ),
-  Clock: () => (
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8"/>
-      <path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+  TrendUp: () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" strokeLinecap="round" strokeLinejoin="round"/>
+      <polyline points="17 6 23 6 23 12" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   Plus: () => (
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5"  y1="12" x2="19" y2="12"/>
     </svg>
   ),
   Arrow: () => (
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+      <path d="M5 12h14M13 6l6 6-6 6"/>
     </svg>
   ),
 };
 
-// ── KPI stat cards data ─────────────────────────────────
-const STATS = [
-  { label: 'Active Cases',     value: '24',  change: '+3 this week', icon: Icon.Briefcase,  color: '#2563EB' },
-  { label: 'Total Clients',    value: '156', change: '+12 new',      icon: Icon.Users,       color: '#059669' },
-  { label: 'Tasks Complete',   value: '12',  change: '4 pending',    icon: Icon.CheckCircle, color: '#7C3AED' },
-  { label: 'Avg. Resolution',  value: '80%', change: 'Up from 74%',  icon: Icon.Clock,       color: '#D97706' },
-];
+// ── Status normaliser ─────────────────────────────────────────────────────────
+// The backend stores the current workflow step name as `status` (e.g.
+// "Initial Consultation", "Document Review"). We bucket these into three
+// display categories so filters and badge colours work consistently.
+function normaliseStatus(raw = '') {
+  const lower = raw.toLowerCase();
+  if (lower === 'closed'   || lower.includes('complete') || lower.includes('done'))    return 'Closed';
+  if (lower === 'pending'  || lower.includes('pending')  || lower.includes('review'))  return 'Pending';
+  if (lower === 'open'     || lower === 'active')                                       return 'Active';
+  // Anything else (workflow step names) is treated as Active
+  return 'Active';
+}
 
-// ── Recent cases mock data ──────────────────────────────
-// Replace with real API data using useEffect + axios
-const RECENT_CASES = [
-  { id: 'C-001', client: 'John Smith',  type: 'Litigation',    status: 'Active',   date: '2024-08-22' },
-  { id: 'C-002', client: 'Jane Doe',    type: 'Family Law',    status: 'Pending',  date: '2024-08-20' },
-  { id: 'C-003', client: 'Acme Corp',   type: 'Corporate',     status: 'Closed',   date: '2024-08-18' },
-  { id: 'C-004', client: 'Bob Marley',  type: 'Criminal',      status: 'Active',   date: '2024-08-15' },
-  { id: 'C-005', client: 'Sara Connor', type: 'Employment',    status: 'Active',   date: '2024-08-10' },
-];
-
-// ── Status badge colour map ─────────────────────────────
+// ── Status badge colour map ───────────────────────────────────────────────────
 const STATUS_COLORS = {
   Active:  { bg: '#DCFCE7', text: '#166534' },
   Pending: { bg: '#FEF9C3', text: '#854D0E' },
   Closed:  { bg: '#F1F5F9', text: '#475569' },
 };
 
-// ────────────────────────────────────────────────────────
-// Dashboard component
-// ────────────────────────────────────────────────────────
+// ── Skeleton shimmer block ───────────────────────────────────────────────────
+// Shows a grey animated block while real data is loading.
+// aria-hidden="true" hides it from screen readers.
+const Skeleton = ({ width = '100%', height = 16, radius = 6 }) => (
+  <div
+    className="dash-skeleton"
+    style={{ width, height, borderRadius: radius }}
+    aria-hidden="true"
+  />
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dashboard Component
+// ─────────────────────────────────────────────────────────────────────────────
 const Dashboard = () => {
-  const navigate = useNavigate();
+  const navigate     = useNavigate();
+  const { user }     = useUser();   // Gives us the logged-in user (first_name, etc.)
+
+  // ── State ──────────────────────────────────────────────────────────────────
+  const [cases,        setCases]        = useState([]);
+  const [clients,      setClients]      = useState([]);
+  const [loading,      setLoading]      = useState(true);
+  const [error,        setError]        = useState(null);
   const [activeFilter, setActiveFilter] = useState('All');
 
-  const filters  = ['All', 'Active', 'Pending', 'Closed'];
-  const filtered = activeFilter === 'All'
-    ? RECENT_CASES
-    : RECENT_CASES.filter(c => c.status === activeFilter);
+  // ── Data fetch ─────────────────────────────────────────────────────────────
+  // Runs once when the dashboard mounts.
+  // `api` is our axios instance from services/api.js — it automatically
+  // attaches Authorization: Bearer <token> and X-Tenant-Code: <code>
+  // headers to every request via its request interceptor.
+  useEffect(() => {
+    let cancelled = false;  // Guards against state updates on unmounted component
 
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fire both requests at the same time — no need to wait for one before
+        // starting the other. Promise.all waits for both to finish.
+        const [casesRes, clientsRes] = await Promise.all([
+          api.get('/cases/'),
+          api.get('/clients/'),
+        ]);
+
+        if (!cancelled) {
+          // casesRes.data and clientsRes.data are the parsed JSON arrays
+          setCases(casesRes.data);
+          setClients(clientsRes.data);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          // api.js already handles 401 (token refresh) and 403 (redirect to signin).
+          // Any error reaching here is a real network/server problem.
+          setError(err.message || 'Failed to load dashboard data. Check your connection.');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchData();
+
+    // Cleanup function: if the user navigates away before the fetch finishes,
+    // we set cancelled = true so the setState calls don't run on unmounted component.
+    return () => { cancelled = true; };
+  }, []); // Empty dependency array = run once on mount only
+
+  // ── KPI calculations ───────────────────────────────────────────────────────
+  // All numbers are derived from the live data arrays.
+  // If loading is true, we still calculate (they'll be 0) and show skeletons.
+  const activeCases  = cases.filter(c => normaliseStatus(c.status) === 'Active').length;
+  const pendingCases = cases.filter(c => normaliseStatus(c.status) === 'Pending').length;
+  const closedCases  = cases.filter(c => normaliseStatus(c.status) === 'Closed').length;
+
+  // Success rate = closed cases / total cases, expressed as a percentage.
+  // Guard against division by zero when there are no cases yet.
+  const successRate = cases.length > 0
+    ? Math.round((closedCases / cases.length) * 100)
+    : 0;
+
+  // KPI cards configuration — value and change are derived from real data above
+  const STATS = [
+    {
+      label:  'Active Cases',
+      value:  activeCases,
+      change: `${pendingCases} pending`,
+      icon:   Icon.Briefcase,
+      color:  '#2563EB',
+    },
+    {
+      label:  'Total Clients',
+      value:  clients.length,
+      change: 'All time',
+      icon:   Icon.Users,
+      color:  '#059669',
+    },
+    {
+      label:  'Pending Cases',
+      value:  pendingCases,
+      change: pendingCases > 0 ? 'Need attention' : 'All clear',
+      icon:   Icon.CheckCircle,
+      color:  '#7C3AED',
+    },
+    {
+      label:  'Success Rate',
+      value:  `${successRate}%`,
+      change: `${closedCases} closed`,
+      icon:   Icon.TrendUp,
+      color:  '#D97706',
+    },
+  ];
+
+  // ── Filter logic for the Recent Cases table ──────────────────────────────
+  const FILTER_TABS = ['All', 'Active', 'Pending', 'Closed'];
+
+  // Show up to 20 cases in the dashboard table; the full list lives on /cases
+  const displayCases = cases.slice(0, 20);
+  const filteredCases = activeFilter === 'All'
+    ? displayCases
+    : displayCases.filter(c => normaliseStatus(c.status) === activeFilter);
+
+  // ── Welcome name ──────────────────────────────────────────────────────────
+  const firstName = user?.first_name || user?.username || 'there';
+
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="dash-page">
 
-      {/* ── Page header ───────────────────────────── */}
+      {/* ── Page header ───────────────────────────────────────────────── */}
       <div className="dash-header">
         <div>
           <h1 className="dash-title">Dashboard</h1>
-          <p className="dash-subtitle">Welcome back — here's what's happening today.</p>
+          <p className="dash-subtitle">Welcome back, {firstName}</p>
         </div>
-        {/* New Case button — top right like in design */}
         <button
           className="dash-btn-new"
           onClick={() => navigate('/create-case')}
@@ -128,40 +243,61 @@ const Dashboard = () => {
         </button>
       </div>
 
-      {/* ── KPI stat cards row ────────────────────── */}
+      {/* ── Error banner (only shown when fetch fails) ─────────────────── */}
+      {error && (
+        <div className="dash-error" role="alert">
+          <span><strong>Could not load data:</strong> {error}</span>
+          <button onClick={() => window.location.reload()}>Retry</button>
+        </div>
+      )}
+
+      {/* ── KPI Stat cards ───────────────────────────────────────────────── */}
       <div className="dash-stats">
         {STATS.map((stat, i) => {
           const Ico = stat.icon;
           return (
-            <div className="dash-stat-card" key={i}
-              style={{ '--accent': stat.color }}>
-              {/* Coloured icon container */}
-              <div className="dash-stat-icon">
-                <Ico />
-              </div>
+            <div
+              className="dash-stat-card"
+              key={i}
+              style={{ '--accent': stat.color }}
+            >
+              <div className="dash-stat-icon"><Ico /></div>
               <div className="dash-stat-body">
-                <span className="dash-stat-value">{stat.value}</span>
+
+                {/* Show skeleton while loading, real value when done */}
+                {loading
+                  ? <Skeleton width={60} height={28} radius={6} />
+                  : <span className="dash-stat-value">{stat.value}</span>
+                }
+
                 <span className="dash-stat-label">{stat.label}</span>
-                <span className="dash-stat-change">{stat.change}</span>
+
+                {loading
+                  ? <Skeleton width={80} height={12} radius={4} />
+                  : <span className="dash-stat-change">{stat.change}</span>
+                }
+
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* ── Recent cases table ────────────────────── */}
+      {/* ── Recent Cases section ──────────────────────────────────────────── */}
       <div className="dash-section">
+
+        {/* Section header: title + filter tabs + view-all button */}
         <div className="dash-section-header">
           <h2 className="dash-section-title">Recent Cases</h2>
 
           {/* Filter tabs */}
           <div className="dash-filters" role="tablist">
-            {filters.map(f => (
+            {FILTER_TABS.map(f => (
               <button
                 key={f}
                 role="tab"
                 aria-selected={activeFilter === f}
-                className={`dash-filter ${activeFilter === f ? 'dash-filter--active' : ''}`}
+                className={`dash-filter${activeFilter === f ? ' dash-filter--active' : ''}`}
                 onClick={() => setActiveFilter(f)}
               >
                 {f}
@@ -169,73 +305,87 @@ const Dashboard = () => {
             ))}
           </div>
 
-          {/* View all link */}
-          <button
-            className="dash-view-all"
-            onClick={() => navigate('/cases')}
-          >
+          <button className="dash-view-all" onClick={() => navigate('/cases')}>
             View all <Icon.Arrow />
           </button>
         </div>
 
-        {/* Table */}
+        {/* Cases table */}
         <div className="dash-table-wrap">
           <table className="dash-table">
             <thead>
               <tr>
-                <th>Case ID</th>
+                <th>Case Code</th>
+                <th>Title</th>
                 <th>Client</th>
-                <th>Type</th>
                 <th>Status</th>
                 <th>Opened</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map(c => {
-                const sc = STATUS_COLORS[c.status] || STATUS_COLORS.Closed;
+
+              {/* Loading skeleton rows — 4 placeholder rows */}
+              {loading && Array.from({ length: 4 }).map((_, i) => (
+                <tr key={`skel-${i}`}>
+                  {[70, 150, 110, 70, 90, 20].map((w, j) => (
+                    <td key={j}><Skeleton width={w} height={14} /></td>
+                  ))}
+                </tr>
+              ))}
+
+              {/* Real data rows */}
+              {!loading && filteredCases.map(c => {
+                const normStatus = normaliseStatus(c.status);
+                const sc = STATUS_COLORS[normStatus] || STATUS_COLORS.Active;
                 return (
-                  <tr key={c.id} className="dash-table-row"
+                  <tr
+                    key={c.id}
+                    className="dash-table-row"
                     onClick={() => navigate('/cases')}
-                    title="Click to view case">
-                    <td className="dash-td-id">{c.id}</td>
-                    <td className="dash-td-client">{c.client}</td>
-                    <td>{c.type}</td>
+                    title="Click to open cases list"
+                  >
+                    <td className="dash-td-id">{c.code}</td>
+                    <td className="dash-td-client">{c.title}</td>
+                    <td>{c.client_name || '—'}</td>
                     <td>
-                      {/* Coloured status badge */}
                       <span
                         className="dash-badge"
                         style={{ background: sc.bg, color: sc.text }}
                       >
-                        {c.status}
+                        {normStatus}
                       </span>
                     </td>
-                    <td>{c.date}</td>
-                    <td className="dash-td-arrow">
-                      <Icon.Arrow />
-                    </td>
+                    <td>{c.start_date || '—'}</td>
+                    <td className="dash-td-arrow"><Icon.Arrow /></td>
                   </tr>
                 );
               })}
-              {filtered.length === 0 && (
+
+              {/* Empty state — no data after filtering */}
+              {!loading && filteredCases.length === 0 && !error && (
                 <tr>
                   <td colSpan={6} className="dash-empty">
-                    No {activeFilter.toLowerCase()} cases found.
+                    {cases.length === 0
+                      ? 'No cases found. Open your first case to get started.'
+                      : `No ${activeFilter.toLowerCase()} cases.`
+                    }
                   </td>
                 </tr>
               )}
+
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* ── Quick actions ─────────────────────────── */}
+      {/* ── Quick actions ─────────────────────────────────────────────────── */}
       <div className="dash-quick">
         {[
-          { label: 'Open a Case',    desc: 'Start a new client file',          path: '/create-case',        color: '#2563EB' },
-          { label: 'Add a Task',     desc: 'Log tasks and to-dos',             path: '/tasks',              color: '#7C3AED' },
-          { label: 'Upload Docs',    desc: 'Attach documents to cases',        path: '/document-management',color: '#059669' },
-          { label: 'Time Log',       desc: 'Record billable hours',            path: '/time-management',    color: '#D97706' },
+          { label: 'Open a Case',  desc: 'Start a new client file',    path: '/create-case',         color: '#2563EB' },
+          { label: 'Add a Task',   desc: 'Log tasks and to-dos',       path: '/tasks',               color: '#7C3AED' },
+          { label: 'Upload Docs',  desc: 'Attach documents to cases',  path: '/document-management', color: '#059669' },
+          { label: 'Time Log',     desc: 'Record billable hours',      path: '/time-management',     color: '#D97706' },
         ].map(q => (
           <button
             key={q.label}
