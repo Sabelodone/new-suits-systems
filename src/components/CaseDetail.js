@@ -4,11 +4,11 @@
  * Case detail modal — shows full case info + workflow controls.
  *
  * Changes from old version:
- *  ✅ Shows all backend Case fields properly
- *  ✅ Workflow status: current step + available transitions
- *  ✅ "Advance Step" button with optional context (approve/reject)
- *  ✅ "Attach Workflow" if no workflow is assigned yet
- *  ✅ Parent can pass onRefresh() to reload cases list after changes
+ *   Shows all backend Case fields properly
+ *   Workflow status: current step + available transitions
+ *   "Advance Step" button with optional context (approve/reject)
+ *   "Attach Workflow" if no workflow is assigned yet
+ *   Parent can pass onRefresh() to reload cases list after changes
  * ─────────────────────────────────────────────────────────────
  */
 

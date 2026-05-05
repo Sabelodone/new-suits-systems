@@ -38,8 +38,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate }                 from 'react-router-dom';
-import api                             from '../services/api'; // ← correct axios instance
+import { useNavigate }                from 'react-router-dom';
+// import api                         from '../services/api'; // ← correct axios instance
 import './CreateCase.css';
 import api from '../services/api';
 

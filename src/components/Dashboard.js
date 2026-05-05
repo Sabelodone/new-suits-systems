@@ -2,41 +2,38 @@
  * src/components/Dashboard.js
  *
  * ─────────────────────────────────────────────────────────────────────────────
- * WHAT WAS BROKEN — WHY ALL NUMBERS SHOWED ZERO:
+ * WHAT WAS FIXED IN THIS VERSION:
  *
- *   The previous Dashboard.js had two separate problems:
+ *   PROBLEM — "Network Error" with all-zero stats:
  *
- *   1. HARDCODED MOCK DATA — the component never called the API at all.
- *      STATS and RECENT_CASES were plain JavaScript arrays defined at the top
- *      of the file with fake numbers (24 active cases, 156 clients, etc.).
- *      No useEffect, no axios, no real data. This is why the dashboard always
- *      showed 0 after we replaced those arrays with the loading-state defaults.
+ *   There were TWO separate issues producing this symptom:
  *
- *   2. 403 ON EVERY REQUEST — even if a useEffect was added, all requests
- *      would have failed with 403 because:
- *        a) settings.py had SessionAuthentication before JWTAuthentication
- *        b) Django session cookies were being picked up and CSRF enforced
- *        c) React frontend never sends CSRF tokens → 403 Forbidden
- *      This is fixed in settings.py (JWT moved to first position).
+ *   1. TIMEOUT TOO SHORT (fixed in api.js):
+ *      Render free tier takes up to 50 seconds to cold-start. The axios
+ *      timeout was 30 s — it fired first, axios threw "Network Error"
+ *      (no HTTP status code, just a failed connection), and the dashboard
+ *      showed 0 for everything. Fixed in api.js: timeout raised to 65 s.
  *
- * WHAT THIS FILE NOW DOES:
- *    useEffect runs on mount, calls GET /cases/ and GET /clients/ in parallel
- *    api.js handles JWT + X-Tenant-Code headers automatically
- *    KPI cards derive real numbers from the live API response
- *    Recent Cases table shows real data (code, title, client_name, status)
- *    Shimmer skeleton shown while data is loading
- *    Friendly error message with Retry button if the API call fails
- *    Welcome message uses the real user's first_name from UserContext
+ *   2. HARDCODED MOCK DATA (fixed in previous session):
+ *      The component had STATS and RECENT_CASES as plain JS arrays with no
+ *      API calls. Now useEffect fetches /cases/ and /clients/ on mount.
+ *
+ *   NEW IN THIS VERSION — "Waking up" state:
+ *      When the backend is cold-starting, the user sees a spinning indicator
+ *      saying "Waking up the server… (this takes ~30–50 s on first load)".
+ *      After 8 seconds of loading with no response, we show this hint.
+ *      When the response arrives (even late), the hint disappears and real
+ *      data populates normally. The user never sees a false "error".
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate }                from 'react-router-dom';
-import { useUser }                    from './UserContext';
-import api                            from '../services/api';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate }                         from 'react-router-dom';
+import { useUser }                             from './UserContext';
+import api                                     from '../services/api';
 import './Dashboard.css';
 
-// ── Inline SVG icons (no external library) ────────────────────────────────────
+// ── Icons ─────────────────────────────────────────────────────────────────────
 const Icon = {
   Briefcase: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -78,31 +75,21 @@ const Icon = {
   ),
 };
 
-// ── Status normaliser ─────────────────────────────────────────────────────────
-// The backend stores the current workflow step name as `status` (e.g.
-// "Initial Consultation", "Document Review"). We bucket these into three
-// display categories so filters and badge colours work consistently.
+// ── Helpers ───────────────────────────────────────────────────────────────────
 function normaliseStatus(raw = '') {
-  const lower = raw.toLowerCase();
-  if (lower === 'closed'   || lower.includes('complete') || lower.includes('done'))    return 'Closed';
-  if (lower === 'pending'  || lower.includes('pending')  || lower.includes('review'))  return 'Pending';
-  if (lower === 'open'     || lower === 'active')                                       return 'Active';
-  // Anything else (workflow step names) is treated as Active
+  const s = raw.toLowerCase();
+  if (s === 'closed'  || s.includes('complete') || s.includes('done'))   return 'Closed';
+  if (s === 'pending' || s.includes('pending')  || s.includes('review')) return 'Pending';
   return 'Active';
 }
 
-// ── Status badge colour map ───────────────────────────────────────────────────
 const STATUS_COLORS = {
   Active:  { bg: '#DCFCE7', text: '#166534' },
-  OPEN:    { bg: '#DCFCE7', text: '#166534' },
   Pending: { bg: '#FEF9C3', text: '#854D0E' },
   Closed:  { bg: '#F1F5F9', text: '#475569' },
-  CLOSED:  { bg: '#F1F5F9', text: '#475569' },
 };
 
-// ── Skeleton shimmer block ───────────────────────────────────────────────────
-// Shows a grey animated block while real data is loading.
-// aria-hidden="true" hides it from screen readers.
+// Animated shimmer skeleton block shown while loading
 const Skeleton = ({ width = '100%', height = 16, radius = 6 }) => (
   <div
     className="dash-skeleton"
@@ -111,188 +98,162 @@ const Skeleton = ({ width = '100%', height = 16, radius = 6 }) => (
   />
 );
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Dashboard Component
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Dashboard ─────────────────────────────────────────────────────────────────
 const Dashboard = () => {
   const navigate     = useNavigate();
-  const { user }     = useUser();   // Gives us the logged-in user (first_name, etc.)
+  const { user }     = useUser();
 
-  // ── State ──────────────────────────────────────────────────────────────────
   const [cases,        setCases]        = useState([]);
   const [clients,      setClients]      = useState([]);
   const [loading,      setLoading]      = useState(true);
+  const [wakingUp,     setWakingUp]     = useState(false); // cold-start hint
   const [error,        setError]        = useState(null);
   const [activeFilter, setActiveFilter] = useState('All');
 
-  // ── Data fetch ─────────────────────────────────────────────────────────────
-  // Runs once when the dashboard mounts.
-  // `api` is our axios instance from services/api.js — it automatically
-  // attaches Authorization: Bearer <token> and X-Tenant-Code: <code>
-  // headers to every request via its request interceptor.
+  // After 8 s of loading with no response, show the "server waking up" hint.
+  // The hint disappears automatically when the data arrives.
+  const wakeTimerRef = useRef(null);
+
   useEffect(() => {
-    let cancelled = false;  // Guards against state updates on unmounted component
+    let cancelled = false;
 
     const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+      setLoading(true);
+      setError(null);
+      setWakingUp(false);
 
-        // Fire both requests at the same time — no need to wait for one before
-        // starting the other. Promise.all waits for both to finish.
+      // Start the "waking up" hint timer — 8 seconds
+      wakeTimerRef.current = setTimeout(() => {
+        if (!cancelled) setWakingUp(true);
+      }, 8000);
+
+      try {
+        // Both requests run in parallel — /cases/ and /clients/
+        // api.js attaches Authorization + X-Tenant-Code automatically.
+        // Timeout is 65 s (raised from 30 s) to handle Render cold starts.
         const [casesRes, clientsRes] = await Promise.all([
           api.get('/cases/'),
           api.get('/clients/'),
         ]);
 
         if (!cancelled) {
-          // casesRes.data and clientsRes.data are the parsed JSON arrays
           setCases(casesRes.data);
           setClients(clientsRes.data);
         }
       } catch (err) {
         if (!cancelled) {
-          // api.js already handles 401 (token refresh) and 403 (redirect to signin).
-          // Any error reaching here is a real network/server problem.
-          setError(err.message || 'Failed to load dashboard data. Check your connection.');
+          // Provide a helpful message depending on error type.
+          // "Network Error" without a status = timeout or CORS.
+          const isNetworkError = !err.response;
+          setError(
+            isNetworkError
+              ? 'Could not reach the server. The backend may still be waking up — wait 30 s and retry.'
+              : err.response?.data?.detail || err.message || 'Failed to load data.',
+          );
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+          setWakingUp(false);
+          clearTimeout(wakeTimerRef.current);
+        }
       }
     };
 
     fetchData();
 
-    // Cleanup function: if the user navigates away before the fetch finishes,
-    // we set cancelled = true so the setState calls don't run on unmounted component.
-    return () => { cancelled = true; };
-  }, []); // Empty dependency array = run once on mount only
+    return () => {
+      cancelled = true;
+      clearTimeout(wakeTimerRef.current);
+    };
+  }, []);
 
-  // ── KPI calculations ───────────────────────────────────────────────────────
-  // All numbers are derived from the live data arrays.
-  // If loading is true, we still calculate (they'll be 0) and show skeletons.
+  // ── Derived KPIs ───────────────────────────────────────────────────────────
   const activeCases  = cases.filter(c => normaliseStatus(c.status) === 'Active').length;
   const pendingCases = cases.filter(c => normaliseStatus(c.status) === 'Pending').length;
   const closedCases  = cases.filter(c => normaliseStatus(c.status) === 'Closed').length;
-
-  // Success rate = closed cases / total cases, expressed as a percentage.
-  // Guard against division by zero when there are no cases yet.
-  const successRate = cases.length > 0
+  const successRate  = cases.length > 0
     ? Math.round((closedCases / cases.length) * 100)
     : 0;
 
-  // KPI cards configuration — value and change are derived from real data above
   const STATS = [
-    {
-      label:  'Active Cases',
-      value:  activeCases,
-      change: `${pendingCases} pending`,
-      icon:   Icon.Briefcase,
-      color:  '#2563EB',
-    },
-    {
-      label:  'Total Clients',
-      value:  clients.length,
-      change: 'All time',
-      icon:   Icon.Users,
-      color:  '#059669',
-    },
-    {
-      label:  'Pending Cases',
-      value:  pendingCases,
-      change: pendingCases > 0 ? 'Need attention' : 'All clear',
-      icon:   Icon.CheckCircle,
-      color:  '#7C3AED',
-    },
-    {
-      label:  'Success Rate',
-      value:  `${successRate}%`,
-      change: `${closedCases} closed`,
-      icon:   Icon.TrendUp,
-      color:  '#D97706',
-    },
+    { label: 'Active Cases',   value: activeCases,  change: `${pendingCases} pending`,                       icon: Icon.Briefcase,  color: '#2563EB' },
+    { label: 'Total Clients',  value: clients.length, change: 'All time',                                    icon: Icon.Users,      color: '#059669' },
+    { label: 'Pending Cases',  value: pendingCases,  change: pendingCases > 0 ? 'Need attention' : 'All clear', icon: Icon.CheckCircle, color: '#7C3AED' },
+    { label: 'Success Rate',   value: `${successRate}%`, change: `${closedCases} closed`,                   icon: Icon.TrendUp,    color: '#D97706' },
   ];
 
-  // ── Filter logic for the Recent Cases table ──────────────────────────────
-  const FILTER_TABS = ['All', 'Active', 'Pending', 'Closed'];
-
-  // Show up to 20 cases in the dashboard table; the full list lives on /cases
-  const displayCases = cases.slice(0, 20);
-  const filteredCases = activeFilter === 'All'
+  const FILTER_TABS    = ['All', 'Active', 'Pending', 'Closed'];
+  const displayCases   = cases.slice(0, 20);
+  const filteredCases  = activeFilter === 'All'
     ? displayCases
     : displayCases.filter(c => normaliseStatus(c.status) === activeFilter);
 
-  // ── Welcome name ──────────────────────────────────────────────────────────
   const firstName = user?.first_name || user?.username || 'there';
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="dash-page">
 
-      {/* ── Page header ───────────────────────────────────────────────── */}
+      {/* ── Page header ─────────────────────────────────────────────────── */}
       <div className="dash-header">
         <div>
           <h1 className="dash-title">Dashboard</h1>
           <p className="dash-subtitle">Welcome back, {firstName}</p>
         </div>
-        <button
-          className="dash-btn-new"
-          onClick={() => navigate('/create-case')}
-          aria-label="Open a new case"
-        >
+        <button className="dash-btn-new" onClick={() => navigate('/create-case')}>
           <span className="dash-btn-icon"><Icon.Plus /></span>
           New Case
         </button>
       </div>
 
-      {/* ── Error banner (only shown when fetch fails) ─────────────────── */}
+      {/* ── "Server waking up" hint ────────────────────────────────────── */}
+      {/* Shows after 8 s of loading — reassures user it isn't broken */}
+      {loading && wakingUp && (
+        <div className="dash-wakeup" role="status">
+          <span className="dash-wakeup-spinner" aria-hidden="true" />
+          <span>
+            <strong>Waking up the server…</strong>
+            &nbsp;The backend is on a free plan and takes 30–50 s to start.
+            Your data will appear shortly.
+          </span>
+        </div>
+      )}
+
+      {/* ── Error banner ────────────────────────────────────────────────── */}
       {error && (
         <div className="dash-error" role="alert">
-          <span><strong>Could not load data:</strong> {error}</span>
+          <span>{error}</span>
           <button onClick={() => window.location.reload()}>Retry</button>
         </div>
       )}
 
-      {/* ── KPI Stat cards ───────────────────────────────────────────────── */}
+      {/* ── KPI cards ───────────────────────────────────────────────────── */}
       <div className="dash-stats">
         {STATS.map((stat, i) => {
           const Ico = stat.icon;
           return (
-            <div
-              className="dash-stat-card"
-              key={i}
-              style={{ '--accent': stat.color }}
-            >
+            <div className="dash-stat-card" key={i} style={{ '--accent': stat.color }}>
               <div className="dash-stat-icon"><Ico /></div>
               <div className="dash-stat-body">
-
-                {/* Show skeleton while loading, real value when done */}
                 {loading
-                  ? <Skeleton width={60} height={28} radius={6} />
-                  : <span className="dash-stat-value">{stat.value}</span>
-                }
-
+                  ? <Skeleton width={60} height={28} />
+                  : <span className="dash-stat-value">{stat.value}</span>}
                 <span className="dash-stat-label">{stat.label}</span>
-
                 {loading
-                  ? <Skeleton width={80} height={12} radius={4} />
-                  : <span className="dash-stat-change">{stat.change}</span>
-                }
-
+                  ? <Skeleton width={80} height={12} />
+                  : <span className="dash-stat-change">{stat.change}</span>}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* ── Recent Cases section ──────────────────────────────────────────── */}
+      {/* ── Recent Cases table ───────────────────────────────────────────── */}
       <div className="dash-section">
-
-        {/* Section header: title + filter tabs + view-all button */}
         <div className="dash-section-header">
           <h2 className="dash-section-title">Recent Cases</h2>
 
-          {/* Filter tabs: All / Active / Pending / Closed */}
           <div className="dash-filters" role="tablist">
             {FILTER_TABS.map(f => (
               <button
@@ -312,7 +273,6 @@ const Dashboard = () => {
           </button>
         </div>
 
-        {/* Cases table */}
         <div className="dash-table-wrap">
           <table className="dash-table">
             <thead>
@@ -326,36 +286,32 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-
-              {/* Loading skeleton rows — 4 placeholder rows */}
+              {/* Skeleton rows while loading */}
               {loading && Array.from({ length: 4 }).map((_, i) => (
-                <tr key={`skel-${i}`}>
+                <tr key={`sk-${i}`}>
                   {[70, 150, 110, 70, 90, 20].map((w, j) => (
                     <td key={j}><Skeleton width={w} height={14} /></td>
                   ))}
                 </tr>
               ))}
 
-              {/* Real data rows */}
+              {/* Real data */}
               {!loading && filteredCases.map(c => {
-                const normStatus = normaliseStatus(c.status);
-                const sc = STATUS_COLORS[normStatus] || STATUS_COLORS.Active;
+                const ns = normaliseStatus(c.status);
+                const sc = STATUS_COLORS[ns] || STATUS_COLORS.Active;
                 return (
                   <tr
                     key={c.id}
                     className="dash-table-row"
                     onClick={() => navigate('/cases')}
-                    title="Click to open cases list"
+                    title="Go to cases"
                   >
                     <td className="dash-td-id">{c.code}</td>
                     <td className="dash-td-client">{c.title}</td>
                     <td>{c.client_name || '—'}</td>
                     <td>
-                      <span
-                        className="dash-badge"
-                        style={{ background: sc.bg, color: sc.text }}
-                      >
-                        {normStatus}
+                      <span className="dash-badge" style={{ background: sc.bg, color: sc.text }}>
+                        {ns}
                       </span>
                     </td>
                     <td>{c.start_date || '—'}</td>
@@ -364,30 +320,28 @@ const Dashboard = () => {
                 );
               })}
 
-              {/* Empty state — no data after filtering */}
-              {!loading && filteredCases.length === 0 && !error && (
+              {/* Empty state */}
+              {!loading && filteredCases.length === 0 && (
                 <tr>
                   <td colSpan={6} className="dash-empty">
                     {cases.length === 0
-                      ? 'No cases found. Open your first case to get started.'
-                      : `No ${activeFilter.toLowerCase()} cases.`
-                    }
+                      ? 'No cases yet. Open your first case to get started.'
+                      : `No ${activeFilter.toLowerCase()} cases.`}
                   </td>
                 </tr>
               )}
-
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* ── Quick actions ─────────────────────────────────────────────────── */}
+      {/* ── Quick actions ────────────────────────────────────────────────── */}
       <div className="dash-quick">
         {[
-          { label: 'Open a Case',  desc: 'Start a new client file',    path: '/create-case',         color: '#2563EB' },
-          { label: 'Add a Task',   desc: 'Log tasks and to-dos',       path: '/tasks',               color: '#7C3AED' },
-          { label: 'Upload Docs',  desc: 'Attach documents to cases',  path: '/document-management', color: '#059669' },
-          { label: 'Time Log',     desc: 'Record billable hours',      path: '/time-management',     color: '#D97706' },
+          { label: 'Open a Case',  desc: 'Start a new client file',   path: '/create-case',         color: '#2563EB' },
+          { label: 'Add a Task',   desc: 'Log tasks and to-dos',      path: '/tasks',               color: '#7C3AED' },
+          { label: 'Upload Docs',  desc: 'Attach documents to cases', path: '/document-management', color: '#059669' },
+          { label: 'Time Log',     desc: 'Record billable hours',     path: '/time-management',     color: '#D97706' },
         ].map(q => (
           <button
             key={q.label}

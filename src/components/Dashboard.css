@@ -1,24 +1,24 @@
 /* ============================================================
    Dashboard.css
-   ─────────────────────────────────────────────────────────
-   Design tokens → KPI cards → table → quick actions → skeleton
-   All styles self-contained — no Bootstrap overrides needed.
+   Light grey page, white cards, blue accents.
+   Includes: KPI cards, table, quick actions,
+             skeleton shimmer, error banner, wakeup hint.
    ============================================================ */
 
 /* ── Design tokens ───────────────────────────────────────── */
 :root {
-  --blue:        #2563EB;
-  --blue-light:  #EFF6FF;
-  --blue-dark:   #1D4ED8;
-  --text-dark:   #111827;
-  --text-mid:    #374151;
-  --text-light:  #6B7280;
-  --border:      #E5E7EB;
-  --bg-page:     #F9FAFB;
-  --white:       #FFFFFF;
-  --shadow:      0 1px 8px rgba(0, 0, 0, 0.06);
-  --radius:      12px;
-  --radius-sm:   8px;
+  --blue:       #2563EB;
+  --blue-light: #EFF6FF;
+  --blue-dark:  #1D4ED8;
+  --text-dark:  #111827;
+  --text-mid:   #374151;
+  --text-light: #6B7280;
+  --border:     #E5E7EB;
+  --bg-page:    #F9FAFB;
+  --white:      #FFFFFF;
+  --shadow:     0 1px 8px rgba(0, 0, 0, 0.06);
+  --radius:     12px;
+  --radius-sm:  8px;
 }
 
 /* ── Page wrapper ─────────────────────────────────────────── */
@@ -49,27 +49,23 @@
   letter-spacing: -0.02em;
 }
 
-.dash-subtitle {
-  font-size: 0.9rem;
-  color:     var(--text-light);
-  margin:    0;
-}
+.dash-subtitle { font-size: 0.9rem; color: var(--text-light); margin: 0; }
 
-/* ── "New Case" blue pill button ─────────────────────────── */
+/* ── "New Case" button ───────────────────────────────────── */
 .dash-btn-new {
-  display:     flex;
-  align-items: center;
-  gap:         8px;
-  background:  var(--blue);
-  color:       var(--white);
-  border:      none;
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  background:    var(--blue);
+  color:         var(--white);
+  border:        none;
   border-radius: 50px;
-  padding:     10px 20px;
-  font-size:   0.9rem;
-  font-weight: 600;
-  cursor:      pointer;
-  transition:  background 0.2s, transform 0.1s;
-  white-space: nowrap;
+  padding:       10px 20px;
+  font-size:     0.9rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    background 0.2s, transform 0.1s;
+  white-space:   nowrap;
 }
 .dash-btn-new:hover  { background: var(--blue-dark); transform: translateY(-1px); }
 .dash-btn-new:active { transform: translateY(0); }
@@ -77,24 +73,54 @@
 .dash-btn-icon { width: 18px; height: 18px; display: flex; align-items: center; }
 .dash-btn-icon svg { width: 100%; height: 100%; }
 
-/* ── Error banner ─────────────────────────────────────────── */
+/* ── "Waking up" hint ─────────────────────────────────────── */
 /*
- * Only visible when the API call fails.
- * Shows a red background with the error message and a Retry button.
+ * Shown after 8 s of loading with no response.
+ * Tells the user the Render free-tier backend is cold-starting (up to 50 s).
+ * Hidden as soon as data arrives or an error occurs.
  */
-.dash-error {
+.dash-wakeup {
   display:       flex;
   align-items:   center;
-  justify-content: space-between;
   gap:           12px;
-  background:    #FEF2F2;
-  border:        1px solid #FECACA;
+  background:    #EFF6FF;
+  border:        1px solid #BFDBFE;
   border-radius: var(--radius-sm);
   padding:       12px 16px;
   margin-bottom: 24px;
   font-size:     0.875rem;
-  color:         #DC2626;
-  flex-wrap:     wrap;
+  color:         #1D4ED8;
+}
+
+/* Small blue spinner inside the wakeup hint */
+.dash-wakeup-spinner {
+  width:         18px;
+  height:        18px;
+  border:        2.5px solid #BFDBFE;
+  border-top:    2.5px solid #2563EB;
+  border-radius: 50%;
+  flex-shrink:   0;
+  animation:     dash-spin 0.8s linear infinite;
+}
+
+@keyframes dash-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Error banner ─────────────────────────────────────────── */
+.dash-error {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             12px;
+  background:      #FEF2F2;
+  border:          1px solid #FECACA;
+  border-radius:   var(--radius-sm);
+  padding:         12px 16px;
+  margin-bottom:   24px;
+  font-size:       0.875rem;
+  color:           #DC2626;
+  flex-wrap:       wrap;
 }
 
 .dash-error button {
@@ -107,11 +133,11 @@
   font-weight:   600;
   cursor:        pointer;
   white-space:   nowrap;
+  flex-shrink:   0;
 }
 .dash-error button:hover { background: #B91C1C; }
 
-/* ── KPI stat cards row ───────────────────────────────────── */
-/* 4 equal columns side by side */
+/* ── KPI stat cards ───────────────────────────────────────── */
 .dash-stats {
   display:               grid;
   grid-template-columns: repeat(4, 1fr);
@@ -134,87 +160,32 @@
   transform:  translateY(-2px);
 }
 
-/*
- * Icon container — background is always light-blue for consistency.
- * The icon SVG itself uses color: var(--accent) to pick up the card's
- * CSS custom property (--accent) set inline in Dashboard.js.
- */
+/* Coloured icon box — uses --accent CSS variable set inline in JS */
 .dash-stat-icon {
-  width:            48px;
-  height:           48px;
-  border-radius:    var(--radius-sm);
-  background:       var(--blue-light);
-  display:          flex;
-  align-items:      center;
-  justify-content:  center;
-  flex-shrink:      0;
-  color:            var(--accent, var(--blue));
+  width:           48px;
+  height:          48px;
+  border-radius:   var(--radius-sm);
+  background:      var(--blue-light);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  color:           var(--accent, var(--blue));
 }
 .dash-stat-icon svg { width: 22px; height: 22px; }
 
-.dash-stat-body {
-  display:        flex;
-  flex-direction: column;
-  gap:            2px;
-}
+.dash-stat-body { display: flex; flex-direction: column; gap: 2px; }
 
-/* Large KPI number */
-.dash-stat-value {
-  font-size:   1.7rem;
-  font-weight: 700;
-  color:       var(--text-dark);
-  line-height: 1;
-}
-
-/* Small uppercase category label */
-.dash-stat-label {
-  font-size:      0.78rem;
-  font-weight:    500;
-  color:          var(--text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-top:     4px;
-}
-
-/* Trend text below the label */
-.dash-stat-change {
-  font-size:   0.78rem;
-  color:       #059669;
-  font-weight: 500;
-  margin-top:  4px;
-}
+.dash-stat-value  { font-size: 1.7rem; font-weight: 700; color: var(--text-dark); line-height: 1; }
+.dash-stat-label  { font-size: 0.78rem; font-weight: 500; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 4px; }
+.dash-stat-change { font-size: 0.78rem; color: #059669; font-weight: 500; margin-top: 4px; }
 
 /* ── Recent Cases section ─────────────────────────────────── */
-.dash-section {
-  background:     var(--white);
-  border-radius:  var(--radius);
-  box-shadow:     var(--shadow);
-  margin-bottom:  28px;
-  overflow:       hidden;
-}
+.dash-section        { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 28px; overflow: hidden; }
+.dash-section-header { display: flex; align-items: center; gap: 12px; padding: 20px 24px 0; flex-wrap: wrap; }
+.dash-section-title  { font-size: 1rem; font-weight: 700; color: var(--text-dark); margin: 0; flex-shrink: 0; }
 
-.dash-section-header {
-  display:     flex;
-  align-items: center;
-  gap:         12px;
-  padding:     20px 24px 0;
-  flex-wrap:   wrap;
-}
-
-.dash-section-title {
-  font-size:   1rem;
-  font-weight: 700;
-  color:       var(--text-dark);
-  margin:      0;
-  flex-shrink: 0;
-}
-
-/* Filter tab row */
-.dash-filters {
-  display: flex;
-  gap:     4px;
-  flex:    1;
-}
+.dash-filters { display: flex; gap: 4px; flex: 1; }
 
 .dash-filter {
   background:    none;
@@ -227,29 +198,21 @@
   cursor:        pointer;
   transition:    background 0.15s, color 0.15s;
 }
-.dash-filter--active {
-  background: var(--blue-light);
-  color:      var(--blue);
-  font-weight: 600;
-}
-.dash-filter:hover:not(.dash-filter--active) {
-  background: var(--bg-page);
-  color:      var(--text-mid);
-}
+.dash-filter--active          { background: var(--blue-light); color: var(--blue); font-weight: 600; }
+.dash-filter:hover:not(.dash-filter--active) { background: var(--bg-page); color: var(--text-mid); }
 
-/* "View all →" button */
 .dash-view-all {
-  background: none;
-  border:     none;
-  color:      var(--blue);
-  font-size:  0.85rem;
+  background:  none;
+  border:      none;
+  color:       var(--blue);
+  font-size:   0.85rem;
   font-weight: 600;
-  cursor:     pointer;
-  display:    flex;
+  cursor:      pointer;
+  display:     flex;
   align-items: center;
-  gap:        4px;
-  padding:    0;
-  transition: color 0.2s;
+  gap:         4px;
+  padding:     0;
+  transition:  color 0.2s;
   margin-left: auto;
 }
 .dash-view-all svg   { width: 16px; height: 16px; }
@@ -258,11 +221,7 @@
 /* ── Cases table ──────────────────────────────────────────── */
 .dash-table-wrap { overflow-x: auto; padding: 12px 0 0; }
 
-.dash-table {
-  width:           100%;
-  border-collapse: collapse;
-  font-size:       0.875rem;
-}
+.dash-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 
 .dash-table thead th {
   padding:        12px 24px;
@@ -276,25 +235,16 @@
   white-space:    nowrap;
 }
 
-.dash-table-row { cursor: pointer; transition: background 0.15s; }
-.dash-table-row:hover { background: var(--blue-light); }
+.dash-table-row           { cursor: pointer; transition: background 0.15s; }
+.dash-table-row:hover     { background: var(--blue-light); }
 
-.dash-table tbody td {
-  padding:        14px 24px;
-  color:          var(--text-mid);
-  border-bottom:  1px solid var(--border);
-  vertical-align: middle;
-}
+.dash-table tbody td      { padding: 14px 24px; color: var(--text-mid); border-bottom: 1px solid var(--border); vertical-align: middle; }
 
-/* Case code — blue, semi-bold */
-.dash-td-id    { font-weight: 600; color: var(--blue) !important; font-size: 0.85rem; }
-/* Case title — dark, bold */
-.dash-td-client { font-weight: 600; color: var(--text-dark) !important; }
-/* Arrow cell — right-aligned, muted */
-.dash-td-arrow  { text-align: right !important; color: var(--text-light) !important; }
-.dash-td-arrow svg { width: 16px; height: 16px; }
+.dash-td-id               { font-weight: 600; color: var(--blue) !important; font-size: 0.85rem; }
+.dash-td-client           { font-weight: 600; color: var(--text-dark) !important; }
+.dash-td-arrow            { text-align: right !important; color: var(--text-light) !important; }
+.dash-td-arrow svg        { width: 16px; height: 16px; }
 
-/* Status badge — inline pill with injected background + text colours */
 .dash-badge {
   display:        inline-flex;
   align-items:    center;
@@ -305,21 +255,10 @@
   letter-spacing: 0.01em;
 }
 
-/* Empty state cell */
-.dash-empty {
-  text-align:  center !important;
-  color:       var(--text-light) !important;
-  padding:     36px !important;
-  font-style:  italic;
-  font-size:   0.9rem;
-}
+.dash-empty { text-align: center !important; color: var(--text-light) !important; padding: 36px !important; font-style: italic; font-size: 0.9rem; }
 
-/* ── Quick action cards ───────────────────────────────────── */
-.dash-quick {
-  display:               grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap:                   16px;
-}
+/* ── Quick actions ────────────────────────────────────────── */
+.dash-quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 
 .dash-quick-card {
   background:    var(--white);
@@ -333,58 +272,22 @@
   text-align:    left;
   transition:    border-color 0.2s, box-shadow 0.2s, transform 0.15s;
 }
-.dash-quick-card:hover {
-  border-color: var(--qcolor, var(--blue));
-  box-shadow:   0 4px 16px rgba(0, 0, 0, 0.08);
-  transform:    translateY(-2px);
-}
+.dash-quick-card:hover { border-color: var(--qcolor, var(--blue)); box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-2px); }
 
-/* Coloured dot — picks up --qcolor from inline style set in Dashboard.js */
-.dash-quick-dot {
-  width:         10px;
-  height:        10px;
-  border-radius: 50%;
-  background:    var(--qcolor, var(--blue));
-  flex-shrink:   0;
-}
-
-.dash-quick-label {
-  font-size:   0.88rem;
-  font-weight: 700;
-  color:       var(--text-dark);
-  margin:      0 0 2px;
-}
-.dash-quick-desc {
-  font-size: 0.78rem;
-  color:     var(--text-light);
-  margin:    0;
-}
-
-.dash-quick-arrow {
-  margin-left:  auto;
-  color:        var(--text-light);
-  display:      flex;
-  align-items:  center;
-}
+.dash-quick-dot   { width: 10px; height: 10px; border-radius: 50%; background: var(--qcolor, var(--blue)); flex-shrink: 0; }
+.dash-quick-label { font-size: 0.88rem; font-weight: 700; color: var(--text-dark); margin: 0 0 2px; }
+.dash-quick-desc  { font-size: 0.78rem; color: var(--text-light); margin: 0; }
+.dash-quick-arrow { margin-left: auto; color: var(--text-light); display: flex; align-items: center; }
 .dash-quick-arrow svg { width: 16px; height: 16px; }
 
-/* ── Skeleton shimmer animation ──────────────────────────── */
-/*
- * Shown in stat cards and table rows while data is loading.
- * The gradient moves left-to-right creating the shimmer effect.
- * aria-hidden="true" is set in the component so screen readers skip it.
- */
+/* ── Skeleton shimmer ─────────────────────────────────────── */
+/* Grey animated block shown in stat cards + table rows while loading */
 .dash-skeleton {
   display:          inline-block;
   background:       #E5E7EB;
-  background-image: linear-gradient(
-    90deg,
-    #E5E7EB 25%,
-    #F3F4F6 50%,
-    #E5E7EB 75%
-  );
-  background-size: 200% 100%;
-  animation:       dash-shimmer 1.4s infinite linear;
+  background-image: linear-gradient(90deg, #E5E7EB 25%, #F3F4F6 50%, #E5E7EB 75%);
+  background-size:  200% 100%;
+  animation:        dash-shimmer 1.4s infinite linear;
 }
 
 @keyframes dash-shimmer {
@@ -392,7 +295,7 @@
   100% { background-position: -200% 0; }
 }
 
-/* ── Responsive breakpoints ──────────────────────────────── */
+/* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 1100px) {
   .dash-stats { grid-template-columns: repeat(2, 1fr); }
   .dash-quick { grid-template-columns: repeat(2, 1fr); }
