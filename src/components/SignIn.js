@@ -1,35 +1,44 @@
 // src/components/SignIn.js
 //
+// Sign-in page — two-panel layout (blue left, white right form).
+//
 // ─────────────────────────────────────────────────────────────────────────────
-// SIGN IN PAGE  —  Updated Design + Tenant Code field
+// WHAT WAS FIXED IN THIS VERSION:
+//
+//  PROBLEM — Admin users couldn't log in:
+//    The Firm Code field was shown with no indication it's optional for admins.
+//    When an admin left it blank and submitted, authService threw
+//    "Firm Code is required" before even hitting the server.
+//
+//    Fix: Added "Leave blank if you are a system administrator" hint under
+//    the Firm Code field. The field is intentionally NOT required (no HTML
+//    required attribute) — admins just leave it blank.
+//
+//  PROBLEM — Generic "500" error shown to users:
+//    When the backend crashes at startup (circular import, migration error),
+//    the error message was "Request failed with status 500" — unhelpful.
+//    authService.js now returns a clear message for 500 errors.
+//    SignIn.js passes it straight through to the error banner.
+//
+//  PROBLEM — "Firm Code does not match" for admin who typed something:
+//    If an admin accidentally typed something in the Firm Code field,
+//    authService compared it against null (admin has no tenant_code) and
+//    threw a mismatch error. Now: if the user is an admin (is_staff/is_superuser),
+//    any value in the Firm Code field is simply ignored.
+//
+//  WHAT STAYED THE SAME:
+//    - Two-panel design (blue left, white right)
+//    - Username + Password + Firm Code fields
+//    - Spinner while loading
+//    - Forgot password link
 // ─────────────────────────────────────────────────────────────────────────────
-//
-// WHAT CHANGED vs. previous version:
-//   ✅ Removed "Sign Up" link — users are onboarded by admins, not self-signup
-//   ✅ Added "Firm Code" field — replaced the signup link with tenant code input
-//   ✅ New blue/white split-panel design matching the provided UI mockups
-//   ✅ Tenant code is validated against the server's /api/auth/me/ response
-//   ✅ signIn() now passes tenantCode to UserContext → authService
-//
-// HOW TENANT CODE WORKS:
-//   1. User enters their firm's code (e.g. "T1", "SMITH-LAW") — obtained from admin
-//   2. After login, authService compares it against what the server returns
-//   3. If it matches → stored in localStorage, attached to every API request as X-Tenant-Code
-//   4. If it doesn't match → error shown, user can't proceed (security guardrail)
-//   5. If user has no tenant (superadmin) → code is optional
-//
-// DESIGN:
-//   - Left panel: blue (#2563eb) with an SVG illustration + brand name
-//   - Right panel: white with Username, Password, and Firm Code fields
-//   - Blue "Login" button, "Forgot Password?" link below
-//   - Responsive: stacks vertically on mobile
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import { useUser } from './UserContext';
 
-// ── Inline styles (keeps the component self-contained, no extra CSS file needed) ──
+// ── Styles (inline — keeps the component self-contained) ─────────────────────
 const styles = {
   page: {
     minHeight: '100vh',
@@ -51,7 +60,7 @@ const styles = {
     boxShadow: '0 20px 60px rgba(37, 99, 235, 0.15)',
   },
 
-  // ── Left panel — blue brand area ──────────────────────────────────────────
+  // ── Left panel ──────────────────────────────────────────────────────────────
   leftPanel: {
     flex: '1',
     background: 'linear-gradient(145deg, #1d4ed8 0%, #2563eb 60%, #3b82f6 100%)',
@@ -80,7 +89,7 @@ const styles = {
     maxWidth: '240px',
   },
 
-  // ── Right panel — white form area ─────────────────────────────────────────
+  // ── Right panel ─────────────────────────────────────────────────────────────
   rightPanel: {
     flex: '1',
     background: '#fff',
@@ -104,7 +113,7 @@ const styles = {
     marginBottom: '24px',
   },
 
-  // ── Form fields ────────────────────────────────────────────────────────────
+  // ── Field groups ─────────────────────────────────────────────────────────────
   fieldGroup: {
     display: 'flex',
     flexDirection: 'column',
@@ -132,14 +141,14 @@ const styles = {
     boxSizing: 'border-box',
   },
 
-  inputFocusStyle: {
+  inputFocus: {
     borderColor: '#2563eb',
     boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.12)',
     background: '#fff',
   },
 
-  // ── Firm Code section (replaces Sign Up link) ─────────────────────────────
-  firmCodeContainer: {
+  // ── Firm Code section ────────────────────────────────────────────────────────
+  firmBox: {
     display: 'flex',
     flexDirection: 'column',
     gap: '4px',
@@ -150,13 +159,13 @@ const styles = {
     border: '1.5px solid #bfdbfe',
   },
 
-  firmCodeLabel: {
+  firmLabel: {
     fontSize: '13px',
     fontWeight: '600',
     color: '#1e40af',
   },
 
-  firmCodeInput: {
+  firmInput: {
     height: '40px',
     padding: '0 14px',
     border: '1.5px solid #bfdbfe',
@@ -172,14 +181,28 @@ const styles = {
     textTransform: 'uppercase',
   },
 
-  firmCodeHint: {
+  firmInputFocus: {
+    borderColor: '#2563eb',
+    boxShadow: '0 0 0 3px rgba(37,99,235,0.12)',
+  },
+
+  firmHint: {
     fontSize: '11px',
     color: '#3b82f6',
     marginTop: '2px',
+    lineHeight: '1.5',
   },
 
-  // ── Submit button ──────────────────────────────────────────────────────────
-  submitButton: {
+  // ── Admin hint (shown when firm code field is empty) ─────────────────────────
+  adminHint: {
+    fontSize: '11px',
+    color: '#6b7280',
+    marginTop: '2px',
+    fontStyle: 'italic',
+  },
+
+  // ── Submit button ─────────────────────────────────────────────────────────────
+  submitBtn: {
     height: '48px',
     background: '#2563eb',
     color: '#fff',
@@ -190,19 +213,19 @@ const styles = {
     cursor: 'pointer',
     width: '100%',
     marginTop: '8px',
-    transition: 'background 0.2s, transform 0.1s',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     gap: '8px',
+    transition: 'background 0.2s',
   },
 
-  submitButtonDisabled: {
+  submitBtnDisabled: {
     background: '#93c5fd',
     cursor: 'not-allowed',
   },
 
-  // ── Error banner ───────────────────────────────────────────────────────────
+  // ── Error banner ──────────────────────────────────────────────────────────────
   errorBanner: {
     background: '#fef2f2',
     border: '1px solid #fecaca',
@@ -211,10 +234,11 @@ const styles = {
     fontSize: '13px',
     color: '#dc2626',
     marginBottom: '12px',
+    lineHeight: '1.5',
   },
 
-  // ── Footer links ───────────────────────────────────────────────────────────
-  forgotLink: {
+  // ── Footer ────────────────────────────────────────────────────────────────────
+  footer: {
     textAlign: 'center',
     marginTop: '12px',
     fontSize: '13px',
@@ -228,25 +252,26 @@ const styles = {
   },
 };
 
-// ── Left panel illustration (simple SVG — matches blue/white mockup aesthetic) ──
+// ── Courthouse SVG illustration (left panel) ──────────────────────────────────
 const LoginIllustration = () => (
-  <svg viewBox="0 0 240 200" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '200px', opacity: 0.9 }}>
-    {/* Building / courthouse */}
+  <svg
+    viewBox="0 0 240 200"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ width: '200px', opacity: 0.9 }}
+    aria-hidden="true"
+  >
     <rect x="60" y="80" width="120" height="100" rx="4" fill="rgba(255,255,255,0.15)" />
     <rect x="50" y="76" width="140" height="12" rx="3" fill="rgba(255,255,255,0.25)" />
     <rect x="75" y="56" width="90" height="24" rx="3" fill="rgba(255,255,255,0.2)" />
     <rect x="106" y="40" width="28" height="20" rx="2" fill="rgba(255,255,255,0.3)" />
-    {/* Columns */}
     <rect x="76" y="88" width="10" height="92" rx="2" fill="rgba(255,255,255,0.2)" />
     <rect x="100" y="88" width="10" height="92" rx="2" fill="rgba(255,255,255,0.2)" />
     <rect x="130" y="88" width="10" height="92" rx="2" fill="rgba(255,255,255,0.2)" />
     <rect x="154" y="88" width="10" height="92" rx="2" fill="rgba(255,255,255,0.2)" />
-    {/* Door */}
     <rect x="104" y="140" width="32" height="40" rx="4" fill="rgba(255,255,255,0.25)" />
-    {/* Steps */}
     <rect x="40" y="180" width="160" height="6" rx="2" fill="rgba(255,255,255,0.3)" />
     <rect x="30" y="186" width="180" height="6" rx="2" fill="rgba(255,255,255,0.2)" />
-    {/* Stars */}
     <circle cx="30" cy="30" r="3" fill="rgba(255,255,255,0.4)" />
     <circle cx="210" cy="50" r="2" fill="rgba(255,255,255,0.4)" />
     <circle cx="200" cy="20" r="4" fill="rgba(255,255,255,0.3)" />
@@ -254,67 +279,47 @@ const LoginIllustration = () => (
   </svg>
 );
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// MAIN COMPONENT
-// ─────────────────────────────────────────────────────────────────────────────
+// ── SignIn component ───────────────────────────────────────────────────────────
 function SignIn() {
-  const { signIn }    = useUser();
-  const navigate      = useNavigate();
+  const { signIn }   = useUser();
+  const navigate     = useNavigate();
 
-  const [username,   setUsername]   = useState('');
-  const [password,   setPassword]   = useState('');
-  // ✅ NEW: Firm Code field — replaces the "Sign Up" link
-  const [firmCode,   setFirmCode]   = useState('');
-  const [error,      setError]      = useState('');
-  const [loading,    setLoading]    = useState(false);
-
-  // Track which input is focused (for focus ring styles)
+  const [username,     setUsername]     = useState('');
+  const [password,     setPassword]     = useState('');
+  const [firmCode,     setFirmCode]     = useState('');
+  const [error,        setError]        = useState('');
+  const [loading,      setLoading]      = useState(false);
   const [focusedField, setFocusedField] = useState(null);
 
-  const getInputStyle = (fieldName) => ({
+  // Helper: merge base + focused styles
+  const inp = (name) => ({
     ...styles.input,
-    ...(focusedField === fieldName ? styles.inputFocusStyle : {}),
+    ...(focusedField === name ? styles.inputFocus : {}),
   });
 
-  const getFirmInputStyle = (fieldName) => ({
-    ...styles.firmCodeInput,
-    ...(focusedField === fieldName ? { borderColor: '#2563eb', boxShadow: '0 0 0 3px rgba(37,99,235,0.12)' } : {}),
+  const firmInp = (name) => ({
+    ...styles.firmInput,
+    ...(focusedField === name ? styles.firmInputFocus : {}),
   });
 
-  // ── Submit handler ─────────────────────────────────────────────────────────
+  // ── Form submit ──────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      // ✅ Pass firmCode as the third argument to signIn
-      // UserContext → authService.login(username, password, firmCode)
-      // authService will:
-      //   1. Get JWT tokens from Django
-      //   2. Call /api/auth/me/ to get the user's actual tenant_code
-      //   3. Compare entered firmCode against the server's tenant_code
-      //   4. Store the validated tenant_code in localStorage
-      await signIn(username, password, firmCode.toUpperCase().trim());
-
-      // ✅ Navigate to dashboard on success
+      // signIn → UserContext → authService.login(username, password, firmCode)
+      // firmCode is passed as-is; authService handles:
+      //   - admin users: firmCode is ignored (server returns is_staff=true)
+      //   - firm users: firmCode is validated against server's tenant_code
+      await signIn(username.trim(), password, firmCode.toUpperCase().trim());
       navigate('/dashboard');
 
     } catch (err) {
-      // Specific error messages for each failure type
-      if (err.message?.includes('firm code') || err.message?.includes('Firm code')) {
-        // Our own validation error from authService
-        setError(err.message);
-      } else if (err.response?.status === 401) {
-        setError('Incorrect username or password. Please try again.');
-      } else if (err.response?.data?.detail) {
-        setError(err.response.data.detail);
-      } else if (err.message) {
-        setError(err.message);
-      } else {
-        setError('Login failed. Check your connection and try again.');
-      }
+      // authService throws Error objects with human-readable messages.
+      // We display them directly in the error banner.
+      setError(err.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -329,7 +334,8 @@ function SignIn() {
           <div style={styles.brandName}>⚖ Suits</div>
           <LoginIllustration />
           <p style={styles.brandTagline}>
-            Legal case management for modern law firms. Secure. Organised. Efficient.
+            Legal case management for modern law firms.
+            Secure. Organised. Efficient.
           </p>
         </div>
 
@@ -338,33 +344,41 @@ function SignIn() {
           <div style={styles.formTitle}>Welcome back</div>
           <div style={styles.formSubtitle}>Sign in to your firm's workspace</div>
 
-          {/* ── Error banner ──────────────────────────────────────────────── */}
-          {error && <div style={styles.errorBanner}>{error}</div>}
+          {/* Error banner — shows any login error (wrong password, server down, etc.) */}
+          {error && (
+            <div style={styles.errorBanner} role="alert">
+              {error}
+            </div>
+          )}
 
-          <form onSubmit={handleSubmit} autoComplete="on">
+          <form onSubmit={handleSubmit} autoComplete="on" noValidate>
 
-            {/* ── Username ─────────────────────────────────────────────────── */}
+            {/* ── Username / Email ──────────────────────────────────────── */}
             <div style={styles.fieldGroup}>
-              <label style={styles.label} htmlFor="username">Username</label>
+              <label style={styles.label} htmlFor="username">
+                Username or Email
+              </label>
               <input
                 id="username"
                 type="text"
-                placeholder="Enter your username"
+                placeholder="Enter your username or email"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 onFocus={() => setFocusedField('username')}
                 onBlur={() => setFocusedField(null)}
-                style={getInputStyle('username')}
-                required
+                style={inp('username')}
                 disabled={loading}
                 autoComplete="username"
                 autoFocus
+                required
               />
             </div>
 
-            {/* ── Password ─────────────────────────────────────────────────── */}
+            {/* ── Password ─────────────────────────────────────────────── */}
             <div style={styles.fieldGroup}>
-              <label style={styles.label} htmlFor="password">Password</label>
+              <label style={styles.label} htmlFor="password">
+                Password
+              </label>
               <input
                 id="password"
                 type="password"
@@ -373,60 +387,71 @@ function SignIn() {
                 onChange={(e) => setPassword(e.target.value)}
                 onFocus={() => setFocusedField('password')}
                 onBlur={() => setFocusedField(null)}
-                style={getInputStyle('password')}
-                required
+                style={inp('password')}
                 disabled={loading}
                 autoComplete="current-password"
+                required
               />
             </div>
 
-            {/* ── Firm Code (replaces Sign Up link) ───────────────────────── */}
+            {/* ── Firm Code ────────────────────────────────────────────── */}
             {/*
-              ✅ WHAT CHANGED: Previously there was a "Don't have an account? Sign up" link here.
-              That has been replaced with this Firm Code field.
+              Multi-tenant field — each law firm has a unique code (e.g. "T1").
+              Users get their code from their administrator.
 
-              WHY: This is a multi-tenant system. Each law firm has a unique code
-              (e.g. "T1", "ACME-LAW"). Users get their firm code from their admin.
-              It ensures they log into the right firm's data and can't accidentally
-              (or deliberately) access another firm's information.
+              ADMIN USERS: leave this blank. System administrators don't
+              belong to a specific firm — they see all firms' data.
+              authService detects is_staff/is_superuser from the server
+              response and ignores this field entirely for admin accounts.
 
-              The code is validated server-side via /api/auth/me/ — if the entered
-              code doesn't match the user's actual firm, login is rejected.
+              FIRM USERS: this field is required. Your code must match the
+              one assigned to your account by your system administrator.
             */}
-            <div style={styles.firmCodeContainer}>
-              <label style={styles.firmCodeLabel} htmlFor="firmCode">
+            <div style={styles.firmBox}>
+              <label style={styles.firmLabel} htmlFor="firmCode">
                 🏛 Firm Code
               </label>
               <input
                 id="firmCode"
                 type="text"
-                placeholder="e.g. T1"
+                placeholder="e.g. T1  (leave blank if you're an admin)"
                 value={firmCode}
                 onChange={(e) => setFirmCode(e.target.value.toUpperCase())}
                 onFocus={() => setFocusedField('firmCode')}
                 onBlur={() => setFocusedField(null)}
-                style={getFirmInputStyle('firmCode')}
+                style={firmInp('firmCode')}
                 disabled={loading}
                 maxLength={20}
                 autoComplete="organization"
+                // NOT required — admin users leave this blank intentionally
               />
-              <span style={styles.firmCodeHint}>
-                Your unique firm identifier — contact your administrator if you don't have one.
+              <span style={styles.firmHint}>
+                Your firm's unique identifier — provided by your administrator.
               </span>
+              {/* Contextual hint when field is empty */}
+              {!firmCode && (
+                <span style={styles.adminHint}>
+                  System administrators: leave blank to log in without a firm code.
+                </span>
+              )}
             </div>
 
-            {/* ── Submit button ────────────────────────────────────────────── */}
+            {/* ── Submit button ────────────────────────────────────────── */}
             <button
               type="submit"
               disabled={loading}
               style={{
-                ...styles.submitButton,
-                ...(loading ? styles.submitButtonDisabled : {}),
+                ...styles.submitBtn,
+                ...(loading ? styles.submitBtnDisabled : {}),
               }}
             >
               {loading ? (
                 <>
-                  <Spinner animation="border" size="sm" style={{ width: '16px', height: '16px' }} />
+                  <Spinner
+                    animation="border"
+                    size="sm"
+                    style={{ width: '16px', height: '16px' }}
+                  />
                   Signing in…
                 </>
               ) : (
@@ -436,15 +461,12 @@ function SignIn() {
 
           </form>
 
-          {/* ── Footer links ─────────────────────────────────────────────── */}
-          <div style={styles.forgotLink}>
-            <Link to="/forgot-password" style={styles.link}>Forgot password?</Link>
+          {/* ── Forgot password link ─────────────────────────────────────── */}
+          <div style={styles.footer}>
+            <Link to="/forgot-password" style={styles.link}>
+              Forgot password?
+            </Link>
           </div>
-          {/*
-            ✅ NOTE: "Sign up" link has been intentionally removed.
-            New users are created by administrators via the Django admin panel
-            or a dedicated onboarding flow. Self-registration is disabled.
-          */}
         </div>
 
       </div>

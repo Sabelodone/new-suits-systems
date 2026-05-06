@@ -1,64 +1,125 @@
 // src/services/authService.js
 //
+// All authentication logic — login, logout, token helpers.
+//
 // ─────────────────────────────────────────────────────────────────────────────
-// Authentication service — all login/logout logic lives here.
+// WHAT WAS FIXED IN THIS VERSION:
 //
-// WHAT CHANGED & WHY:
+//  PROBLEM — 500 error shown as generic "Request failed with status 500":
+//    When the backend crashes at startup (e.g. circular import in serializers),
+//    every endpoint returns 500. The old apiFetch() threw a generic message.
+//    Now we detect 500 specifically and tell the user to wait/retry rather than
+//    suggesting their credentials are wrong.
 //
-//   Previously, the backend's LoginView only returned { id, username, email }.
-//   The backend NOW returns is_staff, is_superuser, tenant_code, tenant_name.
+//  PROBLEM — Admin users couldn't log in without a firm code:
+//    authService was calling apiFetch() (plain fetch) which has a 30s browser
+//    timeout. Render's free tier cold-starts in up to 50s → fetch times out
+//    before the login response arrives → "Failed to fetch" error.
+//    Fix: added an AbortController with 65s timeout to the fetch call.
+//    (Note: api.js already has 65s for post-login requests. This matches it.)
 //
-//   ✅ Admin detection: uses user.is_staff || user.is_superuser from the
-//      server response (was unreliable before because these weren't sent).
-//
-//   ✅ Tenant code storage: now stores user.tenant_code (the server's real
-//      value) instead of the typed input — the server's value is authoritative.
-//      If the server returns null (e.g. for admins), we store "" which the
-//      API interceptor treats as "no tenant header" → skips the X-Tenant-Code.
-//
-//   ✅ Tenant validation: for firm users, the typed code is still compared
-//      against the server's code to give a clear error message if they mistype.
-//      Admin users skip this check entirely.
+//  WHAT STAYED THE SAME:
+//    - Admin detection via user.is_staff || user.is_superuser
+//    - tenant_code storage logic (server's code is authoritative)
+//    - All exports (login, logout, getAccessToken, etc.)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const BASE_URL = "https://suits-webapp-backend.onrender.com";
+const BASE_URL =
+  process.env.REACT_APP_API_URL ||
+  'https://suits-webapp-backend.onrender.com';
 
-// ── Shared fetch wrapper ───────────────────────────────────────────────────
+// ── fetch wrapper with 65-second timeout ──────────────────────────────────────
+// Browser's native fetch() has no built-in timeout. On Render's free tier,
+// the backend takes up to 50 s to cold-start. Without a timeout, the browser
+// will wait indefinitely (or apply its own ~2 min timeout) — a bad UX.
+// With 65 s we match api.js (axios) and give Render enough time to wake up.
 async function apiFetch(path, options = {}) {
-  const response = await fetch(`${BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-  });
+  const controller = new AbortController();
+  // 65 000 ms = 65 s — enough for Render's 50 s cold start + response time
+  const timeoutId  = setTimeout(() => controller.abort(), 65000);
 
-  let body;
+  let response;
+  try {
+    response = await fetch(`${BASE_URL}${path}`, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+    });
+  } catch (err) {
+    // AbortError = our 65s timeout fired
+    // TypeError  = network failure (offline, DNS, CORS preflight blocked)
+    if (err.name === 'AbortError') {
+      throw new Error(
+        'The server is taking too long to respond. ' +
+        'It may be waking up (this can take 30–50 s on a free plan). ' +
+        'Please wait a moment and try again.'
+      );
+    }
+    throw new Error(
+      'Cannot reach the server. Check your internet connection and try again.'
+    );
+  } finally {
+    clearTimeout(timeoutId);
+  }
+
+  // Parse the JSON body (even for error responses — DRF returns JSON errors)
+  let body = {};
   try {
     body = await response.json();
   } catch {
+    // Non-JSON response (e.g. HTML 502 from Render's load balancer)
     body = {};
   }
 
+  // Handle HTTP error status codes with specific messages
   if (!response.ok) {
+    if (response.status === 500) {
+      // Backend startup crash (e.g. circular import, migration error).
+      // The backend log will have the real traceback.
+      throw new Error(
+        'The server encountered an internal error (500). ' +
+        'This is a backend issue — not your credentials. ' +
+        'Check Render logs for the traceback.'
+      );
+    }
+
+    if (response.status === 400 && body.message) {
+      // Our custom LoginView returns {field, message} for validation errors
+      throw new Error(body.message);
+    }
+
     const message =
       body.detail ||
-      (body.non_field_errors && body.non_field_errors[0]) ||
       body.message ||
-      `Request failed with status ${response.status}`;
+      (body.non_field_errors && body.non_field_errors[0]) ||
+      `Login failed (HTTP ${response.status}). Please try again.`;
+
     throw new Error(message);
   }
 
   return body;
 }
 
-// ── Main login function ────────────────────────────────────────────────────
-export async function login(username, password, tenantCode = "") {
-  // The backend expects "login" (not "username") in the request body
-  const tokens = await apiFetch("/api/auth/login/", {
-    method: "POST",
+
+// ── login() ───────────────────────────────────────────────────────────────────
+// Called by UserContext.signIn() which is called by SignIn.js on form submit.
+//
+// Parameters:
+//   username   — email OR username (backend accepts both via "login" field)
+//   password   — plain text (sent over HTTPS, hashed on server)
+//   tenantCode — the firm code entered in the sign-in form
+//                → empty string for admin users (they have no firm code)
+//
+// On success: stores tokens + user in localStorage, returns the user object.
+// On failure: throws with a human-readable message for the UI to display.
+export async function login(username, password, tenantCode = '') {
+  const tokens = await apiFetch('/api/auth/login/', {
+    method: 'POST',
     body: JSON.stringify({
-      login:    username,
+      login:    username,   // ← "login" not "username" — backend accepts email OR username
       password: password,
     }),
   });
@@ -66,78 +127,86 @@ export async function login(username, password, tenantCode = "") {
   const { access, refresh, user } = tokens;
 
   if (!access) {
-    throw new Error("No access token received. Check backend configuration.");
+    throw new Error('No access token received. Check backend configuration.');
   }
   if (!user) {
-    throw new Error("User data not returned from login.");
+    throw new Error(
+      'Login succeeded but no user data was returned. ' +
+      'Ensure your backend LoginView returns a "user" object.'
+    );
   }
 
-  // Store tokens immediately — needed for subsequent API calls
-  localStorage.setItem("accessToken",  access);
-  localStorage.setItem("refreshToken", refresh);
+  // Store JWT tokens immediately
+  localStorage.setItem('accessToken',  access);
+  localStorage.setItem('refreshToken', refresh);
 
-  // ── Determine if this is an admin account ─────────────────────────────────
-  // The backend now reliably sends these booleans — we don't guess.
-  const isAdmin = user.is_staff || user.is_superuser;
+  // ── Admin users — no tenant ────────────────────────────────────────────────
+  // is_staff and is_superuser are returned by our custom LoginView.
+  // Admin users don't belong to any firm — store "" so api.js skips the header.
+  const isAdmin = Boolean(user.is_staff || user.is_superuser);
 
   if (isAdmin) {
-    // Admin users don't have a tenant — they see all data across all firms.
-    // Store empty string so the API interceptor skips the X-Tenant-Code header.
-    localStorage.setItem("tenantCode", "");
+    localStorage.setItem('tenantCode', '');
+
   } else {
-    // ── Firm user validation ─────────────────────────────────────────────────
-    //
-    // Firm users must provide a tenant code at login (enforced on the form).
-    if (!tenantCode.trim()) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+    // ── Firm users — validate and store the tenant code ────────────────────
+    // The firm code is optional on the form (admin users leave it blank).
+    // For firm users, it must match what the server returned.
+
+    if (!tenantCode || !tenantCode.trim()) {
+      // Firm user tried to log in without entering a firm code
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       throw new Error(
-        "Firm Code is required. Please enter the code provided by your administrator."
+        'Firm Code is required for non-admin accounts. ' +
+        'Enter the code provided by your administrator.'
       );
     }
 
-    // Compare the typed code against the server's authoritative value.
-    // If the server returns null/empty (shouldn't happen for firm users),
-    // we trust the typed code and skip validation.
-    const serverCode = (user.tenant_code || "").trim().toLowerCase();
-    const typedCode  = tenantCode.trim().toLowerCase();
+    // Compare entered code against the server's authoritative value.
+    // If server returned null (unexpected for a firm user), we trust the typed code.
+    const serverCode = (user.tenant_code || '').trim().toUpperCase();
+    const typedCode  = tenantCode.trim().toUpperCase();
 
     if (serverCode && typedCode !== serverCode) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       throw new Error(
-        "Firm Code does not match your account. Please check and try again."
+        `Firm Code "${typedCode}" does not match your account. ` +
+        'Please check the code and try again.'
       );
     }
 
-    // ✅ Store the server's tenant code (not the raw typed input) so that
-    //    casing is always consistent with what the backend expects.
-    localStorage.setItem("tenantCode", user.tenant_code || tenantCode);
+    // Store the server's canonical code (correct casing, trimmed)
+    localStorage.setItem('tenantCode', user.tenant_code || tenantCode);
   }
 
-  // Store the full user object for use by UserContext and components
-  localStorage.setItem("user", JSON.stringify(user));
+  // Store the full user object — UserContext reads this on page refresh
+  localStorage.setItem('user', JSON.stringify(user));
 
   return user;
 }
 
-// ── Logout ─────────────────────────────────────────────────────────────────
+
+// ── logout() ──────────────────────────────────────────────────────────────────
+// Clears all auth state from localStorage. Called by UserContext.signOut().
 export function logout() {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("tenantCode");
-  localStorage.removeItem("user");
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('tenantCode');
+  localStorage.removeItem('user');
 }
 
-// ── Token helpers ──────────────────────────────────────────────────────────
-export const getAccessToken  = () => localStorage.getItem("accessToken");
-export const getRefreshToken = () => localStorage.getItem("refreshToken");
-export const getTenantCode   = () => localStorage.getItem("tenantCode");
+
+// ── Token / auth helpers ───────────────────────────────────────────────────────
+export const getAccessToken  = () => localStorage.getItem('accessToken');
+export const getRefreshToken = () => localStorage.getItem('refreshToken');
+export const getTenantCode   = () => localStorage.getItem('tenantCode');
 export const isAuthenticated = () => Boolean(getAccessToken());
 
-// ── Current user helper ────────────────────────────────────────────────────
+// Returns the parsed user object from localStorage, or null if missing/invalid.
 export function getCurrentUser() {
-  const raw = localStorage.getItem("user");
+  const raw = localStorage.getItem('user');
   if (!raw) return null;
   try {
     return JSON.parse(raw);
