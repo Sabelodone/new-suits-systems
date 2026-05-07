@@ -1,94 +1,457 @@
-/* Container Styles */
-.cases-container {
-  background-color: #f8f9fa;
-  padding: 2rem;
-  
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  margin-top: 2rem;
+/* ============================================================
+   Cases.css
+   Card-grid list view matching the design screenshot exactly.
+
+   Structure:
+     .cases-page         → full page wrapper (light grey bg)
+     .cases-page__header → title + New Case button
+     .cases-tabs         → filter tab row
+     .cases-search-row   → search input + filter button
+     .cases-grid         → 3-column responsive card grid
+     .case-card          → individual card
+   ============================================================ */
+
+/* ── Design tokens ───────────────────────────────────────── */
+:root {
+  --c-blue:       #2563EB;
+  --c-blue-light: #EFF6FF;
+  --c-blue-dark:  #1D4ED8;
+  --c-text-dark:  #111827;
+  --c-text-mid:   #374151;
+  --c-text-light: #6B7280;
+  --c-border:     #E5E7EB;
+  --c-bg:         #F9FAFB;
+  --c-white:      #FFFFFF;
+  --c-shadow:     0 1px 6px rgba(0,0,0,0.07);
+  --c-radius:     12px;
 }
 
-/* Heading Styles */
-h1 {
-  font-family: 'Merriweather', serif;
-  color: #4b0082;
-  margin-bottom: 1.5rem;
+/* ── Page wrapper ─────────────────────────────────────────── */
+.cases-page {
+  min-height:  100vh;
+  background:  var(--c-bg);
+  padding:     32px 36px 60px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  box-sizing:  border-box;
+  color:       var(--c-text-dark);
 }
 
-/* Table Styles */
-.custom-table th,
-.custom-table td {
-  font-family: 'Roboto', sans-serif;
-  color: #343a40;
-  padding: 1rem;
-  text-align: center;
+/* ── Page header: "Cases" + "+ New Case" ─────────────────── */
+.cases-page__header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   28px;
 }
 
-.custom-table thead th {
-  background-color: #4b0082;
-  color: #fff;
-  text-transform: uppercase;
-  font-weight: bold;
-  border-bottom: 3px solid #f1f1f1;
+.cases-page__title {
+  font-size:      1.75rem;
+  font-weight:    700;
+  color:          var(--c-text-dark);
+  margin:         0;
+  letter-spacing: -0.02em;
 }
 
-.custom-table tbody tr:hover {
-  background-color: #e6e6fa;
+/* Blue pill "+ New Case" button */
+.cases-page__new-btn {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  background:    var(--c-blue);
+  color:         var(--c-white);
+  border:        none;
+  border-radius: 50px;
+  padding:       10px 22px;
+  font-size:     0.9rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    background 0.2s, transform 0.1s;
+  white-space:   nowrap;
+}
+.cases-page__new-btn:hover  { background: var(--c-blue-dark); transform: translateY(-1px); }
+.cases-page__new-btn:active { transform: translateY(0); }
+.cases-page__new-btn-icon   { width: 16px; height: 16px; display: flex; align-items: center; }
+.cases-page__new-btn-icon svg { width: 100%; height: 100%; }
+
+/* ── Filter tabs ──────────────────────────────────────────── */
+.cases-tabs {
+  display:       flex;
+  gap:           0;
+  margin-bottom: 20px;
+  border-bottom: 1.5px solid var(--c-border);
 }
 
-/* Status Styling */
-.status-open {
-  color: #28a745; /* Green for open status */
-  font-weight: bold;
+.cases-tab {
+  background:     none;
+  border:         none;
+  border-bottom:  3px solid transparent;
+  padding:        10px 20px;
+  font-size:      0.9rem;
+  font-weight:    500;
+  color:          var(--c-text-light);
+  cursor:         pointer;
+  display:        flex;
+  align-items:    center;
+  gap:            8px;
+  transition:     color 0.15s, border-color 0.15s;
+  margin-bottom:  -1.5px;   /* Sits on top of the border-bottom of .cases-tabs */
 }
 
-.status-closed {
-  color: #dc3545; /* Red for closed status */
-  font-weight: bold;
+.cases-tab:hover:not(.cases-tab--active) {
+  color: var(--c-text-mid);
 }
 
-/* Input Styles */
-.form-control {
+/* Active tab: blue text + blue underline */
+.cases-tab--active {
+  color:        var(--c-blue);
+  border-color: var(--c-blue);
+  font-weight:  600;
+}
+
+/* Count pill next to tab label */
+.cases-tab__count {
+  background:    var(--c-border);
+  color:         var(--c-text-light);
+  border-radius: 20px;
+  padding:       1px 8px;
+  font-size:     0.8rem;
+  font-weight:   600;
+}
+.cases-tab__count--active {
+  background: var(--c-blue-light);
+  color:      var(--c-blue);
+}
+
+/* ── Search + Filter row ──────────────────────────────────── */
+.cases-search-row {
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+  margin-bottom: 24px;
+}
+
+/* Search input wrapper — relative so we can position the icon */
+.cases-search-wrap {
+  position: relative;
+  flex:     1;
+  max-width: 480px;
+}
+
+.cases-search-icon {
+  position:       absolute;
+  left:           14px;
+  top:            50%;
+  transform:      translateY(-50%);
+  color:          #9CA3AF;
+  display:        flex;
+  pointer-events: none;
+}
+.cases-search-icon svg { width: 16px; height: 16px; }
+
+.cases-search-input {
+  width:         100%;
+  height:        40px;
+  padding:       0 16px 0 40px;
+  border:        1.5px solid var(--c-border);
+  border-radius: 8px;
+  font-size:     0.875rem;
+  color:         var(--c-text-mid);
+  background:    var(--c-white);
+  outline:       none;
+  box-sizing:    border-box;
+  transition:    border-color 0.2s;
+}
+.cases-search-input::placeholder { color: #9CA3AF; }
+.cases-search-input:focus         { border-color: var(--c-blue); }
+
+/* Filter button */
+.cases-filter-btn {
+  display:       flex;
+  align-items:   center;
+  gap:           7px;
+  background:    var(--c-white);
+  border:        1.5px solid var(--c-border);
+  border-radius: 8px;
+  padding:       0 16px;
+  height:        40px;
+  font-size:     0.875rem;
+  font-weight:   500;
+  color:         var(--c-text-mid);
+  cursor:        pointer;
+  transition:    background 0.15s, border-color 0.15s;
+  white-space:   nowrap;
+}
+.cases-filter-btn:hover          { background: var(--c-bg); border-color: #9CA3AF; }
+.cases-filter-btn svg            { width: 15px; height: 15px; }
+
+/* ── Error banner ─────────────────────────────────────────── */
+.cases-error {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             12px;
+  background:      #FEF2F2;
+  border:          1px solid #FECACA;
+  border-radius:   var(--c-radius);
+  padding:         12px 16px;
+  margin-bottom:   20px;
+  font-size:       0.875rem;
+  color:           #DC2626;
+}
+.cases-error button {
+  background:    #DC2626;
+  color:         var(--c-white);
+  border:        none;
   border-radius: 6px;
-  padding: 0.5rem;
-  font-size: 0.95rem;
+  padding:       4px 12px;
+  font-size:     0.8rem;
+  font-weight:   600;
+  cursor:        pointer;
+  white-space:   nowrap;
+}
+.cases-error button:hover { background: #B91C1C; }
+
+/* ── Card grid ────────────────────────────────────────────── */
+/* 3 equal columns, matching the design screenshot */
+.cases-grid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   20px;
 }
 
-.form-control[type='text'] {
-  background-color: #f7f7f7;
+/* ── Individual case card ─────────────────────────────────── */
+.case-card {
+  background:    var(--c-white);
+  border:        1.5px solid var(--c-border);
+  border-radius: var(--c-radius);
+  padding:       20px;
+  cursor:        pointer;
+  display:       flex;
+  flex-direction: column;
+  gap:           16px;
+  transition:    box-shadow 0.2s, border-color 0.2s, transform 0.15s;
+  box-shadow:    var(--c-shadow);
+  position:      relative;
+}
+.case-card:hover {
+  box-shadow:   0 6px 20px rgba(37,99,235,0.12);
+  border-color: #BFDBFE;
+  transform:    translateY(-2px);
 }
 
-.form-control[type='date'] {
-  background-color: #fff;
+/* ── Card top row: icon + title + menu ────────────────────── */
+.case-card__header {
+  display:     flex;
+  align-items: flex-start;
+  gap:         12px;
 }
 
-/* Button Link Styling */
-.text-indigo {
-  color: #6a1b9a !important;
+/* Light blue square containing the briefcase SVG */
+.case-card__icon-wrap {
+  width:           44px;
+  height:          44px;
+  min-width:       44px;
+  border-radius:   10px;
+  background:      var(--c-blue-light);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+}
+.case-card__icon-wrap svg { width: 22px; height: 22px; }
+
+/* Title and case type text block */
+.case-card__title-block {
+  flex:           1;
+  overflow:       hidden;
+  display:        flex;
+  flex-direction: column;
+  gap:            3px;
 }
 
-.text-indigo:hover {
-  color: #4a148c !important;
+.case-card__title {
+  font-size:     0.925rem;
+  font-weight:   700;
+  color:         var(--c-text-dark);
+  margin:        0;
+  line-height:   1.3;
+  /* Allow title to wrap on 2 lines (matches design) */
+  display:       -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow:      hidden;
 }
 
-.case-item {
-  margin-bottom: 10px;
-  font-weight: bold;
-  font-size: 1.1rem;
+.case-card__type {
+  font-size:  0.78rem;
+  color:      var(--c-text-light);
+  white-space: nowrap;
+  overflow:   hidden;
+  text-overflow: ellipsis;
 }
 
-/* Responsive Styles */
+/* Three-dot action menu button */
+.case-card__menu-wrap { position: relative; flex-shrink: 0; }
+
+.case-card__dots {
+  background:    none;
+  border:        none;
+  padding:       4px 6px;
+  cursor:        pointer;
+  color:         #9CA3AF;
+  border-radius: 6px;
+  display:       flex;
+  align-items:   center;
+  transition:    background 0.15s, color 0.15s;
+}
+.case-card__dots:hover  { background: var(--c-bg); color: var(--c-text-mid); }
+.case-card__dots svg    { width: 16px; height: 16px; }
+
+/* Dropdown menu */
+.case-card__dropdown {
+  position:      absolute;
+  right:         0;
+  top:           calc(100% + 4px);
+  width:         170px;
+  background:    var(--c-white);
+  border:        1.5px solid var(--c-border);
+  border-radius: 10px;
+  box-shadow:    0 8px 24px rgba(0,0,0,0.1);
+  z-index:       50;
+  overflow:      hidden;
+}
+.case-card__dropdown-item {
+  display:     block;
+  width:       100%;
+  padding:     9px 14px;
+  text-align:  left;
+  background:  none;
+  border:      none;
+  font-size:   0.85rem;
+  color:       var(--c-text-mid);
+  cursor:      pointer;
+  transition:  background 0.15s;
+}
+.case-card__dropdown-item:hover { background: var(--c-bg); }
+.case-card__dropdown-item--danger       { color: #DC2626; }
+.case-card__dropdown-item--danger:hover { background: #FEF2F2; }
+
+/* ── Card detail rows ─────────────────────────────────────── */
+.case-card__details {
+  display:        flex;
+  flex-direction: column;
+  gap:            10px;
+}
+
+.case-card__detail-row {
+  display:     flex;
+  align-items: center;
+  gap:         9px;
+  font-size:   0.845rem;
+  color:       var(--c-text-mid);
+}
+
+.case-card__detail-icon {
+  width:       16px;
+  height:      16px;
+  display:     flex;
+  align-items: center;
+  flex-shrink: 0;
+  color:       #9CA3AF;
+}
+.case-card__detail-icon svg { width: 100%; height: 100%; }
+
+/* ── Card footer: status badge + avatars ──────────────────── */
+.case-card__footer {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-top:      auto;
+}
+
+/* Status badge */
+.case-card__status {
+  border-radius: 20px;
+  padding:       4px 12px;
+  font-size:     0.8rem;
+  font-weight:   600;
+  letter-spacing: 0.01em;
+}
+
+/* Avatar circles row */
+.case-card__avatars {
+  display:     flex;
+  align-items: center;
+}
+
+.case-card__avatar {
+  width:           30px;
+  height:          30px;
+  border-radius:   50%;
+  color:           #fff;
+  font-size:       0.72rem;
+  font-weight:     700;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  border:          2px solid var(--c-white);
+  margin-left:     -8px; /* Overlap effect */
+  flex-shrink:     0;
+  letter-spacing:  0.02em;
+}
+/* First avatar: no negative margin */
+.case-card__avatars .case-card__avatar:first-child { margin-left: 0; }
+
+/* Overflow count "+n" badge */
+.case-card__avatar--overflow {
+  background: var(--c-border);
+  color:      var(--c-text-light);
+  font-size:  0.7rem;
+  font-weight: 600;
+}
+
+/* ── Skeleton card ────────────────────────────────────────── */
+.case-card--skeleton {
+  cursor: default;
+  pointer-events: none;
+}
+.case-card--skeleton:hover { transform: none; box-shadow: var(--c-shadow); border-color: var(--c-border); }
+
+.skeleton-line {
+  background-image: linear-gradient(90deg, #E5E7EB 25%, #F3F4F6 50%, #E5E7EB 75%);
+  background-size:  200% 100%;
+  border-radius:    6px;
+  margin-bottom:    8px;
+  animation:        cases-shimmer 1.4s infinite linear;
+}
+
+@keyframes cases-shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.cases-empty {
+  grid-column:     1 / -1;  /* Spans all 3 columns */
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  padding:         64px 24px;
+  color:           var(--c-text-light);
+  font-size:       0.95rem;
+  text-align:      center;
+}
+.cases-empty p { margin: 0; }
+
+/* ── Responsive breakpoints ───────────────────────────────── */
+@media (max-width: 1024px) {
+  .cases-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 768px) {
-  .cases-container {
-    padding: 1rem;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-  }
-
-  .custom-table th,
-  .custom-table td {
-    font-size: 0.9rem;
-    padding: 0.75rem;
-  }
+  .cases-page  { padding: 20px 16px 40px; }
+  .cases-grid  { grid-template-columns: 1fr; }
+  .cases-tabs  { overflow-x: auto; gap: 0; }
+  .cases-tab   { padding: 10px 14px; white-space: nowrap; }
 }
