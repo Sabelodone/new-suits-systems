@@ -47,7 +47,7 @@
 /* Hide hamburger on md+ screens */
 @media (min-width: 768px) { .header-menu-btn { display: none; } }
 
-/* Brand: blue dot + "Suites System" text */
+/* Brand: blue dot + "Suits System" text */
 .header-brand {
   display:     flex;
   align-items: center;

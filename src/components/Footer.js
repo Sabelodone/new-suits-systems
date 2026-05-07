@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { useUser } from './UserContext';
 import './Footer.css';
 
-const Footer = ({ companyName = 'Suites System' }) => {
+const Footer = ({ companyName = 'Suits System' }) => {
   const { user }    = useUser();
   const currentYear = new Date().getFullYear();
 

@@ -158,10 +158,10 @@ const Header = () => {
             tabIndex={0}
             onClick={() => navigate(user ? '/dashboard' : '/')}
             onKeyDown={(e) => e.key === 'Enter' && navigate(user ? '/dashboard' : '/')}
-            aria-label="Suites System — go to dashboard"
+            aria-label="Suits System — go to dashboard"
           >
             <span className="header-brand-dot" aria-hidden="true" />
-            <span className="header-brand-name">Suites System</span>
+            <span className="header-brand-name">Suits System</span>
           </div>
         </div>
 
@@ -284,7 +284,7 @@ const Header = () => {
           >
             {/* Drawer top: brand + close button */}
             <div className="header-drawer-top">
-              <span className="header-brand-name">Suites System</span>
+              <span className="header-brand-name">Suits System</span>
               <button
                 className="header-icon-btn"
                 onClick={() => setDrawer(false)}
