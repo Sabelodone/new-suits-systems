@@ -1,30 +1,13 @@
 /**
  * src/components/Dashboard.js
  *
- * ─────────────────────────────────────────────────────────────────────────────
- * WHAT WAS FIXED IN THIS VERSION:
+ * CHANGES IN THIS VERSION:
+ *       Recent Cases table limited to 6 rows (was 20).
+ *      The dashboard is a summary view — 6 cases is enough to show at a glance.
+ *      The full list is always one click away via "View all →".
  *
- *   PROBLEM — "Network Error" with all-zero stats:
- *
- *   There were TWO separate issues producing this symptom:
- *
- *   1. TIMEOUT TOO SHORT (fixed in api.js):
- *      Render free tier takes up to 50 seconds to cold-start. The axios
- *      timeout was 30 s — it fired first, axios threw "Network Error"
- *      (no HTTP status code, just a failed connection), and the dashboard
- *      showed 0 for everything. Fixed in api.js: timeout raised to 65 s.
- *
- *   2. HARDCODED MOCK DATA (fixed in previous session):
- *      The component had STATS and RECENT_CASES as plain JS arrays with no
- *      API calls. Now useEffect fetches /cases/ and /clients/ on mount.
- *
- *   NEW IN THIS VERSION — "Waking up" state:
- *      When the backend is cold-starting, the user sees a spinning indicator
- *      saying "Waking up the server… (this takes ~30–50 s on first load)".
- *      After 8 seconds of loading with no response, we show this hint.
- *      When the response arrives (even late), the hint disappears and real
- *      data populates normally. The user never sees a false "error".
- * ─────────────────────────────────────────────────────────────────────────────
+ * Everything else (wake-up hint, KPI cards, skeleton loading, error banner,
+ * quick actions) is unchanged from the previous working version.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -89,31 +72,30 @@ const STATUS_COLORS = {
   Closed:  { bg: '#F1F5F9', text: '#475569' },
 };
 
-// Animated shimmer skeleton block shown while loading
 const Skeleton = ({ width = '100%', height = 16, radius = 6 }) => (
-  <div
-    className="dash-skeleton"
-    style={{ width, height, borderRadius: radius }}
-    aria-hidden="true"
-  />
+  <div className="dash-skeleton" style={{ width, height, borderRadius: radius }} aria-hidden="true" />
 );
+
+// ── How many recent cases to show on the dashboard ────────────────────────────
+// 6 is the right number for a summary view — enough context without overwhelming.
+// The full paginated list is always accessible via "View all →" → /cases.
+const DASHBOARD_CASES_LIMIT = 6;
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 const Dashboard = () => {
-  const navigate     = useNavigate();
-  const { user }     = useUser();
+  const navigate = useNavigate();
+  const { user } = useUser();
 
-  const [cases,        setCases]        = useState([]);
-  const [clients,      setClients]      = useState([]);
-  const [loading,      setLoading]      = useState(true);
-  const [wakingUp,     setWakingUp]     = useState(false); // cold-start hint
-  const [error,        setError]        = useState(null);
+  const [cases,       setCases]       = useState([]);
+  const [clients,     setClients]     = useState([]);
+  const [loading,     setLoading]     = useState(true);
+  const [wakingUp,    setWakingUp]    = useState(false);
+  const [error,       setError]       = useState(null);
   const [activeFilter, setActiveFilter] = useState('All');
 
-  // After 8 s of loading with no response, show the "server waking up" hint.
-  // The hint disappears automatically when the data arrives.
   const wakeTimerRef = useRef(null);
 
+  // ── Fetch data ───────────────────────────────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
 
@@ -122,32 +104,26 @@ const Dashboard = () => {
       setError(null);
       setWakingUp(false);
 
-      // Start the "waking up" hint timer — 8 seconds
+      // Show "waking up" hint after 8 s — Render free tier takes up to 50 s
       wakeTimerRef.current = setTimeout(() => {
         if (!cancelled) setWakingUp(true);
       }, 8000);
 
       try {
-        // Both requests run in parallel — /cases/ and /clients/
-        // api.js attaches Authorization + X-Tenant-Code automatically.
-        // Timeout is 65 s (raised from 30 s) to handle Render cold starts.
         const [casesRes, clientsRes] = await Promise.all([
           api.get('/cases/'),
           api.get('/clients/'),
         ]);
-
         if (!cancelled) {
-          setCases(casesRes.data);
-          setClients(clientsRes.data);
+          setCases(Array.isArray(casesRes.data) ? casesRes.data : (casesRes.data.results || []));
+          setClients(Array.isArray(clientsRes.data) ? clientsRes.data : (clientsRes.data.results || []));
         }
       } catch (err) {
         if (!cancelled) {
-          // Provide a helpful message depending on error type.
-          // "Network Error" without a status = timeout or CORS.
-          const isNetworkError = !err.response;
+          const isNetwork = !err.response;
           setError(
-            isNetworkError
-              ? 'Could not reach the server. The backend may still be waking up — wait 30 s and retry.'
+            isNetwork
+              ? 'Could not reach the server. It may still be waking up — wait 30 s and retry.'
               : err.response?.data?.detail || err.message || 'Failed to load data.',
           );
         }
@@ -161,41 +137,37 @@ const Dashboard = () => {
     };
 
     fetchData();
-
-    return () => {
-      cancelled = true;
-      clearTimeout(wakeTimerRef.current);
-    };
+    return () => { cancelled = true; clearTimeout(wakeTimerRef.current); };
   }, []);
 
-  // ── Derived KPIs ───────────────────────────────────────────────────────────
+  // ── KPI stats ────────────────────────────────────────────────────────────────
   const activeCases  = cases.filter(c => normaliseStatus(c.status) === 'Active').length;
   const pendingCases = cases.filter(c => normaliseStatus(c.status) === 'Pending').length;
   const closedCases  = cases.filter(c => normaliseStatus(c.status) === 'Closed').length;
-  const successRate  = cases.length > 0
-    ? Math.round((closedCases / cases.length) * 100)
-    : 0;
+  const successRate  = cases.length > 0 ? Math.round((closedCases / cases.length) * 100) : 0;
 
   const STATS = [
-    { label: 'Active Cases',   value: activeCases,  change: `${pendingCases} pending`,                       icon: Icon.Briefcase,  color: '#2563EB' },
-    { label: 'Total Clients',  value: clients.length, change: 'All time',                                    icon: Icon.Users,      color: '#059669' },
-    { label: 'Pending Cases',  value: pendingCases,  change: pendingCases > 0 ? 'Need attention' : 'All clear', icon: Icon.CheckCircle, color: '#7C3AED' },
-    { label: 'Success Rate',   value: `${successRate}%`, change: `${closedCases} closed`,                   icon: Icon.TrendUp,    color: '#D97706' },
+    { label: 'Active Cases',  value: activeCases,      change: `${pendingCases} pending`,                        icon: Icon.Briefcase,   color: '#2563EB' },
+    { label: 'Total Clients', value: clients.length,   change: 'All time',                                       icon: Icon.Users,       color: '#059669' },
+    { label: 'Pending Cases', value: pendingCases,     change: pendingCases > 0 ? 'Need attention' : 'All clear', icon: Icon.CheckCircle, color: '#7C3AED' },
+    { label: 'Success Rate',  value: `${successRate}%`, change: `${closedCases} closed`,                         icon: Icon.TrendUp,     color: '#D97706' },
   ];
 
-  const FILTER_TABS    = ['All', 'Active', 'Pending', 'Closed'];
-  const displayCases   = cases.slice(0, 20);
-  const filteredCases  = activeFilter === 'All'
-    ? displayCases
-    : displayCases.filter(c => normaliseStatus(c.status) === activeFilter);
+  // ── Recent cases: limit to DASHBOARD_CASES_LIMIT (6) ─────────────────────────
+  // These are the most recently-fetched cases (API returns them in server order).
+  // Apply filter tab on top of the limit so tabs still work in this table.
+  const FILTER_TABS = ['All', 'Active', 'Pending', 'Closed'];
+
+  const recentCases = cases
+    .filter(c => activeFilter === 'All' || normaliseStatus(c.status) === activeFilter)
+    .slice(0, DASHBOARD_CASES_LIMIT); // ← LIMIT TO 6
 
   const firstName = user?.first_name || user?.username || 'there';
 
-  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="dash-page">
 
-      {/* ── Page header ─────────────────────────────────────────────────── */}
+      {/* ── Page header ──────────────────────────────────────────────────── */}
       <div className="dash-header">
         <div>
           <h1 className="dash-title">Dashboard</h1>
@@ -207,8 +179,7 @@ const Dashboard = () => {
         </button>
       </div>
 
-      {/* ── "Server waking up" hint ────────────────────────────────────── */}
-      {/* Shows after 8 s of loading — reassures user it isn't broken */}
+      {/* ── Server waking-up hint (shown after 8 s of loading) ─────────── */}
       {loading && wakingUp && (
         <div className="dash-wakeup" role="status">
           <span className="dash-wakeup-spinner" aria-hidden="true" />
@@ -220,7 +191,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* ── Error banner ────────────────────────────────────────────────── */}
+      {/* ── Error banner ──────────────────────────────────────────────────── */}
       {error && (
         <div className="dash-error" role="alert">
           <span>{error}</span>
@@ -228,7 +199,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* ── KPI cards ───────────────────────────────────────────────────── */}
+      {/* ── KPI stat cards ────────────────────────────────────────────────── */}
       <div className="dash-stats">
         {STATS.map((stat, i) => {
           const Ico = stat.icon;
@@ -236,24 +207,21 @@ const Dashboard = () => {
             <div className="dash-stat-card" key={i} style={{ '--accent': stat.color }}>
               <div className="dash-stat-icon"><Ico /></div>
               <div className="dash-stat-body">
-                {loading
-                  ? <Skeleton width={60} height={28} />
-                  : <span className="dash-stat-value">{stat.value}</span>}
+                {loading ? <Skeleton width={60} height={28} /> : <span className="dash-stat-value">{stat.value}</span>}
                 <span className="dash-stat-label">{stat.label}</span>
-                {loading
-                  ? <Skeleton width={80} height={12} />
-                  : <span className="dash-stat-change">{stat.change}</span>}
+                {loading ? <Skeleton width={80} height={12} /> : <span className="dash-stat-change">{stat.change}</span>}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* ── Recent Cases table ───────────────────────────────────────────── */}
+      {/* ── Recent Cases (limited to 6) ───────────────────────────────────── */}
       <div className="dash-section">
         <div className="dash-section-header">
           <h2 className="dash-section-title">Recent Cases</h2>
 
+          {/* Filter tabs */}
           <div className="dash-filters" role="tablist">
             {FILTER_TABS.map(f => (
               <button
@@ -268,6 +236,7 @@ const Dashboard = () => {
             ))}
           </div>
 
+          {/* "View all →" navigates to /cases (full paginated list) */}
           <button className="dash-view-all" onClick={() => navigate('/cases')}>
             View all <Icon.Arrow />
           </button>
@@ -286,8 +255,8 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {/* Skeleton rows while loading */}
-              {loading && Array.from({ length: 4 }).map((_, i) => (
+              {/* Skeleton rows while loading — match the 6-row limit */}
+              {loading && Array.from({ length: DASHBOARD_CASES_LIMIT }).map((_, i) => (
                 <tr key={`sk-${i}`}>
                   {[70, 150, 110, 70, 90, 20].map((w, j) => (
                     <td key={j}><Skeleton width={w} height={14} /></td>
@@ -295,24 +264,17 @@ const Dashboard = () => {
                 </tr>
               ))}
 
-              {/* Real data */}
-              {!loading && filteredCases.map(c => {
+              {/* Real rows (max 6) */}
+              {!loading && recentCases.map(c => {
                 const ns = normaliseStatus(c.status);
                 const sc = STATUS_COLORS[ns] || STATUS_COLORS.Active;
                 return (
-                  <tr
-                    key={c.id}
-                    className="dash-table-row"
-                    onClick={() => navigate('/cases')}
-                    title="Go to cases"
-                  >
+                  <tr key={c.id} className="dash-table-row" onClick={() => navigate('/cases')} title="Go to cases">
                     <td className="dash-td-id">{c.code}</td>
                     <td className="dash-td-client">{c.title}</td>
                     <td>{c.client_name || '—'}</td>
                     <td>
-                      <span className="dash-badge" style={{ background: sc.bg, color: sc.text }}>
-                        {ns}
-                      </span>
+                      <span className="dash-badge" style={{ background: sc.bg, color: sc.text }}>{ns}</span>
                     </td>
                     <td>{c.start_date || '—'}</td>
                     <td className="dash-td-arrow"><Icon.Arrow /></td>
@@ -321,12 +283,10 @@ const Dashboard = () => {
               })}
 
               {/* Empty state */}
-              {!loading && filteredCases.length === 0 && (
+              {!loading && recentCases.length === 0 && (
                 <tr>
                   <td colSpan={6} className="dash-empty">
-                    {cases.length === 0
-                      ? 'No cases yet. Open your first case to get started.'
-                      : `No ${activeFilter.toLowerCase()} cases.`}
+                    {cases.length === 0 ? 'No cases yet. Open your first case to get started.' : `No ${activeFilter.toLowerCase()} cases.`}
                   </td>
                 </tr>
               )}
@@ -335,7 +295,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* ── Quick actions ────────────────────────────────────────────────── */}
+      {/* ── Quick actions ─────────────────────────────────────────────────── */}
       <div className="dash-quick">
         {[
           { label: 'Open a Case',  desc: 'Start a new client file',   path: '/create-case',         color: '#2563EB' },
@@ -343,12 +303,7 @@ const Dashboard = () => {
           { label: 'Upload Docs',  desc: 'Attach documents to cases', path: '/document-management', color: '#059669' },
           { label: 'Time Log',     desc: 'Record billable hours',     path: '/time-management',     color: '#D97706' },
         ].map(q => (
-          <button
-            key={q.label}
-            className="dash-quick-card"
-            onClick={() => navigate(q.path)}
-            style={{ '--qcolor': q.color }}
-          >
+          <button key={q.label} className="dash-quick-card" onClick={() => navigate(q.path)} style={{ '--qcolor': q.color }}>
             <div className="dash-quick-dot" />
             <div>
               <p className="dash-quick-label">{q.label}</p>

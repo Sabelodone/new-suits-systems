@@ -1,131 +1,438 @@
-/* Time Management Container */
-.time-management-container {
-  background-color: #f8f9fa;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  margin-top: 2rem;
+/* ============================================================
+   TimeManagement.css
+   Calendar + Time Tracker view — matches design screenshot.
+   Two-column: left (calendar 70%), right (sidebar 30%).
+   ============================================================ */
+
+:root {
+  --tm-blue:       #2563EB;
+  --tm-blue-light: #EFF6FF;
+  --tm-blue-dark:  #1D4ED8;
+  --tm-text-dark:  #111827;
+  --tm-text-mid:   #374151;
+  --tm-text-light: #6B7280;
+  --tm-border:     #E5E7EB;
+  --tm-bg:         #F9FAFB;
+  --tm-white:      #FFFFFF;
+  --tm-shadow:     0 1px 6px rgba(0,0,0,0.07);
+  --tm-radius:     12px;
 }
 
-/* Heading Styles */
-h1 {
-  font-family: 'Merriweather', serif;
-  color: #4b0082;
-  margin-bottom: 2rem;
-  font-size: 2.5rem;
-  letter-spacing: 0.05rem;
+/* ── Page wrapper ─────────────────────────────────────────── */
+.tm-page {
+  min-height:  100vh;
+  background:  var(--tm-bg);
+  padding:     32px 36px 60px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  box-sizing:  border-box;
+  color:       var(--tm-text-dark);
 }
 
-/* Table Styles */
-.custom-table th,
-.custom-table td {
-  font-family: 'Roboto', sans-serif;
-  color: #343a40;
-  padding: 1.2rem;
+/* ── Page header ──────────────────────────────────────────── */
+.tm-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   24px;
+}
+.tm-title {
+  font-size:      1.75rem;
+  font-weight:    700;
+  color:          var(--tm-text-dark);
+  margin:         0;
+  letter-spacing: -0.02em;
+}
+.tm-new-btn {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  background:    var(--tm-blue);
+  color:         var(--tm-white);
+  border:        none;
+  border-radius: 50px;
+  padding:       10px 22px;
+  font-size:     0.9rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    background 0.2s, transform 0.1s;
+}
+.tm-new-btn:hover { background: var(--tm-blue-dark); transform: translateY(-1px); }
+.tm-new-icon { width: 16px; height: 16px; display: flex; align-items: center; }
+.tm-new-icon svg { width: 100%; height: 100%; }
+
+/* ── Search row ───────────────────────────────────────────── */
+.tm-search-row {
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+  margin-bottom: 24px;
+}
+.tm-search-wrap { position: relative; flex: 1; max-width: 600px; }
+.tm-search-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: #9CA3AF; display: flex; pointer-events: none;
+}
+.tm-search-icon svg { width: 16px; height: 16px; }
+.tm-search-input {
+  width: 100%; height: 40px; padding: 0 16px 0 40px;
+  border: 1.5px solid var(--tm-border); border-radius: 8px;
+  font-size: 0.875rem; color: var(--tm-text-mid); background: var(--tm-white);
+  outline: none; box-sizing: border-box; transition: border-color 0.2s;
+}
+.tm-search-input::placeholder { color: #9CA3AF; }
+.tm-search-input:focus { border-color: var(--tm-blue); }
+.tm-filter-btn {
+  display: flex; align-items: center; gap: 7px; background: var(--tm-white);
+  border: 1.5px solid var(--tm-border); border-radius: 8px; padding: 0 16px;
+  height: 40px; font-size: 0.875rem; font-weight: 500; color: var(--tm-text-mid);
+  cursor: pointer; white-space: nowrap; transition: background 0.15s;
+}
+.tm-filter-btn svg { width: 15px; height: 15px; }
+.tm-filter-btn:hover { background: var(--tm-bg); }
+
+/* ── Two-column body ──────────────────────────────────────── */
+.tm-body {
+  display:  flex;
+  gap:      24px;
+  align-items: flex-start;
+}
+
+/* ════════════════════════════════════════════════════════════
+   LEFT: Calendar panel
+   ════════════════════════════════════════════════════════════ */
+.tm-calendar-panel {
+  flex:          1 1 0;
+  min-width:     0;
+  background:    var(--tm-white);
+  border:        1.5px solid var(--tm-border);
+  border-radius: var(--tm-radius);
+  overflow:      hidden;
+  box-shadow:    var(--tm-shadow);
+}
+
+/* ── Calendar top bar: nav + view toggle ── */
+.tm-cal-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         16px 20px;
+  border-bottom:   1.5px solid var(--tm-border);
+  flex-wrap:       wrap;
+  gap:             12px;
+}
+.tm-cal-nav { display: flex; align-items: center; gap: 12px; }
+.tm-nav-btn {
+  width: 32px; height: 32px; border-radius: 8px; border: 1.5px solid var(--tm-border);
+  background: var(--tm-white); cursor: pointer; display: flex; align-items: center;
+  justify-content: center; color: var(--tm-text-mid); transition: background 0.15s;
+}
+.tm-nav-btn:hover { background: var(--tm-bg); }
+.tm-nav-btn svg   { width: 16px; height: 16px; }
+.tm-cal-title {
+  font-size: 1.05rem; font-weight: 700; color: var(--tm-text-dark); margin: 0; min-width: 170px;
+}
+
+/* Month / Week / Day toggle */
+.tm-view-toggle { display: flex; border: 1.5px solid var(--tm-border); border-radius: 8px; overflow: hidden; }
+.tm-view-btn {
+  background: var(--tm-white); border: none; padding: 6px 14px; font-size: 0.85rem;
+  font-weight: 500; color: var(--tm-text-light); cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.tm-view-btn + .tm-view-btn { border-left: 1.5px solid var(--tm-border); }
+.tm-view-btn--active { background: var(--tm-blue); color: var(--tm-white); font-weight: 600; }
+
+/* ── Day-of-week header row ── */
+.tm-cal-day-headers {
+  display:        grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom:  1.5px solid var(--tm-border);
+  background:     var(--tm-bg);
+}
+.tm-cal-day-label {
+  padding:    10px 4px;
   text-align: center;
-  vertical-align: middle;
-}
-
-.custom-table thead th {
-  background-color: #4b0082;
-  color: #fff;
+  font-size:  0.8rem;
+  font-weight: 600;
+  color:      var(--tm-text-light);
   text-transform: uppercase;
-  font-weight: bold;
+  letter-spacing: 0.04em;
 }
 
-.custom-table tbody tr:hover {
-  background-color: #e6e6fa;
-  transition: background-color 0.2s ease;
+/* ── Calendar grid ── */
+.tm-cal-grid {
+  display:               grid;
+  grid-template-columns: repeat(7, 1fr);
 }
 
-/* Accordion & Filter Styles */
-.card-header {
-  background-color: #f8f9fa; /* Match container background */
-  border: none; /* Remove default border */
+/* Individual day cell */
+.tm-cal-cell {
+  min-height:  100px;
+  padding:     8px 6px 6px;
+  border-right: 1px solid var(--tm-border);
+  border-bottom: 1px solid var(--tm-border);
+  cursor:      pointer;
+  transition:  background 0.15s;
+  overflow:    hidden;
+  box-sizing:  border-box;
 }
-.button-accordion {
-  background-color: #fff; /* White button background */
-  color: #343a40; /* Changed text color to dark gray instead of purple */
-  font-family: 'Roboto', sans-serif;
-  font-weight: bold;
-  padding: 0.75rem 1.5rem;
-  text-align: left;
-  border: 1px solid #ccc;
-  border-radius: 0.5rem;
-  width: 100%;
-  box-shadow: none;
-  transition: background-color 0.2s ease;
+/* Remove right border from last column */
+.tm-cal-cell:nth-child(7n) { border-right: none; }
+.tm-cal-cell:hover { background: var(--tm-blue-light); }
+
+/* Day from a different month — greyed out */
+.tm-cal-cell--other { background: #FAFAFA; }
+.tm-cal-cell--other .tm-cal-date { color: #C4C9D4; }
+
+/* Today highlight */
+.tm-cal-cell--today { background: #F0F7FF; }
+
+/* Date number at top of cell */
+.tm-cal-date {
+  display:       inline-block;
+  font-size:     0.85rem;
+  font-weight:   500;
+  color:         var(--tm-text-mid);
+  margin-bottom: 4px;
+  line-height:   1;
+  width:         24px;
+  text-align:    center;
+}
+.tm-cal-date--today {
+  background:    var(--tm-blue);
+  color:         var(--tm-white);
+  border-radius: 50%;
+  font-weight:   700;
+  width:         24px;
+  height:        24px;
+  display:       inline-flex;
+  align-items:   center;
+  justify-content: center;
 }
 
-.button-accordion:hover {
-  background-color: #f0f0f0; /* Changed hover background to light gray instead of lavender */
+/* Events container in cell */
+.tm-cal-events { display: flex; flex-direction: column; gap: 3px; }
+
+/* Individual event chip */
+.tm-cal-event {
+  display:       flex;
+  align-items:   center;
+  gap:           4px;
+  border-radius: 4px;
+  padding:       2px 5px;
+  font-size:     0.72rem;
+  font-weight:   500;
+  line-height:   1.3;
+  overflow:      hidden;
+  cursor:        pointer;
+}
+.tm-cal-event-icon { width: 10px; height: 10px; display: flex; align-items: center; flex-shrink: 0; }
+.tm-cal-event-icon svg { width: 100%; height: 100%; }
+.tm-cal-event-text {
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+}
+.tm-cal-event-time { opacity: 0.8; margin-left: 3px; }
+
+/* "+N more" overflow label */
+.tm-cal-event-more {
+  font-size:  0.7rem;
+  color:      var(--tm-text-light);
+  padding:    0 5px;
+  cursor:     pointer;
 }
 
-.button-accordion .ms-auto {
-  transition: transform 0.3s ease;
+/* ════════════════════════════════════════════════════════════
+   RIGHT: Sidebar panels
+   ════════════════════════════════════════════════════════════ */
+.tm-sidebar {
+  width:          300px;
+  min-width:      280px;
+  flex-shrink:    0;
+  display:        flex;
+  flex-direction: column;
+  gap:            16px;
 }
 
-.button-accordion[aria-expanded="true"] .ms-auto {
-  transform: rotate(180deg); /* Rotate arrow when expanded */
+/* Generic panel card */
+.tm-panel {
+  background:    var(--tm-white);
+  border:        1.5px solid var(--tm-border);
+  border-radius: var(--tm-radius);
+  padding:       20px;
+  box-shadow:    var(--tm-shadow);
+}
+.tm-panel-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   16px;
+}
+.tm-panel-title {
+  font-size:   1rem;
+  font-weight: 700;
+  color:       var(--tm-text-dark);
+  margin:      0;
 }
 
-.card-body {
-  background-color: #fff;
-  border-top: none;
-  padding: 1.5rem 1rem;
+/* Play/Stop icon button in Time Tracker header */
+.tm-play-btn {
+  width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--tm-blue-light);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.tm-play-btn:hover { background: #BFDBFE; }
+.tm-play-btn svg   { width: 16px; height: 16px; }
+
+/* ── Time Tracker form fields ── */
+.tm-tracker-field { margin-bottom: 14px; }
+.tm-tracker-label {
+  display:       block;
+  font-size:     0.8rem;
+  font-weight:   500;
+  color:         var(--tm-text-light);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tm-tracker-select,
+.tm-tracker-input {
+  width:         100%;
+  height:        38px;
+  padding:       0 12px;
+  border:        1.5px solid var(--tm-border);
+  border-radius: 8px;
+  font-size:     0.875rem;
+  color:         var(--tm-text-dark);
+  background:    var(--tm-white);
+  outline:       none;
+  box-sizing:    border-box;
+  transition:    border-color 0.2s;
+}
+.tm-tracker-select:focus,
+.tm-tracker-input:focus { border-color: var(--tm-blue); }
+.tm-tracker-input::placeholder { color: #9CA3AF; }
+.tm-tracker-select:disabled,
+.tm-tracker-input:disabled { background: var(--tm-bg); color: var(--tm-text-light); }
+
+/* ── Big timer display ── */
+.tm-timer-display {
+  font-size:   2rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color:       var(--tm-text-dark);
+  text-align:  center;
+  padding:     16px 0 12px;
+  letter-spacing: 0.04em;
+  transition:  color 0.3s;
+}
+.tm-timer-display--running { color: var(--tm-blue); }
+
+/* ── Start/Stop button ── */
+.tm-tracker-btn {
+  width:         100%;
+  height:        40px;
+  border:        none;
+  border-radius: 8px;
+  background:    var(--tm-blue);
+  color:         var(--tm-white);
+  font-size:     0.9rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    background 0.2s;
+}
+.tm-tracker-btn:hover       { background: var(--tm-blue-dark); }
+.tm-tracker-btn--stop       { background: #DC2626; }
+.tm-tracker-btn--stop:hover { background: #B91C1C; }
+
+/* ── Summary rows (Today + Weekly) ── */
+.tm-summary-row {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         10px 0;
+  border-bottom:   1px solid var(--tm-border);
+}
+.tm-summary-row:last-of-type { border-bottom: none; }
+.tm-summary-label { font-size: 0.875rem; color: var(--tm-text-light); }
+.tm-summary-value { font-size: 0.95rem; font-weight: 700; color: var(--tm-text-dark); }
+
+/* ── Weekly progress bar ── */
+.tm-progress-track {
+  margin-top:    12px;
+  height:        8px;
+  background:    var(--tm-border);
+  border-radius: 99px;
+  overflow:      hidden;
+}
+.tm-progress-bar {
+  height:        100%;
+  background:    var(--tm-blue);
+  border-radius: 99px;
+  transition:    width 0.4s ease;
+}
+.tm-progress-label {
+  display:    block;
+  font-size:  0.75rem;
+  color:      var(--tm-text-light);
+  margin-top: 6px;
 }
 
-/* Input Fields */
-.form-group {
-  margin-bottom: 1.5rem;
+/* ════════════════════════════════════════════════════════════
+   Add Event Modal
+   ════════════════════════════════════════════════════════════ */
+.tm-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px;
 }
-
-.input-group-text {
-  background-color: #f0f0f0; /* Light grey background for icons */
-  border: none; /* No border for input group text */
-  color: #4b0082; /* Purple color for icons */
+.tm-modal {
+  background: var(--tm-white); border-radius: 16px; padding: 28px; width: 100%; max-width: 440px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: tm-modal-in 0.2s ease;
 }
-
-.form-control {
-  border-radius: 0.5rem; /* Rounded inputs */
-  border: 1px solid #ccc;
+@keyframes tm-modal-in { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+.tm-modal-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
 }
-
-.form-control:focus {
-  border-color: #4b0082; /* Focus state border */
-  box-shadow: 0 0 5px rgba(75, 0, 130, 0.3);
+.tm-modal-header h3 { font-size: 1.05rem; font-weight: 700; color: var(--tm-text-dark); margin: 0; }
+.tm-modal-close {
+  background: none; border: none; font-size: 1.1rem; color: var(--tm-text-light);
+  cursor: pointer; padding: 4px 8px; border-radius: 6px;
 }
-
-/* Badge Styles */
-.badge-success {
-  background-color: #28a745;
+.tm-modal-close:hover { background: var(--tm-bg); }
+.tm-modal-form { display: flex; flex-direction: column; gap: 14px; }
+.tm-modal-field { display: flex; flex-direction: column; gap: 5px; }
+.tm-modal-field label { font-size: 0.85rem; font-weight: 500; color: var(--tm-text-mid); }
+.tm-modal-field input,
+.tm-modal-field select {
+  border: 1.5px solid var(--tm-border); border-radius: 8px; padding: 9px 12px;
+  font-size: 0.9rem; color: var(--tm-text-dark); outline: none; transition: border-color 0.2s;
+  background: var(--tm-white);
 }
-
-.badge-info {
-  background-color: #17a2b8;
+.tm-modal-field input:focus,
+.tm-modal-field select:focus { border-color: var(--tm-blue); }
+.tm-modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 4px; }
+.tm-btn-cancel {
+  background: transparent; border: 1.5px solid var(--tm-border); border-radius: 50px;
+  padding: 9px 22px; font-size: 0.875rem; font-weight: 500; color: var(--tm-text-mid); cursor: pointer;
 }
-
-.badge-warning {
-  background-color: #ffc107;
+.tm-btn-cancel:hover { border-color: #9CA3AF; }
+.tm-btn-save {
+  background: var(--tm-blue); color: white; border: none; border-radius: 50px;
+  padding: 9px 24px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
 }
+.tm-btn-save:hover { background: var(--tm-blue-dark); }
 
-/* Responsive Styles */
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .tm-body        { flex-direction: column; }
+  .tm-sidebar     { width: 100%; min-width: 0; }
+  .tm-cal-cell    { min-height: 70px; }
+}
 @media (max-width: 768px) {
-  .time-management-container {
-    padding: 1.5rem;
-  }
-
-  h1 {
-    font-size: 2rem;
-  }
-
-  .custom-table th,
-  .custom-table td {
-    font-size: 0.85rem;
-    padding: 0.8rem;
-  }
-
-  .button-accordion {
-    font-size: 1rem; /* Smaller font size for accordion button */
-    padding: 0.5rem 1rem;
-  }
+  .tm-page        { padding: 20px 16px 40px; }
+  .tm-cal-day-label { font-size: 0.72rem; padding: 8px 2px; }
+  .tm-cal-event   { font-size: 0.65rem; }
+  .tm-cal-date    { font-size: 0.78rem; }
+  .tm-cal-cell    { min-height: 56px; padding: 4px 2px; }
+  .tm-timer-display { font-size: 1.6rem; }
 }

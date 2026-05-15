@@ -455,3 +455,100 @@
   .cases-tabs  { overflow-x: auto; gap: 0; }
   .cases-tab   { padding: 10px 14px; white-space: nowrap; }
 }
+/* ── Pagination bar ───────────────────────────────────────── */
+/*
+ * Sits below the card grid.
+ * Left: "Showing 1–9 of 28 cases"
+ * Right: ← 1 2 3 … 5 →
+ */
+.cases-pagination {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  flex-wrap:       wrap;
+  gap:             12px;
+  margin-top:      28px;
+  padding-top:     20px;
+  border-top:      1.5px solid var(--c-border);
+  font-family:     'Segoe UI', system-ui, sans-serif;
+}
+
+/* "Showing 1–9 of 28 cases" label */
+.cases-pagination__count {
+  font-size:  0.875rem;
+  color:      var(--c-text-light);
+}
+.cases-pagination__count strong {
+  color:       var(--c-text-mid);
+  font-weight: 600;
+}
+
+/* Navigation row: prev, page numbers, next */
+.cases-pagination__nav {
+  display:     flex;
+  align-items: center;
+  gap:         4px;
+}
+
+/* Base button: prev/next arrows AND numbered pages share this */
+.cases-pagination__btn {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  min-width:       36px;
+  height:          36px;
+  padding:         0 4px;
+  background:      var(--c-white);
+  border:          1.5px solid var(--c-border);
+  border-radius:   8px;
+  font-size:       0.875rem;
+  font-weight:     500;
+  color:           var(--c-text-mid);
+  cursor:          pointer;
+  transition:      background 0.15s, border-color 0.15s, color 0.15s;
+}
+.cases-pagination__btn svg       { width: 16px; height: 16px; }
+.cases-pagination__btn:hover:not(:disabled):not(.cases-pagination__btn--active) {
+  background:   var(--c-bg);
+  border-color: #9CA3AF;
+  color:        var(--c-text-dark);
+}
+
+/* Active / current page button: solid blue */
+.cases-pagination__btn--active {
+  background:   var(--c-blue);
+  border-color: var(--c-blue);
+  color:        #FFFFFF;
+  font-weight:  600;
+}
+.cases-pagination__btn--active:hover { background: var(--c-blue-dark); }
+
+/* Disabled prev/next (at first/last page) */
+.cases-pagination__btn:disabled {
+  opacity: 0.35;
+  cursor:  not-allowed;
+}
+
+/* "…" ellipsis between page groups */
+.cases-pagination__ellipsis {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  min-width:       32px;
+  height:          36px;
+  font-size:       0.875rem;
+  color:           var(--c-text-light);
+  cursor:          default;
+  user-select:     none;
+}
+
+/* Numbered page button — slightly wider to fit 2-digit numbers */
+.cases-pagination__btn--num { min-width: 36px; }
+
+@media (max-width: 480px) {
+  .cases-pagination {
+    flex-direction: column;
+    align-items:    center;
+    text-align:     center;
+  }
+}
